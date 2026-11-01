@@ -10,14 +10,14 @@ Proyecto del equipo **[Grupo-02]** para *7513 · Proyecto de Desarrollo de Aplic
 | Aspecto                     | Descripción                                    |
 | --------------------------- | ---------------------------------------------  |
 | Problema                    | Llevar un registro de canciones escuchadas     |
-| Usuarios                    | Personas usuarias principales                  |
+| Usuarios                    | Personas que disfruten de la música            |
 | Funcionalidades núcleo      | 1. Crear reseña de canción                     |
 |                             | 2. Valorar cancion                             |
 |                             | 3. Buscar artistas y canciones para valorar    |
 | Reglas de negocio           | 1. Valoracion del 1 al 5                       |
 |                             | 2. Una reseña por canción                      |
 |                             | 3. No se puede dar like a reseñas propias      |
-| API externa                 | Nombre, URL de la documentación y uso previsto |
+| API externa                 | Deezer API (https://developers.deezer.com/api). Uso: obtener información de canciones, artistas y albumes |
 
 ## Equipo y roles del sprint actual
 
