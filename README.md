@@ -49,6 +49,17 @@ npm test
 - Acuerdos de trabajo y convenciones: [`CONTRIBUTING.md`](CONTRIBUTING.md)
 - Riesgos: [`docs/riesgos.md`](docs/riesgos.md)
 
+## 📌 Documentación de Endpoints
+
+| Método | Endpoint | Descripción | Código de Éxito | Códigos de Error |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | Registra un nuevo usuario (regular o administrador) mediante ServicioAuth. | **201 Created** | `400`, `500` |
+| `POST` | `/api/auth/login` | Inicia sesión validando credenciales y generando sesión. | **200 OK** | `400`, `401`, `500` |
+| `GET` | `/api/usuarios` | Obtiene el listado completo de usuarios del repositorio. | **200 OK** | `500` |
+| `GET` | `/api/usuarios/:id` | Busca y devuelve un usuario específico por su ID. | **200 OK** | `404`, `500` |
+| `PUT` | `/api/usuarios/:id` | Actualiza los datos o atributos de un usuario existente. | **200 OK** | `400`, `404`, `500` |
+| `DELETE` | `/api/usuarios/:id` | Elimina un usuario del sistema. | **204 No Content** | `404`, `500` |
+
 ## Uso de herramientas de IA
 
 Registrar aquí qué herramientas se usaron, para qué tareas y qué se adoptó de sus propuestas.
