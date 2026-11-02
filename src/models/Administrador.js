@@ -1,8 +1,8 @@
 const Usuario = require("./Usuario")
 
 class Administrador extends Usuario {
-    constructor(username, email, passwordHash){
-        super(username, email, passwordHash, "administrador")
+    constructor(id, username, email, passwordHash){
+        super(id, username, email, passwordHash, "administrador")
     }
 }
 
