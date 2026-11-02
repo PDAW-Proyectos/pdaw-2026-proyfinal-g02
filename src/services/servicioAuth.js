@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 
-class ServicioUsuarios {
+class ServicioAuth {
     constructor(repositorio){
         this.repositorio = repositorio
     }
@@ -42,4 +42,4 @@ class ServicioUsuarios {
     }
 }
 
-module.exports = ServicioUsuarios
+module.exports = ServicioAuth

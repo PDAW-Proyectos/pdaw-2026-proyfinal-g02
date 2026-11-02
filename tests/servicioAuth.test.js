@@ -1,5 +1,5 @@
 const RepositorioUsuarios = require("../src/repositories/RepositorioUsuarios");
-const ServicioUsuarios = require("../src/services/servicioUsuarios");
+const ServicioAuth = require("../src/services/servicioAuth");
 const { crearCarpetaTemporal } = require("../src/utils/utilidades");
 
 
@@ -10,7 +10,7 @@ describe("Servicio usuarios", () => {
     beforeEach(async() => {
         const ruta = await crearCarpetaTemporal()     
         repositorio = new RepositorioUsuarios(ruta);
-        servicio = new ServicioUsuarios(repositorio)
+        servicio = new ServicioAuth(repositorio)
     })
 
     test("Registrar usuario", async() => {
