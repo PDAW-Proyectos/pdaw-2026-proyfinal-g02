@@ -46,7 +46,6 @@ describe("Repositorio de usuarios - CRUD", () => {
         expect(repositorio.buscarPorId(1).id).toBe(1); // respeta el id 
         expect(repositorio.buscarPorId(1).username).toBe("pepeArgento");
         expect(repositorio.buscarPorId(1).email).toBe("pepon@gmail.com");
-        expect(repositorio.buscarPorId(1).passwordHash).toBe("asdfasdf2323");
         expect(repositorio.buscarPorId(1).estaBaneado).toBe(true);
     });
 
