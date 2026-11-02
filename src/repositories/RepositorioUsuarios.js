@@ -80,11 +80,27 @@ class RepositorioUsuarios {
     }
 
     buscarPorId(id) {
-        return this.alPublico(this.usuarios.find((usuario) => usuario.id === Number(id)));
+        const user = this.usuarios.find((usuario) => usuario.id === Number(id))
+        if (!user) {
+            return null
+        }
+        return this.alPublico(user);
     }
 
     buscarPorEmail(email) {
-        return this.alPublico(this.usuarios.find((usuario) => usuario.email === email));
+        const user = this.usuarios.find((usuario) => usuario.email === email)
+        if (!user) {
+            return null
+        }
+        return this.alPublico(user);
+    }
+
+    buscarPorUsername(username) {
+        const user = this.usuarios.find((usuario) => usuario.username === username)
+        if (!user) {
+            return null
+        }
+        return this.alPublico(user);
     }
 
     async actualizar(id, cambios) {
