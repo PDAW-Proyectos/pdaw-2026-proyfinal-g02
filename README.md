@@ -48,6 +48,7 @@ npm test
 - Diagramas y wireframes: [`docs/`](docs/)
 - Acuerdos de trabajo y convenciones: [`CONTRIBUTING.md`](CONTRIBUTING.md)
 - Riesgos: [`docs/riesgos.md`](docs/riesgos.md)
+- Contrato de la API: https://developers.deezer.com/guidelines
 
 ## Endpoints
 
