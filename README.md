@@ -49,7 +49,7 @@ npm test
 - Acuerdos de trabajo y convenciones: [`CONTRIBUTING.md`](CONTRIBUTING.md)
 - Riesgos: [`docs/riesgos.md`](docs/riesgos.md)
 
-## 📌 Documentación de Endpoints
+## Endpoints
 
 | Método | Endpoint | Descripción | Código de Éxito | Códigos de Error |
 | :--- | :--- | :--- | :--- | :--- |
