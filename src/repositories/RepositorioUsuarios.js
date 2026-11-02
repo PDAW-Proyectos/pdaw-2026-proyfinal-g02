@@ -57,6 +57,10 @@ class RepositorioUsuarios {
         return this.usuarios.find(usuario => usuario.id === Number(id));
     }
 
+    buscarPorEmail(email) {
+        return this.usuarios.find(usuario => usuario.email === email);
+    }
+
     async actualizar(id, cambios) {
         const anterior = this.buscarPorId(id);
         if (!anterior) throw new Error("Usuario inexistente");
