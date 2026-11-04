@@ -31,15 +31,15 @@ router.post('/', (req, res, next) => {
       artista,
       rating: Number(rating),
       reseña,
-      username: 'fabricio', // Usuario simulado por ahora
+      username: 'fabricio', 
       createdAt: new Date().toISOString()
     };
 
-    reseñasMemoria.unshift(nuevaReseña); // Lo agregamos al principio de la lista
+    reseñasMemoria.unshift(nuevaReseña);
     res.status(201).json(nuevaReseña);
 
   } catch (err) {
-    next(err); // Deriva el error al middleware global que armamos antes
+    next(err); 
   }
 });
 
