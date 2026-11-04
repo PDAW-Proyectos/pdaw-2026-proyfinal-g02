@@ -1,0 +1,11 @@
+/* esta clase es para la vista de cancion */
+.img-cancion {
+    width: 100%;          
+    max-width: 400px;     
+    height: 400px;        
+    object-fit: cover;   
+}
+
+.boton-hacer-reseña{
+    max-width: 250px;
+}
