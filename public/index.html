@@ -7,5 +7,24 @@
 </head>
 <body>
     <h1>inicio</h1>
+    <!--AGREGAR ESTO AL HTML -->
+    <!-- MODIFICANDOLO COMO SEA NECESARIO -->
+        <!-- Mensaje de estado (Cargando / Error) accesible -->
+        <div id="status-container" aria-live="polite" class="status-msg"></div>
+
+        <!-- Contenedor donde se insertan las reseñas -->
+        <section id="lista-reseñas" class="grilla-reseñas"></section>
+
+        <!-- Plantilla HTML segura para cada reseña -->
+        <template id="template-reseña">
+        <article class="card-reseña">
+            <h3 class="titulo-cancion"></h3>
+            <p class="nombre-artista"></p>
+            <div class="valoracion-estrellas"></div>
+            <p class="texto-reseña"></p>
+            <small class="autor-reseña"></small>
+        </article>
+        </template>
+        <!---------------HASTA ACA ! --------------------->
 </body>
 </html>
