@@ -9,6 +9,8 @@
   },
   "scripts": {
     "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "lint": "echo \"Error: no lint specified\" && exit 0",
     "test": "jest"
   },
   "keywords": [],
