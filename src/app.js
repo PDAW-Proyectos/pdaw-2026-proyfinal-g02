@@ -48,3 +48,44 @@ export async function cargarReseñas() {
     }
   }
 }
+
+
+const form = document.querySelector('#template-reseña');
+
+if (form) {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault(); 
+
+    const formData = new FormData(form);
+    const nuevaReseña = {
+      tituloCancion: formData.get('tituloCancion'),
+      artista: formData.get('artista'),
+      rating: Number(formData.get('rating')),
+      reseña: formData.get('reseña')
+    };
+
+    try {
+      
+      await api('/api/reseñas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(nuevaReseña)
+      });
+
+      
+      form.reset();
+      alert('¡Reseña publicada con éxito!');
+      
+     
+      cargarReseñas();
+
+    } catch (err) {
+     
+      if (err instanceof ApiError) {
+        alert(`No se pudo publicar: ${err.message}`);
+      } else {
+        alert('Ocurrió un error inesperado al enviar la reseña.');
+      }
+    }
+  });
+}
