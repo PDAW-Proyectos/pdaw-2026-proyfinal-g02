@@ -1,72 +1,76 @@
-const Usuario = require("./Usuario")
+const Usuario = require("./Usuario");
 
 class UsuarioRegular extends Usuario {
     constructor(id, username, email, passwordHash) {
-        super(id, username, email, passwordHash, "usuario")
-        this.estaBaneado = false
-        this.reseñasFavoritas = []
-        this.misReseñas = []
-        this.seguidos = []
-        this.seguidores = []
+        super(id, username, email, passwordHash, "usuario");
+        this.estaBaneado = false;
+        this.reseñasFavoritas = [];
+        this.misReseñas = [];
+        this.seguidos = [];
+        this.seguidores = [];
     }
 
-    // agregarReseñaAFavoritas(id): void
-    agregarReseñaAFavoritas(id){
-        const favorita = this.reseñasFavoritas.find(r => r === id)
-        if (favorita) return
-        this.reseñasFavoritas.push(id)
+    agregarReseñaAFavoritas(id) {
+        if (!id) return false;
+        if (this.reseñasFavoritas.includes(id)) return false;
+        this.reseñasFavoritas.push(id);
+        return true;
     }
 
-    // eliminarReseñaDeFavoritas(id): void
-    eliminarReseñaDeFavoritas(id){
-        const filtrado = this.reseñasFavoritas.filter(r => r !== id)
-        this.reseñasFavoritas = filtrado
+    eliminarReseñaDeFavoritas(id) {
+        const index = this.reseñasFavoritas.indexOf(id);
+        if (index === -1) return false;
+        this.reseñasFavoritas = this.reseñasFavoritas.filter((r) => r !== id);
+        return true;
     }
 
-    // agregarReseña(Reseña): void
-    agregarReseña(id){
-        const hecha = this.misReseñas.find(r => r === id)
-        if (hecha) return
-        this.misReseñas.push(id)
+    agregarReseña(id) {
+        if (!id) return false;
+        if (this.misReseñas.includes(id)) return false;
+        this.misReseñas.push(id);
+        return true;
     }
 
-    // eliminarReseña(id): void
-    eliminarReseña(id){
-        const filtrado = this.misReseñas.filter(r => r !== id)
-        this.misReseñas = filtrado
+    eliminarReseña(id) {
+        const initialLength = this.misReseñas.length;
+        this.misReseñas = this.misReseñas.filter(r => r !== id);
+        return this.misReseñas.length < initialLength; // Retorna true si efectivamente se borró
     }
 
-    // seguirUsuario(id): void
-    seguirUsuario(id){
-        const seguido = this.seguidos.find(seguido => seguido === id)
-        if (seguido) return
-        this.seguidos.push(id)
+    seguirUsuario(id) {
+        if (!id) return false;
+        if (id === this.id) {
+            throw new Error("No podés seguirte a vos mismo.");
+        }
+        if (this.seguidos.includes(id)) return false; // Ya lo sigue
+        this.seguidos.push(id);
+        return true;
     }
 
-    // dejarDeSeguirUsuario(id): void
-    dejarDeSeguirUsuario(id){
-        const filtrado = this.seguidos.filter(seguido => seguido !== id)
-        this.seguidos = filtrado
+    dejarDeSeguirUsuario(id) {
+        const initialLength = this.seguidos.length;
+        this.seguidos = this.seguidos.filter(seguido => seguido !== id);
+        return this.seguidos.length < initialLength;
     }
 
-    // agregarSeguidor(id): void
-    agregarSeguidor(id){
-        const seguidor = this.seguidores.find(seguidor => seguidor === id)
-        if (seguidor) return
-        this.seguidores.push(id)
+    agregarSeguidor(id) {
+        if (!id) return false;
+        if (id === this.id) return false; // Nadie puede ser su propio seguidor
+        if (this.seguidores.includes(id)) return false;
+        this.seguidores.push(id);
+        return true;
     }
 
-    // eliminarSeguidor(id): void
-    eliminarSeguidor(id){
-        const filtrado = this.seguidores.filter(seguidor => seguidor !== id)
-        this.seguidores = filtrado
+    eliminarSeguidor(id) {
+        const initialLength = this.seguidores.length;
+        this.seguidores = this.seguidores.filter(seguidor => seguidor !== id);
+        return this.seguidores.length < initialLength;
     }
 
-    // bannearUsuario(): boolean
-    toggleBan(){
-        this.estaBaneado = !this.estaBaneado
-        return this.estaBaneado
+    toggleBan() {
+        this.estaBaneado = !this.estaBaneado;
+        return this.estaBaneado;
     }
 }
 
-module.exports = UsuarioRegular
+module.exports = UsuarioRegular;
