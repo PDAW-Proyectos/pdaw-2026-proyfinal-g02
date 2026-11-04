@@ -6,7 +6,6 @@ export class ApiError extends Error {
   }
 }
 
-const cache = new Map();
 
 export async function api(url, { method = 'GET', body, signal, retries = 3, timeout = 5000 } = {}) {
   let attempt = 0;
