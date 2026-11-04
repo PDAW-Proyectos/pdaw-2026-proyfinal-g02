@@ -1,4 +1,5 @@
-const { readFile, writeFile } = require("node:fs/promises");
+const { readFile, writeFile, mkdir } = require("node:fs/promises");
+const path = require("node:path")
 const UsuarioRegular = require("../models/UsuarioRegular");
 const Administrador = require("../models/Administrador");
 
@@ -39,6 +40,8 @@ class RepositorioUsuarios {
     }
 
     async guardar() {
+        const carpeta = path.dirname(this.ruta);
+        await mkdir(carpeta, { recursive: true });
         await writeFile(this.ruta, JSON.stringify(this.usuarios, null, 2), "utf8");
     }
 
