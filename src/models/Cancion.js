@@ -10,3 +10,5 @@ class Cancion {
         this.fechaLanzamiento = fechaLanzamiento ? (fechaLanzamiento instanceof Date ? fechaLanzamiento : new Date(fechaLanzamiento)) : null
     }
 }
+
+module.exports = Cancion
