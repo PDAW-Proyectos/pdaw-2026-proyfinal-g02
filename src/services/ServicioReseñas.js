@@ -67,7 +67,7 @@ class ServicioReseñas {
 
         // 4. Agregar reseña al usuario
         if (this.repositorioUsuarios) {
-            await this.repositorioUsuarios.agregarReseñaAUsuario(idUsuario, nuevaReseña.id);
+            await this.repositorioUsuarios.agregarReseña(idUsuario, nuevaReseña.id);
         }
 
         return nuevaReseña;
