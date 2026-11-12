@@ -7,6 +7,7 @@ module.exports = function (servicioReseñas, middlewareAutenticacion) {
 
     // Rutas públicas
     router.get("/", resenasCtrl.listar);
+    router.get("/usuario/:idUsuario", resenasCtrl.listarPorUsuario);
 
     // Rutas protegidas
     router.post("/", middlewareAutenticacion.requiereAutenticacion, resenasCtrl.crear);

@@ -9,6 +9,16 @@ function crearResenasController(servicioReseñas) {
             }
         },
 
+        listarPorUsuario: async (req, res) => {
+            try {
+                const { idUsuario } = req.params;
+                const reseñas = await servicioReseñas.obtenerReseñasDeUsuario(idUsuario);
+                res.json(reseñas);
+            } catch (error) {
+                res.status(400).json({ error: error.message });
+            }
+        },
+
         crear: async (req, res) => {
             try {
                 const idUsuario = req.user?.id;
@@ -18,7 +28,7 @@ function crearResenasController(servicioReseñas) {
                     idUsuario,
                     cancion,
                     valoracionPropia,
-                    descripcion
+                    descripcion,
                 );
 
                 res.status(201).json(nuevaReseña);
@@ -33,11 +43,12 @@ function crearResenasController(servicioReseñas) {
                 const idUsuarioActual = req.user?.id;
                 const datosNuevos = req.body;
 
-                const reseñaActualizada = await servicioReseñas.actualizarReseña(
-                    idReseña,
-                    idUsuarioActual,
-                    datosNuevos
-                );
+                const reseñaActualizada =
+                    await servicioReseñas.actualizarReseña(
+                        idReseña,
+                        idUsuarioActual,
+                        datosNuevos,
+                    );
 
                 res.json(reseñaActualizada);
             } catch (error) {
@@ -52,13 +63,17 @@ function crearResenasController(servicioReseñas) {
                 const idUsuarioActual = req.user?.id;
                 const esAdmin = req.user?.esAdmin || false;
 
-                await servicioReseñas.eliminarReseña(idReseña, idUsuarioActual, esAdmin);
+                await servicioReseñas.eliminarReseña(
+                    idReseña,
+                    idUsuarioActual,
+                    esAdmin,
+                );
                 res.json({ mensaje: "Reseña eliminada correctamente." });
             } catch (error) {
                 const status = error.message.includes("permisos") ? 403 : 400;
                 res.status(status).json({ error: error.message });
             }
-        }
+        },
     };
 }
 
