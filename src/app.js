@@ -3,9 +3,11 @@ const express = require("express");
 const session = require("express-session");
 const config = require("./config");
 const routerAuth = require("./routes/routes.auth");
+const routerReseñas = require("./routes/routes.reseñas");
+const routerDeezer = require("./routes/routes.deezer");
 
 function createApp(contenedor) {
-    const { repositorios, servicios, middlewares } = contenedor
+    const { servicios, middlewares } = contenedor
 
     const app = express();
     app.use(express.static(path.join(__dirname, "..", "public")));
@@ -29,6 +31,8 @@ function createApp(contenedor) {
     app.use(middlewares.autenticacion.autenticar) 
 
     app.use("/api/auth", routerAuth(servicios, middlewares.autenticacion))
+    app.use("/api/resenas", routerReseñas(servicios.reseñas, middlewares.autenticacion));
+    app.use("/api/deezer", routerDeezer(servicios.deezer))
 
     return app;
 }
