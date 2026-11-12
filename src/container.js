@@ -11,20 +11,20 @@ const repositorios = {
     reseñas: new RepositorioReseñas(config.rutaReseñas)
 };
 
-//cargar los repositorios con los datos de los archivos
-(async() => {
-    await repositorios.usuarios.cargar()
-    await repositorios.reseñas.cargar()
-})()
-
 const servicios = {
     auth: new ServicioAuth(repositorios.usuarios),
     deezer: new ServicioDeezer,
-    reseñas: new ServicioReseñas(repositorios.reseñas, this.deezer),
+    reseñas: new ServicioReseñas(repositorios.reseñas, repositorios.usuarios),
 }
 
 const middlewares = {
     autenticacion: autenticacion(repositorios.usuarios)
 }
 
-module.exports = { config, repositorios, servicios, middlewares }
+// Función para inicializar la persistencia antes de arrancar la app
+async function inicializarContenedor() {
+    await repositorios.usuarios.cargar();
+    await repositorios.reseñas.cargar();
+}
+
+module.exports = { config, repositorios, servicios, middlewares, inicializarContenedor }

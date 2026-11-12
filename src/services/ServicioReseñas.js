@@ -2,9 +2,9 @@ const Reseña = require("../models/Reseña");
 const Cancion = require("../models/Cancion");
 
 class ServicioReseñas {
-    constructor(repositorioReseñas, servicioDeezer = null) {
+    constructor(repositorioReseñas, repositorioUsuarios) {
         this.repositorioReseñas = repositorioReseñas;
-        this.servicioDeezer = servicioDeezer;
+        this.repositorioUsuarios = repositorioUsuarios;
     }
 
     async listarReseñas() {
@@ -65,6 +65,11 @@ class ServicioReseñas {
             idUsuario
         );
 
+        // 4. Agregar reseña al usuario
+        if (this.repositorioUsuarios) {
+            await this.repositorioUsuarios.agregarReseñaAUsuario(idUsuario, nuevaReseña.id);
+        }
+
         return nuevaReseña;
     }
 
@@ -90,12 +95,17 @@ class ServicioReseñas {
     async eliminarReseña(idReseña, idUsuarioActual, esAdmin = false) {
         const reseña = await this.obtenerReseñaPorId(idReseña);
 
-        // Permite borrar al dueño o a un administrador
         if (String(reseña.idUsuario) !== String(idUsuarioActual) && !esAdmin) {
             throw new Error("No tenés permisos para eliminar esta reseña.");
         }
 
-        return await this.repositorioReseñas.eliminar(idReseña);
+        const resultado = await this.repositorioReseñas.eliminar(idReseña);
+
+        if (this.repositorioUsuarios && reseña.idUsuario) {
+            await this.repositorioUsuarios.quitarReseña(reseña.idUsuario, idReseña);
+        }
+
+        return resultado;
     }
 }
 
