@@ -107,6 +107,20 @@ class ServicioReseñas {
 
         return resultado;
     }
+
+    async obtenerUltimas(limite = 10) {
+        const todas = await this.repositorioReseñas.listar();
+        return [...todas]
+            .sort((a, b) => new Date(b.fechaPublicado) - new Date(a.fechaPublicado))
+            .slice(0, Number(limite));
+    }
+
+    async obtenerPopulares(limite = 10) {
+        const todas = await this.repositorioReseñas.listar();
+        return [...todas]
+            .sort((a, b) => b.cantidadFavoritos - a.cantidadFavoritos)
+            .slice(0, Number(limite));
+    }
 }
 
 module.exports = ServicioReseñas;
