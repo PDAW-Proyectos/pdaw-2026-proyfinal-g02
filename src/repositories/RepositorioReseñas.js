@@ -32,8 +32,7 @@ class RepositorioReseñas {
                               c?.album,
                               c?.previewUrl,
                               c?.imagen,
-                              c?.duracion,
-                              c?.fechaLanzamiento,
+                              c?.duracion
                           );
 
                 return new Reseña(

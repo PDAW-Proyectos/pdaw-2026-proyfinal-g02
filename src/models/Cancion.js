@@ -1,5 +1,5 @@
 class Cancion {
-    constructor(id, titulo, artistas = [], album = "", previewUrl = "", imagen = "", duracion = 0, fechaLanzamiento = null) {
+    constructor(id, titulo, artistas = [], album = "", previewUrl = "", imagen = "", duracion = 0) {
         this.id = String(id || "");
         this.titulo = titulo || "";
         this.artistas = artistas;
@@ -7,7 +7,6 @@ class Cancion {
         this.previewUrl = previewUrl;
         this.imagen = imagen;
         this.duracion = duracion;
-        this.fechaLanzamiento = fechaLanzamiento ? new Date(fechaLanzamiento) : null;
     }
 
     static fromDeezer(trackData) {
@@ -18,8 +17,7 @@ class Cancion {
             trackData.album ? trackData.album.title : "",
             trackData.preview || "",
             trackData.album && trackData.album.cover_medium ? trackData.album.cover_medium : "",
-            trackData.duration || 0,
-            null
+            trackData.duration || 0
         );
     }
 }

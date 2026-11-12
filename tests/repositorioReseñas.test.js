@@ -20,7 +20,7 @@ describe("Repositorio de Reseñas - CRUD y Persistencia", () => {
             imagen: "https://imagen.url",
             duracion: 354
         }
-        cancionEjemplo = new Cancion(c.id, c.titulo, c.artistas, c.album, c.previewUrl, c.imagen, c.duracion, c.fechaLanzamiento);
+        cancionEjemplo = new Cancion(c.id, c.titulo, c.artistas, c.album, c.previewUrl, c.imagen, c.duracion);
         
     });
 
@@ -38,7 +38,6 @@ describe("Repositorio de Reseñas - CRUD y Persistencia", () => {
         
         await repo2.cargar();
         const listaRepo2 = repo2.listar();
-        console.log(listaRepo2);
         
         expect(listaRepo2.length).toBe(1);
         expect(listaRepo2[0].id).toBe("1");
