@@ -94,6 +94,40 @@ class RepositorioUsuarios {
         await this.guardar();
         return true;
     }
+
+    async agregarReseña(idUsuario, idReseña) {
+        const usuario = this.buscarPorId(idUsuario);
+        if (!usuario) {
+            throw new Error("Usuario inexistente");
+        }
+
+        if (!usuario.misReseñas) {
+            usuario.misReseñas = [];
+        }
+
+        if (!usuario.misReseñas.includes(idReseña)) {
+            usuario.misReseñas.push(idReseña);
+            await this.guardar(); 
+        }
+
+        return usuario;
+    }
+
+    async quitarReseña(idUsuario, idReseña) {
+        const usuario = this.buscarPorId(idUsuario);
+        if (!usuario) {
+            throw new Error("Usuario inexistente");
+        }
+
+        if (usuario.misReseñas) {
+            usuario.misReseñas = usuario.misReseñas.filter(
+                (id) => String(id) !== String(idReseña)
+            );
+            await this.guardar(); 
+        }
+
+        return usuario;
+    }
 }
 
 module.exports = RepositorioUsuarios;
