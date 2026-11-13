@@ -1,4 +1,4 @@
-async function cargarUltimasReseñas() {
+export async function cargarUltimasReseñas() {
     const container = document.querySelector("#reviewsContainer");
     
     if (!container) return;
@@ -70,7 +70,7 @@ async function cargarUltimasReseñas() {
     }
 }
 
-async function cargarReseñasPopulares() {
+export async function cargarReseñasPopulares() {
     const grid = document.getElementById('popular-reviews-grid');
     if (!grid) return; 
 
