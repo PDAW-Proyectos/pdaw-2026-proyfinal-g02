@@ -16,7 +16,7 @@ const servicios = {
     auth: new ServicioAuth(repositorios.usuarios),
     deezer: new ServicioDeezer(),
     reseñas: new ServicioReseñas(repositorios.reseñas, repositorios.usuarios),
-    usuarios: new ServicioUsuarios(repositorios.usuarios),
+    usuarios: new ServicioUsuarios(repositorios.usuarios, repositorios.reseñas),
 };
 
 const middlewares = {

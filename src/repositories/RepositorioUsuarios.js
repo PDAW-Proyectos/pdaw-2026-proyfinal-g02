@@ -170,6 +170,36 @@ class RepositorioUsuarios {
         await this.guardar();
         return true;
     }
+
+    async agregarReseñaFavorita(idUsuario, idReseña) {
+        const usuario = this.buscarPorId(idUsuario);
+        if (!usuario) {
+            throw new Error("Usuario inexistente");
+        }
+        if (!usuario.reseñasFavoritas) {
+            usuario.reseñasFavoritas = [];
+        }
+        const yaExiste = usuario.reseñasFavoritas.some(id => String(id) === String(idReseña));
+        if (!yaExiste) {
+            usuario.reseñasFavoritas.push(Number(idReseña));
+            await this.guardar();
+        }
+        return usuario;
+    }
+
+    async quitarReseñaFavorita(idUsuario, idReseña) {
+        const usuario = this.buscarPorId(idUsuario);
+        if (!usuario) {
+            throw new Error("Usuario inexistente");
+        }
+        if (usuario.reseñasFavoritas) {
+            usuario.reseñasFavoritas = usuario.reseñasFavoritas.filter(
+                (id) => String(id) !== String(idReseña)
+            );
+            await this.guardar();
+        }
+        return usuario;
+    }
 }
 
 module.exports = RepositorioUsuarios;

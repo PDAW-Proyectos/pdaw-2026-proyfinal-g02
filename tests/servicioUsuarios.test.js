@@ -3,18 +3,26 @@ const ServicioUsuarios = require('../src/services/ServicioUsuarios');
 describe('ServicioUsuarios', () => {
     let servicio;
     let repositorioUsuariosMock;
+    let repositorioReseñasMock;
 
     beforeEach(() => {
-        // Creamos un mock completo del repositorio de usuarios antes de cada test
+        // Creamos mocks completos para ambos repositorios
         repositorioUsuariosMock = {
             listar: jest.fn(),
             buscarPorId: jest.fn(),
             actualizar: jest.fn(),
-            eliminar: jest.fn()
+            eliminar: jest.fn(),
+            agregarReseñaFavorita: jest.fn(),
+            quitarReseñaFavorita: jest.fn()
         };
 
-        // Inyectamos el mock en el servicio
-        servicio = new ServicioUsuarios(repositorioUsuariosMock);
+        repositorioReseñasMock = {
+            buscarPorId: jest.fn(),
+            guardar: jest.fn()
+        };
+
+        // Inyectamos ambos mocks en el servicio
+        servicio = new ServicioUsuarios(repositorioUsuariosMock, repositorioReseñasMock);
     });
 
     test('listarTodos debe retornar los usuarios formateados de forma segura (sin contraseñas)', () => {
@@ -93,5 +101,41 @@ describe('ServicioUsuarios', () => {
 
         expect(resultado).toBe(true);
         expect(repositorioUsuariosMock.eliminar).toHaveBeenCalledWith(5);
+    });
+
+    test('agregarFavorita debe registrar la reseña en el usuario e incrementar los favoritos de la reseña', async () => {
+        const usuarioFalso = { id: 1, username: 'martin', reseñasFavoritas: [] };
+        const reseñaFalsa = { 
+            id: 10, 
+            cantidadFavoritos: 2, 
+            modificarCantidadFavoritos: jest.fn().mockReturnValue(3) 
+        };
+
+        repositorioUsuariosMock.agregarReseñaFavorita.mockResolvedValue({ ...usuarioFalso, reseñasFavoritas: [10] });
+        repositorioReseñasMock.buscarPorId.mockReturnValue(reseñaFalsa);
+
+        const resultado = await servicio.agregarFavorita(1, 10);
+
+        expect(resultado.reseñasFavoritas).toContain(10);
+        expect(reseñaFalsa.modificarCantidadFavoritos).toHaveBeenCalledWith(1);
+        expect(repositorioReseñasMock.guardar).toHaveBeenCalled();
+    });
+
+    test('quitarFavorita debe eliminar la reseña del usuario y decrementar los favoritos de la reseña', async () => {
+        const usuarioFalso = { id: 1, username: 'martin', reseñasFavoritas: [10] };
+        const reseñaFalsa = { 
+            id: 10, 
+            cantidadFavoritos: 3, 
+            modificarCantidadFavoritos: jest.fn().mockReturnValue(2) 
+        };
+
+        repositorioUsuariosMock.quitarReseñaFavorita.mockResolvedValue({ ...usuarioFalso, reseñasFavoritas: [] });
+        repositorioReseñasMock.buscarPorId.mockReturnValue(reseñaFalsa);
+
+        const resultado = await servicio.quitarFavorita(1, 10);
+
+        expect(resultado.reseñasFavoritas).not.toContain(10);
+        expect(reseñaFalsa.modificarCantidadFavoritos).toHaveBeenCalledWith(-1);
+        expect(repositorioReseñasMock.guardar).toHaveBeenCalled();
     });
 });

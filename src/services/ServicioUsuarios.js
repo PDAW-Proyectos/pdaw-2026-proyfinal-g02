@@ -1,6 +1,7 @@
 class ServicioUsuarios {
-    constructor(repositorioUsuarios) {
+    constructor(repositorioUsuarios, repositorioReseñas) {
         this.repositorioUsuarios = repositorioUsuarios;
+        this.repositorioReseñas = repositorioReseñas;
     }
 
     listarTodos() {
@@ -74,6 +75,26 @@ class ServicioUsuarios {
         return await this.repositorioUsuarios.dejarDeSeguirUsuario(idSeguidor, idSeguido);
     }
 
+    async agregarFavorita(idUsuarioLogueado, idReseña) {
+        const usuarioActualizado = await this.repositorioUsuarios.agregarReseñaFavorita(idUsuarioLogueado, idReseña);
+        const reseña = this.repositorioReseñas.buscarPorId(idReseña);
+        if (reseña) {
+            reseña.modificarCantidadFavoritos(1);
+            await this.repositorioReseñas.guardar();
+        }
+        return this._formatearUsuarioSeguro(usuarioActualizado);
+    }
+
+    async quitarFavorita(idUsuarioLogueado, idReseña) {
+        const usuarioActualizado = await this.repositorioUsuarios.quitarReseñaFavorita(idUsuarioLogueado, idReseña);
+        const reseña = this.repositorioReseñas.buscarPorId(idReseña);
+        if (reseña) {
+            reseña.modificarCantidadFavoritos(-1);
+            await this.repositorioReseñas.guardar();
+        }
+        return this._formatearUsuarioSeguro(usuarioActualizado);
+    }
+
     // Método auxiliar privado para limpiar datos sensibles
     _formatearUsuarioSeguro(usuario) {
         return {
@@ -83,6 +104,7 @@ class ServicioUsuarios {
             rol: usuario.rol,
             estaBaneado: usuario.estaBaneado ?? false,
             misReseñas: usuario.misReseñas || [],
+            reseñasFavoritas: usuario.reseñasFavoritas || [],
             seguidores: usuario.seguidores || [],
             seguidos: usuario.seguidos || []
         };

@@ -82,6 +82,32 @@ function crearControladorUsuarios(servicioUsuarios) {
             } catch (error) {
                 res.status(400).json({ error: error.message });
             }
+        },
+
+        async agregarFavorita(req, res) {
+            try {
+                const { idReseña } = req.params;
+                const usuarioActualizado = await servicioUsuarios.agregarFavorita(req.user.id, idReseña);
+                res.json({
+                    mensaje: "Reseña agregada a favoritas con éxito.",
+                    usuario: usuarioActualizado
+                });
+            } catch (error) {
+                res.status(400).json({ error: error.message });
+            }
+        },
+
+        async quitarFavorita(req, res) {
+            try {
+                const { idReseña } = req.params;
+                const usuarioActualizado = await servicioUsuarios.quitarFavorita(req.user.id, idReseña);
+                res.json({
+                    mensaje: "Reseña eliminada de favoritas.",
+                    usuario: usuarioActualizado
+                });
+            } catch (error) {
+                res.status(400).json({ error: error.message });
+            }
         }
     };
 }
