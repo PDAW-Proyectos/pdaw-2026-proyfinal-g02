@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+
+<body>
+    <!-- header -->
+    <header class="navbar navbar-custom navbar-expand-lg px-4 py-3">
+        <div class="container-fluid">
+            <a class="navbar-brand text-light fw-bold fs-3" href="#">Beatácora</a>
+
+
+            <div class="auth-actions d-flex gap-2">
+                <!-- Botón que activa el Modal de Login -->
+                <button class="btn btn-link text-light text-decoration-none" data-bs-toggle="modal"
+                    data-bs-target="#loginModal">
+                    Iniciar sesión <i class="fa-regular fa-user ms-1"></i>
+                </button>
+                <!-- Botón que activa el Modal de Registro -->
+                <button class="btn btn-brand btn-sm px-3" data-bs-toggle="modal" data-bs-target="#registerModal">
+                    Registrarse
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container my-5">
+
+        <div class="mx-auto perfil-card rounded p-5">
+            <div class="row align-items-center justify-content-center">
+
+                <div class="col-md-auto text-center mb-4 mb-md-0">
+                    <div
+                        class="perfil-img rounded d-flex align-items-center justify-content-center text-secondary mx-auto">
+                        <i class="bi bi-person-fill display-1"></i>
+                    </div>
+                </div>
+
+                <div class="col-md-7 ps-md-5 text-center text-md-start">
+                    <h1 class="fw-bold text-white mb-4">Tafu89</h1>
+
+                    <p class="text-secondary mb-2">Reseñas propias: 23</p>
+                    <p class="text-secondary mb-2">Reseñas guardadas: 2</p>
+                    <p class="text-secondary mb-4">Cuenta creada desde: 20/10/2026</p>
+
+                    <div>
+                        <a href="#" class="text-white text-decoration-underline fw-bold">Ver reseñas</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-top py-4 text-center mt-auto">
+
+        <p class="small py-2 mb-0">Podes encontrarnos tambien en:</p>
+        <div class="container">
+            <div class="row">
+                <div class="col d-flex justify-content-center align-items-center gap-2 my-2">
+                    <a href="#" class="text-light fs-4" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-light fs-4" aria-label="Twitter X"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#" class="text-light fs-4" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+
+
+        <p class="small py-2 mb-0">Copyright 2026 Beatácora©. Todos los derechos reservados</p>
+    </footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
