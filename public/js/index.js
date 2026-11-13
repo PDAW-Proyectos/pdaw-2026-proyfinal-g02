@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", async() => {
     setearAuthForms();
 
     cargarReseñasPopulares();
+    cargarUltimasReseñas();
 });
 
 async function cargarReseñasPopulares() {
