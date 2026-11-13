@@ -12,6 +12,8 @@ function routerUsuarios(servicioUsuarios, middlewares) {
     router.put("/:id", requiereAutenticacion, controlador.actualizar);
     router.patch("/:id/ban", requiereAutenticacion, soloAdmin, controlador.cambiarEstadoBan);
     router.delete("/:id", requiereAutenticacion, controlador.eliminar);
+    router.post("/:id/seguir", requiereAutenticacion, controlador.seguir);
+    router.delete("/:id/seguir", requiereAutenticacion, controlador.dejarDeSeguir);
 
     return router;
 }

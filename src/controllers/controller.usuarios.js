@@ -58,6 +58,30 @@ function crearControladorUsuarios(servicioUsuarios) {
                 const status = error.message.includes("permisos") ? 403 : 500;
                 res.status(status).json({ error: error.message });
             }
+        },
+
+        async seguir(req, res) {
+            try {
+                const { id: idTarget } = req.params; // A quién quiero seguir
+                const idLogueado = req.user.id;      // Quién está haciendo la acción
+                
+                await servicioUsuarios.seguir(idLogueado, idTarget);
+                res.json({ mensaje: "Ahora seguís a este usuario con éxito." });
+            } catch (error) {
+                res.status(400).json({ error: error.message });
+            }
+        },
+
+        async dejarDeSeguir(req, res) {
+            try {
+                const { id: idTarget } = req.params;
+                const idLogueado = req.user.id;
+                
+                await servicioUsuarios.dejarDeSeguir(idLogueado, idTarget);
+                res.json({ mensaje: "Dejaste de seguir a este usuario." });
+            } catch (error) {
+                res.status(400).json({ error: error.message });
+            }
         }
     };
 }

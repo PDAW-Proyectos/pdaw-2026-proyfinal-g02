@@ -60,6 +60,20 @@ class ServicioUsuarios {
         return await this.repositorioUsuarios.eliminar(id);
     }
 
+    async seguir(idSeguidor, idSeguido) {
+        if (Number(idSeguidor) === Number(idSeguido)) {
+            throw new Error("No podés seguirte a vos mismo.");
+        }
+        return await this.repositorioUsuarios.seguirUsuario(idSeguidor, idSeguido);
+    }
+
+    async dejarDeSeguir(idSeguidor, idSeguido) {
+        if (Number(idSeguidor) === Number(idSeguido)) {
+            throw new Error("No podés dejar de seguirte a vos mismo.");
+        }
+        return await this.repositorioUsuarios.dejarDeSeguirUsuario(idSeguidor, idSeguido);
+    }
+
     // Método auxiliar privado para limpiar datos sensibles
     _formatearUsuarioSeguro(usuario) {
         return {
