@@ -1,25 +1,27 @@
 const config = require("./config");
 const autenticacion = require("./middlewares/autenticacion");
-const RepositorioUsuarios = require("./repositories/RepositorioUsuarios")
-const RepositorioReseñas = require("./repositories/RepositorioReseñas")
-const ServicioAuth = require("./services/servicioAuth")
-const ServicioReseñas = require("./services/ServicioReseñas")
-const ServicioDeezer = require("./services/ServicioDeezer")
+const RepositorioUsuarios = require("./repositories/RepositorioUsuarios");
+const RepositorioReseñas = require("./repositories/RepositorioReseñas");
+const ServicioAuth = require("./services/servicioAuth");
+const ServicioReseñas = require("./services/ServicioReseñas");
+const ServicioDeezer = require("./services/ServicioDeezer");
+const ServicioUsuarios = require("./services/ServicioUsuarios");
 
 const repositorios = {
     usuarios: new RepositorioUsuarios(config.rutaUsuarios),
-    reseñas: new RepositorioReseñas(config.rutaReseñas)
+    reseñas: new RepositorioReseñas(config.rutaReseñas),
 };
 
 const servicios = {
     auth: new ServicioAuth(repositorios.usuarios),
-    deezer: new ServicioDeezer,
+    deezer: new ServicioDeezer(),
     reseñas: new ServicioReseñas(repositorios.reseñas, repositorios.usuarios),
-}
+    usuarios: new ServicioUsuarios(repositorios.usuarios),
+};
 
 const middlewares = {
-    autenticacion: autenticacion(repositorios.usuarios)
-}
+    autenticacion: autenticacion(repositorios.usuarios),
+};
 
 // Función para inicializar la persistencia antes de arrancar la app
 async function inicializarContenedor() {
@@ -27,4 +29,10 @@ async function inicializarContenedor() {
     await repositorios.reseñas.cargar();
 }
 
-module.exports = { config, repositorios, servicios, middlewares, inicializarContenedor }
+module.exports = {
+    config,
+    repositorios,
+    servicios,
+    middlewares,
+    inicializarContenedor,
+};
