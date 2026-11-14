@@ -1,3 +1,13 @@
+
+function obtenerClaseGenero(genero) {
+    if (!genero) return "bg-secondary text-light";
+    const gen = genero.toLowerCase();
+    if (gen.includes("pop")) return "bg-success text-light";
+    if (gen.includes("rock")) return "bg-warning text-dark";
+    if (gen.includes("jazz")) return "bg-info text-dark";
+    return "bg-secondary text-light";
+}
+
 export async function cargarUltimasReseñas() {
     const container = document.querySelector("#reviewsContainer");
     
