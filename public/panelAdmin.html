@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -33,99 +33,9 @@
 
     <main class="container my-5">
         <h1 class="text-center fw-bold mb-5">Panel de usuarios</h1>
+        <div id="usuarios-container" class="mx-auto favorites-container">
 
-        <div class="mx-auto favorites-container">
-
-            <div class="review-card mb-3 d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-4">
-                    <div
-                        class="rounded-circle d-flex align-items-center justify-content-center fw-bold review-avatar-icon">
-                        <i class="bi bi-person-fill fs-5"></i>
-                    </div>
-                    <span class="fw-bold text-white">tafu89</span>
-                    <a href="#" class="text-secondary text-decoration-underline">Reseñas</a>
-                </div>
-
-                <button class="btn btn-link p-0 text-decoration-none" aria-label="Eliminar usuario tafu89">
-                    <span
-                        class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center btn-acciones">
-                        <i class="bi bi-x-lg"></i>
-                    </span>
-                </button>
-            </div>
-
-            <div class="review-card mb-3 d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-4">
-                    <div
-                        class="rounded-circle d-flex align-items-center justify-content-center fw-bold review-avatar-icon">
-                        <i class="bi bi-person-fill fs-5"></i>
-                    </div>
-                    <span class="fw-bold text-white">dosmifa</span>
-                    <a href="#" class="text-secondary text-decoration-underline">Reseñas</a>
-                </div>
-
-                <button class="btn btn-link p-0 text-decoration-none" aria-label="Eliminar usuario dosmifa">
-                    <span
-                        class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center btn-acciones">
-                        <i class="bi bi-x-lg"></i>
-                    </span>
-                </button>
-            </div>
-
-            <div class="review-card mb-3 d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-4">
-                    <div
-                        class="rounded-circle d-flex align-items-center justify-content-center fw-bold review-avatar-icon">
-                        <i class="bi bi-person-fill fs-5"></i>
-                    </div>
-                    <span class="fw-bold text-white">tinchodev</span>
-                    <a href="#" class="text-secondary text-decoration-underline">Reseñas</a>
-                </div>
-
-                <button class="btn btn-link p-0 text-decoration-none" aria-label="Eliminar usuario tinchodev">
-                    <span
-                        class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center btn-acciones">
-                        <i class="bi bi-x-lg"></i>
-                    </span>
-                </button>
-            </div>
-
-            <div class="review-card mb-3 d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-4">
-                    <div
-                        class="rounded-circle d-flex align-items-center justify-content-center fw-bold review-avatar-icon">
-                        <i class="bi bi-person-fill fs-5"></i>
-                    </div>
-                    <span class="fw-bold text-white">gurkita8</span>
-                    <a href="#" class="text-secondary text-decoration-underline">Reseñas</a>
-                </div>
-
-                <button class="btn btn-link p-0 text-decoration-none" aria-label="Eliminar usuario gurkita8">
-                    <span
-                        class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center btn-acciones">
-                        <i class="bi bi-x-lg"></i>
-                    </span>
-                </button>
-            </div>
-
-            <div class="review-card mb-3 d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-4">
-                    <div
-                        class="rounded-circle d-flex align-items-center justify-content-center fw-bold review-avatar-icon">
-                        <i class="bi bi-person-fill fs-5"></i>
-                    </div>
-                    <span class="fw-bold text-white">Peter2</span>
-                    <a href="#" class="text-secondary text-decoration-underline">Reseñas</a>
-                </div>
-
-                <button class="btn btn-link p-0 text-decoration-none" aria-label="Eliminar usuario Peter2">
-                    <span
-                        class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center btn-acciones">
-                        <i class="bi bi-x-lg"></i>
-                    </span>
-                </button>
-            </div>
-
+           
         </div>
     </main>
 
@@ -142,10 +52,73 @@
             </div>
         </div>
 
+        <!-- ================= MODAL DE INICIO DE SESIÓN ================= -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-3">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold" id="loginModalLabel">Iniciar Sesión en Beatácora</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label text-secondary small">Correo electrónico</label>
+                            <input type="email" class="form-control search-input" id="loginEmail" required
+                                placeholder="tu@correo.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label text-secondary small">Contraseña</label>
+                            <input type="password" class="form-control search-input" id="loginPassword" required
+                                placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn btn-brand w-100 mt-3 py-2">Entrar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL DE REGISTRO ================= -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-3">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold" id="registerModalLabel">Crear una cuenta</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="registerUsername" class="form-label text-secondary small">Nombre de
+                                usuario</label>
+                            <input type="text" class="form-control search-input" id="registerUsername" required
+                                placeholder="tu_usuario" minlength="3" maxlength="20">
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerEmail" class="form-label text-secondary small">Correo
+                                electrónico</label>
+                            <input type="email" class="form-control search-input" id="registerEmail" required
+                                placeholder="tu@correo.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerPassword" class="form-label text-secondary small">Contraseña</label>
+                            <input type="password" class="form-control search-input" id="registerPassword" required
+                                minlength="6" placeholder="mínimo 6 caracteres">
+                        </div>
+                        <button type="submit" class="btn btn-brand w-100 mt-3 py-2">Registrarse</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
         <p class="small py-2 mb-0">Copyright 2026 Beatácora©. Todos los derechos reservados</p>
     </footer>
-
+    <script type="module" src="js/panelAdmin.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
