@@ -107,10 +107,13 @@ describe('ServicioUsuarios', () => {
         const usuarioFalso = { id: 1, username: 'martin', reseñasFavoritas: [] };
         const reseñaFalsa = { 
             id: 10, 
+            idUsuario: 2, // De otro usuario 
             cantidadFavoritos: 2, 
             modificarCantidadFavoritos: jest.fn().mockReturnValue(3) 
         };
 
+        // Mockeamos la búsqueda del usuario para que el servicio lea sus favoritas actuales
+        repositorioUsuariosMock.buscarPorId.mockReturnValue(usuarioFalso);
         repositorioUsuariosMock.agregarReseñaFavorita.mockResolvedValue({ ...usuarioFalso, reseñasFavoritas: [10] });
         repositorioReseñasMock.buscarPorId.mockReturnValue(reseñaFalsa);
 
@@ -129,6 +132,7 @@ describe('ServicioUsuarios', () => {
             modificarCantidadFavoritos: jest.fn().mockReturnValue(2) 
         };
 
+        repositorioUsuariosMock.buscarPorId.mockReturnValue(usuarioFalso);
         repositorioUsuariosMock.quitarReseñaFavorita.mockResolvedValue({ ...usuarioFalso, reseñasFavoritas: [] });
         repositorioReseñasMock.buscarPorId.mockReturnValue(reseñaFalsa);
 
@@ -137,5 +141,26 @@ describe('ServicioUsuarios', () => {
         expect(resultado.reseñasFavoritas).not.toContain(10);
         expect(reseñaFalsa.modificarCantidadFavoritos).toHaveBeenCalledWith(-1);
         expect(repositorioReseñasMock.guardar).toHaveBeenCalled();
+    });
+
+    test('agregarFavorita debe lanzar un error si el usuario intenta favoritear su propia reseña', async () => {
+        const idUsuario = 1;
+        const idReseña = 50;
+
+        const reseñaPropia = { 
+            id: 50, 
+            idUsuario: 1, 
+            cantidadFavoritos: 0, 
+            modificarCantidadFavoritos: jest.fn() 
+        };
+
+        repositorioReseñasMock.buscarPorId.mockReturnValue(reseñaPropia);
+
+        await expect(
+            servicio.agregarFavorita(idUsuario, idReseña)
+        ).rejects.toThrow("No podés agregar tu propia reseña a favoritas.");
+
+        // Nos aseguramos de que NUNCA se haya llamado al repositorio para guardar la favorita
+        expect(repositorioUsuariosMock.agregarReseñaFavorita).not.toHaveBeenCalled();
     });
 });
