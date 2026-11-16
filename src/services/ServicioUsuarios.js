@@ -76,12 +76,29 @@ class ServicioUsuarios {
     }
 
     async agregarFavorita(idUsuarioLogueado, idReseña) {
-        const usuarioActualizado = await this.repositorioUsuarios.agregarReseñaFavorita(idUsuarioLogueado, idReseña);
+        if (!idReseña) {
+            throw new Error("Debe proporcionar una ID de reseña válida.");
+        }
+
         const reseña = this.repositorioReseñas.buscarPorId(idReseña);
-        if (reseña) {
+        if (!reseña) {
+            throw new Error("La reseña que querés marcar como favorita no existe.");
+        }
+
+        if (String(reseña.idUsuario) === String(idUsuarioLogueado)) {
+            throw new Error("No podés agregar tu propia reseña a favoritas.");
+        }
+
+        const usuarioActual = this.repositorioUsuarios.buscarPorId(idUsuarioLogueado);
+        const yaEraFavorita = usuarioActual.reseñasFavoritas?.some(id => String(id) === String(idReseña));
+
+        const usuarioActualizado = await this.repositorioUsuarios.agregarReseñaFavorita(idUsuarioLogueado, idReseña);
+
+        if (!yaEraFavorita) {
             reseña.modificarCantidadFavoritos(1);
             await this.repositorioReseñas.guardar();
         }
+
         return this._formatearUsuarioSeguro(usuarioActualizado);
     }
 

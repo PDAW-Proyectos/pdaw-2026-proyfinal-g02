@@ -181,7 +181,7 @@ class RepositorioUsuarios {
         }
         const yaExiste = usuario.reseñasFavoritas.some(id => String(id) === String(idReseña));
         if (!yaExiste) {
-            usuario.reseñasFavoritas.push(Number(idReseña));
+            usuario.reseñasFavoritas.push(String(idReseña));
             await this.guardar();
         }
         return usuario;
