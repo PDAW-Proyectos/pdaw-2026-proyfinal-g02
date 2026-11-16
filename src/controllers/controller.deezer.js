@@ -6,7 +6,7 @@ function crearDeezerController(servicioDeezer) {
                 const canciones = await servicioDeezer.buscarCanciones(termino);
                 res.json(canciones);
             } catch (error) {
-                res.status(500).json({ error: error.message });
+                next(error);
             }
         },
         topGlobal: async (req, res) => {
@@ -14,7 +14,7 @@ function crearDeezerController(servicioDeezer) {
                 const canciones = await servicioDeezer.obtenerTopGlobal();
                 res.json(canciones);
             } catch (error) {
-                res.status(500).json({ error: error.message });
+                next(error)
             }
         }
     };
