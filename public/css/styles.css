@@ -171,4 +171,11 @@
         display: block;
         }
 
+        .favorites-container {
+        width: 75%;          /* Aquí defines que ocupe el 75% de la página */
+        max-width: 900px;    /* Evita que se estire demasiado en monitores muy grandes */
+        margin-left: auto;   /* Centra automáticamente a la izquierda */
+        margin-right: auto;  /* Centra automáticamente a la derecha */
+    }
+
         

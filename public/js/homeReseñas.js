@@ -1,13 +1,3 @@
-
-function obtenerClaseGenero(genero) {
-    if (!genero) return "bg-secondary text-light";
-    const gen = genero.toLowerCase();
-    if (gen.includes("pop")) return "bg-success text-light";
-    if (gen.includes("rock")) return "bg-warning text-dark";
-    if (gen.includes("jazz")) return "bg-info text-dark";
-    return "bg-secondary text-light";
-}
-
 export async function cargarUltimasReseñas() {
     const container = document.querySelector("#reviewsContainer");
     
@@ -48,27 +38,43 @@ export async function cargarUltimasReseñas() {
                 : (reseña.cancion.artistas || "Artista desconocido");
 
             colDiv.innerHTML = `
-                <div class="review-card h-100 d-flex flex-column justify-content-between p-3 border rounded shadow-sm">
-                    <div>
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <div>
-                                <h5 class="m-0 fw-bold fs-6">${reseña.cancion.titulo}</h5>
-                                <small class="text-secondary">${artistasStr}</small>
-                            </div>
-                            <span class="genre-tag bg-primary text-light px-2 py-1 rounded small">${reseña.cancion.album || 'Single'}</span>
-                        </div>
-                        <div class="d-flex align-items-center mb-2">
-                            <span class="badge bg-success me-2">★ ${reseña.valoracionPropia}.0</span>
-                        </div>
-                        <p class="review-text small mb-3">
-                            "${reseña.descripcion}"
-                        </p>
+                <div class="review-card mb-4">
+                <div class="row align-items-center">
+
+                    <div
+                        class="col-3 text-center d-flex flex-column justify-content-around py-2">
                     </div>
-                    <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary small text-secondary">
-                        <span>${fechaFormateada}</span>
-                        <button class="btn btn-link p-0 text-danger"><i class="fa-regular fa-heart"></i> <span class="text-dark">${reseña.cantidadFavoritos}</span></button>
+
+                    <div class="col-9">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="d-flex align-items-center gap-3">
+                                <div
+                                    class="rounded-circle d-flex align-items-center justify-content-center fw-bold review-avatar-icon">
+                                    <i class="bi bi-music-note-beamed fs-5"></i>
+                                </div>
+                                <div>
+                                    <h5 class="card-title mb-0 fw-bold">${reseña.cancion.titulo}</h5>
+                                    <small class="text-secondary">${artistasStr}s</small>
+                                </div>
+                            </div>
+                            <span class="genre-tag bg-warning text-dark">Pop</span>
+                        </div>
+
+                        <div class="my-2">
+                            <span class="fs-4 fw-bold text-white">★ ${reseña.valoracionPropia}.0</span>
+                        </div>
+
+                        <p class="mb-3 review-desc">
+                            ${reseña.descripcion}
+                        </p>
+
+                        <div
+                            class="d-flex justify-content-between align-items-center pt-2 border-top review-border-top">
+                            <small class="text-secondary">Fecha de publicacion: ${fechaFormateada}</small>
+                        </div>
                     </div>
                 </div>
+            </div>
             `;
 
             container.appendChild(colDiv);
