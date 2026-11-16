@@ -23,7 +23,7 @@ async function cargarReseñasFavoritas() {
     const contenedor = document.getElementById("favoritos-container");
 
     try {
-        const respuesta = await fetch("/api/usuarios/favoritos");
+        const respuesta = await fetch("/api/favoritas/:idReseña");
         
         if (!respuesta.ok) throw new Error("No se pudieron cargar las reseñas favoritas.");
 
@@ -68,6 +68,7 @@ async function cargarReseñasFavoritas() {
             </div>
         `).join("");
 
+
         configurarBotonesFavoritos();
 
     } catch (error) {
@@ -83,7 +84,7 @@ function configurarBotonesFavoritos() {
             const idReseña = e.currentTarget.getAttribute("data-id");
             
             try {
-                const respuesta = await fetch(`/api/resenas/${idReseña}/favorito`, {
+                const respuesta = await fetch(`/api/resenas/favoritas/${idReseña}`, {
                     method: "DELETE"
                 });
 
