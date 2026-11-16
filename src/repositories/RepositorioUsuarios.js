@@ -128,6 +128,78 @@ class RepositorioUsuarios {
 
         return usuario;
     }
+
+    async seguirUsuario(idSeguidor, idSeguido) {
+        const seguidor = this.buscarPorId(idSeguidor);
+        const seguido = this.buscarPorId(idSeguido);
+
+        if (!seguidor || !seguido) {
+            throw new Error("Usuario no encontrado.");
+        }
+
+        if (!seguidor.seguidos) seguidor.seguidos = [];
+        if (!seguido.seguidores) seguido.seguidores = [];
+
+        // Si ya lo sigue, no hacemos nada (idempotente)
+        const yaLoSigue = seguidor.seguidos.some(id => Number(id) === Number(idSeguido));
+        if (!yaLoSigue) {
+            seguidor.seguidos.push(Number(idSeguido));
+            seguido.seguidores.push(Number(idSeguidor));
+            await this.guardar();
+        }
+
+        return true;
+    }
+
+    async dejarDeSeguirUsuario(idSeguidor, idSeguido) {
+        const seguidor = this.buscarPorId(idSeguidor);
+        const seguido = this.buscarPorId(idSeguido);
+
+        if (!seguidor || !seguido) {
+            throw new Error("Usuario no encontrado.");
+        }
+
+        if (seguidor.seguidos) {
+            seguidor.seguidos = seguidor.seguidos.filter(id => Number(id) !== Number(idSeguido));
+        }
+
+        if (seguido.seguidores) {
+            seguido.seguidores = seguido.seguidores.filter(id => Number(id) !== Number(idSeguidor));
+        }
+
+        await this.guardar();
+        return true;
+    }
+
+    async agregarReseñaFavorita(idUsuario, idReseña) {
+        const usuario = this.buscarPorId(idUsuario);
+        if (!usuario) {
+            throw new Error("Usuario inexistente");
+        }
+        if (!usuario.reseñasFavoritas) {
+            usuario.reseñasFavoritas = [];
+        }
+        const yaExiste = usuario.reseñasFavoritas.some(id => String(id) === String(idReseña));
+        if (!yaExiste) {
+            usuario.reseñasFavoritas.push(String(idReseña));
+            await this.guardar();
+        }
+        return usuario;
+    }
+
+    async quitarReseñaFavorita(idUsuario, idReseña) {
+        const usuario = this.buscarPorId(idUsuario);
+        if (!usuario) {
+            throw new Error("Usuario inexistente");
+        }
+        if (usuario.reseñasFavoritas) {
+            usuario.reseñasFavoritas = usuario.reseñasFavoritas.filter(
+                (id) => String(id) !== String(idReseña)
+            );
+            await this.guardar();
+        }
+        return usuario;
+    }
 }
 
 module.exports = RepositorioUsuarios;

@@ -5,6 +5,7 @@ const config = require("./config");
 const routerAuth = require("./routes/routes.auth");
 const routerReseñas = require("./routes/routes.reseñas");
 const routerDeezer = require("./routes/routes.deezer");
+const routerUsuarios = require("./routes/routes.usuarios");
 
 function createApp(contenedor) {
     const { servicios, middlewares } = contenedor
@@ -33,6 +34,7 @@ function createApp(contenedor) {
     app.use("/api/auth", routerAuth(servicios, middlewares.autenticacion))
     app.use("/api/resenas", routerReseñas(servicios.reseñas, middlewares.autenticacion));
     app.use("/api/deezer", routerDeezer(servicios.deezer))
+    app.use("/api/usuarios", routerUsuarios(servicios.usuarios, middlewares))
 
     return app;
 }
