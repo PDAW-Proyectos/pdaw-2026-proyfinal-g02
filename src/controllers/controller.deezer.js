@@ -1,6 +1,6 @@
 function crearDeezerController(servicioDeezer) {
     return {
-        buscar: async (req, res) => {
+        buscar: async (req, res, next) => {
             try {
                 const termino = req.query.q;
                 const canciones = await servicioDeezer.buscarCanciones(termino);
