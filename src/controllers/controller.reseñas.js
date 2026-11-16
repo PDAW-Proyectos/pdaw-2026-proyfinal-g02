@@ -1,26 +1,25 @@
 function crearResenasController(servicioReseñas) {
     return {
-        listar: async (req, res) => {
+        listar: async (req, res, next) => {
             try {
                 const reseñas = await servicioReseñas.listarReseñas();
                 res.json(reseñas);
             } catch (error) {
-                res.status(500).json({ error: error.message });
+                next(error);
             }
         },
 
-        listarPorUsuario: async (req, res) => {
+        listarPorUsuario: async (req, res, next) => {
             try {
                 const { idUsuario } = req.params;
-                const reseñas =
-                    await servicioReseñas.obtenerReseñasDeUsuario(idUsuario);
+                const reseñas = await servicioReseñas.obtenerReseñasDeUsuario(idUsuario);
                 res.json(reseñas);
             } catch (error) {
-                res.status(400).json({ error: error.message });
+                next(error);
             }
         },
 
-        crear: async (req, res) => {
+        crear: async (req, res, next) => {
             try {
                 const idUsuario = req.user?.id;
                 const { cancion, valoracionPropia, descripcion } = req.body;
@@ -34,35 +33,33 @@ function crearResenasController(servicioReseñas) {
 
                 res.status(201).json(nuevaReseña);
             } catch (error) {
-                res.status(400).json({ error: error.message });
+                next(error);
             }
         },
 
-        actualizar: async (req, res) => {
+        actualizar: async (req, res, next) => {
             try {
                 const idReseña = req.params.id;
                 const idUsuarioActual = req.user?.id;
                 const datosNuevos = req.body;
 
-                const reseñaActualizada =
-                    await servicioReseñas.actualizarReseña(
-                        idReseña,
-                        idUsuarioActual,
-                        datosNuevos,
-                    );
+                const reseñaActualizada = await servicioReseñas.actualizarReseña(
+                    idReseña,
+                    idUsuarioActual,
+                    datosNuevos,
+                );
 
                 res.json(reseñaActualizada);
             } catch (error) {
-                const status = error.message.includes("permisos") ? 403 : 400;
-                res.status(status).json({ error: error.message });
+                next(error);
             }
         },
 
-        eliminar: async (req, res) => {
+        eliminar: async (req, res, next) => {
             try {
                 const idReseña = req.params.id;
                 const idUsuarioActual = req.user?.id;
-                const esAdmin = req.user?.esAdmin || false;
+                const esAdmin = req.user?.rol === "administrador" || req.user?.esAdmin || false;
 
                 await servicioReseñas.eliminarReseña(
                     idReseña,
@@ -71,29 +68,27 @@ function crearResenasController(servicioReseñas) {
                 );
                 res.json({ mensaje: "Reseña eliminada correctamente." });
             } catch (error) {
-                const status = error.message.includes("permisos") ? 403 : 400;
-                res.status(status).json({ error: error.message });
+                next(error);
             }
         },
 
-        async listarUltimas(req, res) {
+        listarUltimas: async (req, res, next) => {
             try {
                 const limite = req.query.limit || 10;
                 const ultimas = await servicioReseñas.obtenerUltimas(limite);
                 res.json(ultimas);
             } catch (error) {
-                res.status(500).json({ error: error.message });
+                next(error);
             }
         },
 
-        async listarPopulares(req, res) {
+        listarPopulares: async (req, res, next) => {
             try {
                 const limite = req.query.limit || 10;
-                const populares =
-                    await servicioReseñas.obtenerPopulares(limite);
+                const populares = await servicioReseñas.obtenerPopulares(limite);
                 res.json(populares);
             } catch (error) {
-                res.status(500).json({ error: error.message });
+                next(error);
             }
         },
     };

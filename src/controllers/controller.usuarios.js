@@ -1,27 +1,26 @@
 function crearControladorUsuarios(servicioUsuarios) {
     
     return {
-        async listarTodos(req, res) {
+        async listarTodos(req, res, next) {
             try {
                 const usuarios = servicioUsuarios.listarTodos();
                 res.json(usuarios);
             } catch (error) {
-                res.status(500).json({ error: error.message });
+                next(error);
             }
         },
 
-        async obtenerPorId(req, res) {
+        async obtenerPorId(req, res, next) {
             try {
                 const { id } = req.params;
                 const usuario = servicioUsuarios.obtenerPorId(id);
                 res.json(usuario);
             } catch (error) {
-                const status = error.message.includes("no encontrado") ? 404 : 500;
-                res.status(status).json({ error: error.message });
+                next(error);
             }
         },
 
-        async actualizar(req, res) {
+        async actualizar(req, res, next) {
             try {
                 const { id } = req.params;
                 const usuarioActualizado = await servicioUsuarios.actualizar(id, req.body, req.user);
@@ -30,12 +29,11 @@ function crearControladorUsuarios(servicioUsuarios) {
                     usuario: usuarioActualizado
                 });
             } catch (error) {
-                const status = error.message.includes("permisos") ? 403 : 400;
-                res.status(status).json({ error: error.message });
+                next(error);
             }
         },
 
-        async cambiarEstadoBan(req, res) {
+        async cambiarEstadoBan(req, res, next) {
             try {
                 const { id } = req.params;
                 const { estaBaneado } = req.body;
@@ -45,22 +43,21 @@ function crearControladorUsuarios(servicioUsuarios) {
                     usuario: usuarioActualizado
                 });
             } catch (error) {
-                res.status(400).json({ error: error.message });
+                next(error);
             }
         },
 
-        async eliminar(req, res) {
+        async eliminar(req, res, next) {
             try {
                 const { id } = req.params;
                 await servicioUsuarios.eliminar(id, req.user);
                 res.json({ mensaje: "Usuario eliminado correctamente." });
             } catch (error) {
-                const status = error.message.includes("permisos") ? 403 : 500;
-                res.status(status).json({ error: error.message });
+                next(error);
             }
         },
 
-        async seguir(req, res) {
+        async seguir(req, res, next) {
             try {
                 const { id: idTarget } = req.params; // A quién quiero seguir
                 const idLogueado = req.user.id;      // Quién está haciendo la acción
@@ -68,11 +65,11 @@ function crearControladorUsuarios(servicioUsuarios) {
                 await servicioUsuarios.seguir(idLogueado, idTarget);
                 res.json({ mensaje: "Ahora seguís a este usuario con éxito." });
             } catch (error) {
-                res.status(400).json({ error: error.message });
+                next(error);
             }
         },
 
-        async dejarDeSeguir(req, res) {
+        async dejarDeSeguir(req, res, next) {
             try {
                 const { id: idTarget } = req.params;
                 const idLogueado = req.user.id;
@@ -80,11 +77,11 @@ function crearControladorUsuarios(servicioUsuarios) {
                 await servicioUsuarios.dejarDeSeguir(idLogueado, idTarget);
                 res.json({ mensaje: "Dejaste de seguir a este usuario." });
             } catch (error) {
-                res.status(400).json({ error: error.message });
+                next(error);
             }
         },
 
-        async agregarFavorita(req, res) {
+        async agregarFavorita(req, res, next) {
             try {
                 const { idReseña } = req.params;
                 const usuarioActualizado = await servicioUsuarios.agregarFavorita(req.user.id, idReseña);
@@ -93,11 +90,11 @@ function crearControladorUsuarios(servicioUsuarios) {
                     usuario: usuarioActualizado
                 });
             } catch (error) {
-                res.status(400).json({ error: error.message });
+                next(error);
             }
         },
 
-        async quitarFavorita(req, res) {
+        async quitarFavorita(req, res, next) {
             try {
                 const { idReseña } = req.params;
                 const usuarioActualizado = await servicioUsuarios.quitarFavorita(req.user.id, idReseña);
@@ -106,7 +103,7 @@ function crearControladorUsuarios(servicioUsuarios) {
                     usuario: usuarioActualizado
                 });
             } catch (error) {
-                res.status(400).json({ error: error.message });
+                next(error);
             }
         }
     };

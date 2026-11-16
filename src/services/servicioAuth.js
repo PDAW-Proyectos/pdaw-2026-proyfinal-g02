@@ -1,4 +1,9 @@
 const bcrypt = require("bcryptjs");
+const {
+    BadRequestError,
+    ConflictError,
+    ForbiddenError
+} = require("../utils/errors.js");
 
 class ServicioAuth {
     constructor(repositorio) {
@@ -21,54 +26,80 @@ class ServicioAuth {
     }
 
     async registrarUsuario(username, email, password, rol = "usuario") {
-        // validaciones
-        if (!username || typeof username !== "string" || username.trim().length < 3) {
-            throw new Error("El nombre de usuario debe tener al menos 3 caracteres.");
+        // validaciones de formato con BadRequestError
+        if (
+            !username ||
+            typeof username !== "string" ||
+            username.trim().length < 3
+        ) {
+            throw new BadRequestError(
+                "El nombre de usuario debe tener al menos 3 caracteres.",
+            );
         }
         if (username.trim().length > 20) {
-            throw new Error("El nombre de usuario no puede superar los 20 caracteres.");
+            throw new BadRequestError(
+                "El nombre de usuario no puede superar los 20 caracteres.",
+            );
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email || !emailRegex.test(email.trim())) {
-            throw new Error("El formato del correo electrónico no es válido.");
+            throw new BadRequestError(
+                "El formato del correo electrónico no es válido.",
+            );
         }
 
         if (!password || password.length < 6) {
-            throw new Error("La contraseña debe tener al menos 6 caracteres.");
+            throw new BadRequestError(
+                "La contraseña debe tener al menos 6 caracteres.",
+            );
         }
 
         const cleanUsername = username.trim();
         const cleanEmail = email.trim().toLowerCase();
 
-        // que sean unicos el username y el email
+        // que sean unicos el username y el email (ConflictError)
         const existeEmail = this.repositorio.buscarPorEmail(cleanEmail);
-        const existeUsername = this.repositorio.buscarPorUsername(cleanUsername);
-        
+        const existeUsername =
+            this.repositorio.buscarPorUsername(cleanUsername);
+
         if (existeEmail || existeUsername) {
-            throw new Error("El usuario o correo ya se encuentra registrado.");
+            throw new ConflictError(
+                "El usuario o correo ya se encuentra registrado.",
+            );
         }
 
         const passwordHash = await bcrypt.hash(password, 12);
-        const usuario = await this.repositorio.agregar(cleanUsername, cleanEmail, passwordHash, rol);
-        
+        const usuario = await this.repositorio.agregar(
+            cleanUsername,
+            cleanEmail,
+            passwordHash,
+            rol,
+        );
+
         return this._toPublic(usuario);
     }
 
     async iniciarSesion(email, password) {
         if (!email || !password) {
-            throw new Error("Todos los campos son obligatorios.");
+            throw new BadRequestError("Todos los campos son obligatorios.");
         }
 
-        const usuario = this.repositorio.buscarPorEmail(email.trim().toLowerCase());
-        if (!usuario) return null; // Credenciales inválidas
+        const usuario = this.repositorio.buscarPorEmail(
+            email.trim().toLowerCase(),
+        );
+        if (!usuario) {
+            return null; // 👈 Retorna null para los tests de credenciales inválidas
+        }
 
         if (usuario.estaBaneado) {
-            throw new Error("Tu cuenta se encuentra suspendida.");
+            throw new ForbiddenError("Tu cuenta se encuentra suspendida.");
         }
 
         const esValida = await bcrypt.compare(password, usuario.passwordHash);
-        if (!esValida) return null; // Credenciales inválidas
+        if (!esValida) {
+            return null; // 👈 Retorna null para los tests de contraseña incorrecta
+        }
 
         return this._toPublic(usuario);
     }
