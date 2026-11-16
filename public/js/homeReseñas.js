@@ -23,7 +23,7 @@ export async function cargarUltimasReseñas() {
 
         reseñas.forEach((reseña) => {
             const colDiv = document.createElement("div");
-            colDiv.className = "col-md-4 mb-4"; // Añadí mb-4 para separar las filas si hay varias
+            colDiv.className = "col-12 mb-4"; // Añadí mb-4 para separar las filas si hay varias
 
             // Formateamos la fecha o calculamos antigüedad de forma sencilla
             const fechaFormateada = new Date(reseña.fechaPublicado).toLocaleDateString("es-AR", {
@@ -41,11 +41,7 @@ export async function cargarUltimasReseñas() {
                 <div class="review-card mb-4">
                 <div class="row align-items-center">
 
-                    <div
-                        class="col-3 text-center d-flex flex-column justify-content-around py-2">
-                    </div>
-
-                    <div class="col-9">
+                    <div class="col-12 px-5">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <div class="d-flex align-items-center gap-3">
                                 <div
@@ -54,14 +50,14 @@ export async function cargarUltimasReseñas() {
                                 </div>
                                 <div>
                                     <h5 class="card-title mb-0 fw-bold">${reseña.cancion.titulo}</h5>
-                                    <small class="text-secondary">${artistasStr}s</small>
+                                    <small class="text-secondary">${artistasStr}</small>
                                 </div>
                             </div>
                             <span class="genre-tag bg-warning text-dark">Pop</span>
                         </div>
 
                         <div class="my-2">
-                            <span class="fs-4 fw-bold text-white">★ ${reseña.valoracionPropia}.0</span>
+                            <span class="fs-4 fw-bold text-warning">★<span class= "text-white"> ${reseña.valoracionPropia}.0</span>
                         </div>
 
                         <p class="mb-3 review-desc">

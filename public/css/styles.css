@@ -99,7 +99,7 @@
 
         .hero-banner {
         background-image: 
-            linear-gradient(to bottom, rgba(27, 31, 36, 0.45), rgba(27, 31, 36, 0.98)),
+            linear-gradient(to bottom, rgba(27, 31, 36, 0.45), rgba(27, 31, 36, 0.98)95%,#14181c 100%),
             url('../img/fondo-tocadisco-index.jfif');
 
         background-size: cover;
@@ -119,6 +119,8 @@
         .hero-banner p {
         color: #e2e8f0;
         text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+        -webkit-text-stroke: 1.5px #0b0d10;
+        paint-order: stroke fill;
         }
 
         .hero-banner .card {
@@ -171,11 +173,13 @@
         display: block;
         }
 
-        .favorites-container {
-        width: 75%;          /* Aquí defines que ocupe el 75% de la página */
-        max-width: 900px;    /* Evita que se estire demasiado en monitores muy grandes */
-        margin-left: auto;   /* Centra automáticamente a la izquierda */
-        margin-right: auto;  /* Centra automáticamente a la derecha */
-    }
-
+        h1{
+            font-family: 'Playfair Display', sans-serif;
+            letter-spacing: 15px;
+            text-shadow: 0 4px 18px rgba(0, 0, 0, 0.9), 0 1px 3px rgba(0, 0, 0, 0.95);
+        }
         
+        h2{
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.5px;
+        }
