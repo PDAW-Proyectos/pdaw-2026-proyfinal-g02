@@ -97,11 +97,11 @@ export function setearAuthForms() {
 
                 loginForm.reset();
                 if (loginModal) loginModal.hide();
-
-                if (data.user && data.user.role === "admin") {
-                    window.location.href = "/"; // acomodar a la que quiera
+                
+                if (data.user && data.user.rol === "administrador") {
+                    window.location.href = "/panelAdmin.html";
                 } else {
-                    window.location.href = "/"; // acomodar a la que quiera
+                    window.location.href = "/explorar.html";
                 }
             } catch (error) {
                 console.error("Error en login:", error);
@@ -110,3 +110,11 @@ export function setearAuthForms() {
         });
     }
 }
+
+export function requiereRol(user, rol) {
+    if (!user || user.rol !== rol) {
+        window.location.href = '/';
+        return false;
+    }
+    return true
+} // en cada vista que requiera un rol: if (!requiereRol(user, 'administrador')) return;
