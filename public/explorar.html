@@ -34,57 +34,18 @@
     <main class="container my-5">
         <h1 class="text-center fw-bold mb-4">Explora la música</h1>
 
-        <div class="mx-auto favorites-container mb-5" id="contenedor-resultados">
+        <!-- Barra de búsqueda -->
+        <div class="mx-auto favorites-container mb-4">
             <div class="input-group search-bar-container mx-auto">
-                <input type="text" class="form-control search-input py-2 px-3"
-                    placeholder="Buscar canciones" aria-label="Buscar música">
+                <input type="text" id="input-buscar" class="form-control search-input py-2 px-3"
+                placeholder="Buscar canciones" aria-label="Buscar música">
                 <span class="input-group-text search-input text-secondary">
                     <i class="bi bi-search"></i>
                 </span>
             </div>
         </div>
 
-        <div class="mx-auto favorites-container mb-4">
-            <ul class="nav justify-content-center border-bottom border-secondary pb-2 gap-5">
-                <li class="nav-item">
-                    <a class="nav-link text-white fw-bold active pb-3 border-bottom border-2 border-white"
-                        href="#">Géneros</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-secondary" id="tab-top-global" href="#">Top Global</a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="mx-auto favorites-container">
-
-            <div class="review-card explorar-card mb-4 d-flex align-items-center justify-content-center">
-                <div
-                    class="img-explorar img-explorar-izq rounded d-flex align-items-center justify-content-center text-secondary">
-                    <i class="bi bi-image fs-2"></i>
-                </div>
-                <div class="text-center">
-                    <h5 class="card-title fw-bold mb-1">Titulo de canción</h5>
-                    <p class="text-secondary small mb-1">Artista</p>
-                    <p class="text-secondary small mb-1">Album</p>
-                    <small class="text-secondary">Año de lanzamiento</small>
-                </div>
-            </div>
-
-            <div class="review-card explorar-card mb-4 d-flex align-items-center justify-content-center">
-                <div
-                    class="img-explorar img-explorar-izq rounded d-flex align-items-center justify-content-center text-secondary">
-                    <i class="bi bi-image fs-2"></i>
-                </div>
-                <div class="text-center">
-                    <h5 class="card-title fw-bold mb-1">Titulo de canción</h5>
-                    <p class="text-secondary small mb-1">Artista</p>
-                    <p class="text-secondary small mb-1">Album</p>
-                    <small class="text-secondary">Año de lanzamiento</small>
-                </div>
-            </div>
-
-        </div>
+        <div class="container" id="contenedor-resultados"></div>
     </main>
 
     <footer class="border-top py-4 text-center mt-auto">
