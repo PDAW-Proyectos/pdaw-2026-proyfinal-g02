@@ -1,7 +1,8 @@
 const { readFile, writeFile, mkdir } = require("node:fs/promises");
-const path = require("node:path")
+const path = require("node:path");
 const UsuarioRegular = require("../models/UsuarioRegular");
 const Administrador = require("../models/Administrador");
+const { NotFoundError } = require("../utils/errors.js");
 
 class RepositorioUsuarios {
     constructor(ruta) {
@@ -76,7 +77,7 @@ class RepositorioUsuarios {
 
     async actualizar(id, cambios) {
         const usuario = this.buscarPorId(id);
-        if (!usuario) throw new Error("Usuario inexistente");
+        if (!usuario) throw new NotFoundError("Usuario inexistente");
         if (cambios.username !== undefined) usuario.username = cambios.username;
         if (cambios.email !== undefined) usuario.email = cambios.email;
         if (cambios.passwordHash !== undefined) usuario.passwordHash = cambios.passwordHash;
@@ -98,7 +99,7 @@ class RepositorioUsuarios {
     async agregarReseña(idUsuario, idReseña) {
         const usuario = this.buscarPorId(idUsuario);
         if (!usuario) {
-            throw new Error("Usuario inexistente");
+            throw new NotFoundError("Usuario");
         }
 
         if (!usuario.misReseñas) {
@@ -116,7 +117,7 @@ class RepositorioUsuarios {
     async quitarReseña(idUsuario, idReseña) {
         const usuario = this.buscarPorId(idUsuario);
         if (!usuario) {
-            throw new Error("Usuario inexistente");
+            throw new NotFoundError("Usuario");
         }
 
         if (usuario.misReseñas) {
@@ -126,6 +127,77 @@ class RepositorioUsuarios {
             await this.guardar(); 
         }
 
+        return usuario;
+    }
+
+    async seguirUsuario(idSeguidor, idSeguido) {
+        const seguidor = this.buscarPorId(idSeguidor);
+        const seguido = this.buscarPorId(idSeguido);
+
+        if (!seguidor || !seguido) {
+            throw new NotFoundError("Usuario");
+        }
+
+        if (!seguidor.seguidos) seguidor.seguidos = [];
+        if (!seguido.seguidores) seguido.seguidores = [];
+
+        const yaLoSigue = seguidor.seguidos.some(id => Number(id) === Number(idSeguido));
+        if (!yaLoSigue) {
+            seguidor.seguidos.push(Number(idSeguido));
+            seguido.seguidores.push(Number(idSeguidor));
+            await this.guardar();
+        }
+
+        return true;
+    }
+
+    async dejarDeSeguirUsuario(idSeguidor, idSeguido) {
+        const seguidor = this.buscarPorId(idSeguidor);
+        const seguido = this.buscarPorId(idSeguido);
+
+        if (!seguidor || !seguido) {
+            throw new NotFoundError("Usuario");
+        }
+
+        if (seguidor.seguidos) {
+            seguidor.seguidos = seguidor.seguidos.filter(id => Number(id) !== Number(idSeguido));
+        }
+
+        if (seguido.seguidores) {
+            seguido.seguidores = seguido.seguidores.filter(id => Number(id) !== Number(idSeguidor));
+        }
+
+        await this.guardar();
+        return true;
+    }
+
+    async agregarReseñaFavorita(idUsuario, idReseña) {
+        const usuario = this.buscarPorId(idUsuario);
+        if (!usuario) {
+            throw new NotFoundError("Usuario");
+        }
+        if (!usuario.reseñasFavoritas) {
+            usuario.reseñasFavoritas = [];
+        }
+        const yaExiste = usuario.reseñasFavoritas.some(id => String(id) === String(idReseña));
+        if (!yaExiste) {
+            usuario.reseñasFavoritas.push(String(idReseña));
+            await this.guardar();
+        }
+        return usuario;
+    }
+
+    async quitarReseñaFavorita(idUsuario, idReseña) {
+        const usuario = this.buscarPorId(idUsuario);
+        if (!usuario) {
+            throw new NotFoundError("Usuario");
+        }
+        if (usuario.reseñasFavoritas) {
+            usuario.reseñasFavoritas = usuario.reseñasFavoritas.filter(
+                (id) => String(id) !== String(idReseña)
+            );
+            await this.guardar();
+        }
         return usuario;
     }
 }

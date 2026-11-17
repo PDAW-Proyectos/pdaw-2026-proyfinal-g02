@@ -1,4 +1,5 @@
 const Cancion = require("../models/Cancion");
+const { ExternalServiceError } = require("../utils/errors.js");
 
 class ServicioDeezer {
     async buscarCanciones(termino) {
@@ -11,7 +12,7 @@ class ServicioDeezer {
             const response = await fetch(url);
             
             if (!response.ok) {
-                throw new Error("Error al comunicarse con la API de Deezer.");
+                throw new ExternalServiceError("Deezer");
             }
 
             const data = await response.json();
@@ -24,8 +25,10 @@ class ServicioDeezer {
             // Mapeamos cada resultado con Cancion.fromDeezer
             return data.data.map((track) => Cancion.fromDeezer(track));
         } catch (error) {
-            console.error("Error en ServicioDeezer.buscarCanciones:", error);
-            throw new Error("No se pudo realizar la búsqueda en este momento.");
+            if (error.name && error.name.includes('Error')) {
+                throw error;
+            }
+            throw new ExternalServiceError("Deezer", error);
         }
     }
 
@@ -36,15 +39,19 @@ class ServicioDeezer {
             const url = `https://api.deezer.com/track/${id}`;
             const response = await fetch(url);
             
-            if (!response.ok) return null;
+            if (!response.ok) {
+                throw new ExternalServiceError("Deezer");
+            }
 
             const track = await response.json();
             if (!track || !track.id) return null;
 
             return Cancion.fromDeezer(track);
         } catch (error) {
-            console.error("Error en ServicioDeezer.obtenerCancionPorId:", error);
-            return null;
+            if (error.name && error.name.includes('ExternalServiceError')) {
+                throw error;
+            }
+            throw new ExternalServiceError("Deezer", error);
         }
     }
 

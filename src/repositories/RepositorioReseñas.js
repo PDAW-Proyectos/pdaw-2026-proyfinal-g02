@@ -2,6 +2,7 @@ const { readFile, writeFile, mkdir } = require("node:fs/promises");
 const path = require("node:path");
 const Reseña = require("../models/Reseña");
 const Cancion = require("../models/Cancion");
+const { NotFoundError } = require("../utils/errors.js");
 
 class RepositorioReseñas {
     constructor(rutaArchivo) {
@@ -100,7 +101,7 @@ class RepositorioReseñas {
         const index = this.reseñas.findIndex(
             (r) => String(r.id) === String(id),
         );
-        if (index === -1) throw new Error("Reseña inexistente");
+        if (index === -1) throw new NotFoundError("Reseña inexistente");
 
         const reseñaActual = this.reseñas[index];
 
