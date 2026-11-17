@@ -7,6 +7,8 @@ function routerDeezer(servicioDeezer) {
 
     // Endpoint: GET /api/deezer/buscar?q=termino
     router.get("/buscar", deezerCtrl.buscar);
+    // Endpoint: GET /api/deezer/chart
+    router.get("/topGlobal", deezerCtrl.topGlobal);
 
     return router;
 }

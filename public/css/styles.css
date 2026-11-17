@@ -84,3 +84,38 @@
         .btn-brand:hover {
             background-color: #00c74b;
         }
+
+        .btn-acciones {
+            width: 32px;
+            height: 32px;
+        }
+
+        .img-explorar {
+            width: 160px;
+            height: 120px;
+            background-color: #2c3440;
+        }
+
+        .explorar-card {
+            position: relative;
+            min-height: 145px;
+        }
+
+        .img-explorar-izq {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .perfil-card {
+            max-width: 800px;
+            background-color: #1c2228;
+            border: 1px solid #2c3440;
+        }
+
+        .perfil-img {
+            width: 220px;
+            height: 220px;
+            background-color: #2c3440;
+        }

@@ -54,6 +54,30 @@ class ServicioDeezer {
             throw new ExternalServiceError("Deezer", error);
         }
     }
+
+    async obtenerTopGlobal() {
+        try {
+            // Apuntamos al endpoint del chart / top global de Deezer
+            const url = `https://api.deezer.com/chart/0/tracks`;
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error("Error al obtener el chart de Deezer.");
+            }
+
+            const data = await response.json();
+
+            if (!data.data || !Array.isArray(data.data)) {
+                return [];
+            }
+
+            // Mapeamos cada objeto con tu modelo existente
+            return data.data.map((track) => Cancion.fromDeezer(track));
+        } catch (error) {
+            console.error("Error en ServicioDeezer.obtenerNovedades:", error);
+            throw new Error("No se pudieron cargar las novedades.");
+        }
+    }
 }
 
 module.exports = ServicioDeezer;
