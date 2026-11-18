@@ -43,23 +43,48 @@ export async function cargarUsuarios(){
                     <span class="fw-bold text-white">${user.username}</span>
                     <a href="#" class="text-secondary text-decoration-underline">Reseñas: (${cantidadReseñas})</a>
                 </div>
-                <button class="btn btn-link p-0 text-decoration-none" aria-label="Editar">
-                    <span
-                        class="rounded-circle bg-text text-white d-inline-flex align-items-center justify-content-center btn-acciones">
-                        <i class="bi bi-x-lg"></i>
-                    </span>
-                </button>
-
-                <button class="btn btn-link p-0 text-decoration-none" aria-label="Eliminar">
-                    <span
-                        class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center btn-acciones">
+                <button class="btn btn-link p-0 text-decoration-none eliminar-usuario" data-userid="${user.id}" aria-label="Eliminar">
+                    <span class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center btn-acciones">
                         <i class="bi bi-x-lg"></i>
                     </span>
                 </button>
             </div>
         `}).join('');
+
+        inicializarAccionesUsuarios();
+
+
     } catch (error) {
         console.error("Error: ", error);
         contenedor.innerHTML = `<p class= "text-danger text-center py-4">Ocurrió un error al cargar los usuarios.</p>`;
     }
+}
+
+async function inicializarAccionesUsuarios(){
+    const contenedor = document.getElementById("usuarios-container");
+
+    contenedor.querySelectorAll(".eliminar-usuario").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+
+            const targetBtn = e.target.closest(".eliminar-usuario");
+            const userId = targetBtn.getAttribute("data-userid");
+            console.log("ID capturado para eliminar:", userId);
+
+            const confirmado = confirm("¿Estas seguro que deseas eliminar a este usuario?");
+            if (!confirmado) return;
+
+            try {
+                const respuesta = await fetch(`/api/usuarios/${userId}`,{ 
+                    method: "DELETE"
+                });
+                if (!respuesta.ok) {
+                    throw new Error("No se puede eliminar al usuario desde el servidor");
+                }
+                cargarUsuarios();
+            }catch (error) {
+                console.error("Error: ", error);
+                alert("Ocurrió un error al intentar eliminar el usuario");
+            }
+        });
+    });
 }
