@@ -7,8 +7,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.location.href = "/login.html";
         return;
     }
-
-    cargarNavbar(user, { mostrarBuscador: true });
+    let mostrar = true
+    if(user && user.rol === "administrador"){
+        mostrar = false
+    }
+    cargarNavbar(user, { mostrarBuscador: mostrar });
     inicializarAuth();
 
     
