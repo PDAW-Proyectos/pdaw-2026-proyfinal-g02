@@ -28,7 +28,12 @@ export async function cargarUsuarios(){
         const usuarios = todosLosUsuarios.filter(user => user.rol !== "administrador");
 
         if (usuarios.length === 0) {
-            contenedor.innerHTML = `<p class="text-secondary text-center py-4">No hay usuarios registrados.</p>`;
+            contenedor.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-secondary py-4">
+                        No hay usuarios registrados.
+                    </td>
+                </tr>`;
             return;
         }
 
@@ -37,27 +42,40 @@ export async function cargarUsuarios(){
             const estaBaneado = user.estaBaneado || false;    
 
         return `
-        <div class="review-card mb-3 d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-4">
-                    <div
-                        class="rounded-circle d-flex align-items-center justify-content-center fw-bold review-avatar-icon">
-                        <i class="bi bi-person-fill fs-5"></i>
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold review-avatar-icon" style="width: 36px; height: 36px;">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        <span class="fw-bold text-white flex-grow-1 text-center pe-4">${user.username}</span>
                     </div>
-                    <span class="fw-bold text-white">${user.username}</span>
-                    <a href="/usuario/${user.id}" class="text-secondary text-decoration-underline">Reseñas: (${cantidadReseñas})</a>
-                </div>
-                <button class="btn btn-sm ${estaBaneado ? 'btn-danger' : 'btn-warning'} btn-banear" 
-                        data-id="${user.id}" 
-                        data-baneado="${estaBaneado}">
-                    <i class="fa-solid fa-ban me-1"></i> ${estaBaneado ? 'Desbanear' : 'Banear'}
-                </button>
-                <button class="btn btn-link p-0 text-decoration-none eliminar-usuario" data-userid="${user.id}" aria-label="Eliminar">
-                    <span class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center btn-acciones">
-                        <i class="bi bi-x-lg"></i>
-                    </span>
-                </button>
-            </div>
-        `}).join('');
+                </td>
+                <td class="text-secondary text-center">
+                    ${user.email || 'Sin email'}
+                </td>
+                <td class="text-center">
+                    <a href="/usuario/${user.id}" class="badge bg-secondary text-light text-decoration-none px-3 py-2 btn-ver-reseñas">
+                        Ver reseñas
+                    </a>
+                </td>
+                <td class="text-center">
+                    <div class="d-inline-flex align-items-center gap-2">
+                        <button class="btn btn-sm ${estaBaneado ? 'btn-danger' : 'btn-warning'} text-dark fw-bold btn-banear" 
+                                data-id="${user.id}" 
+                                data-baneado="${estaBaneado}">
+                            <i class="fa-solid fa-ban me-1"></i> ${estaBaneado ? 'Desbanear' : 'Banear'}
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger eliminar-usuario" 
+                                data-userid="${user.id}" 
+                                title="Eliminar usuario"
+                                aria-label="Eliminar">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            `}).join('');
 
         inicializarAccionesUsuarios();
 
