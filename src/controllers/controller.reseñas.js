@@ -1,4 +1,6 @@
-function crearResenasController(servicioReseñas) {
+const { NotFoundError, BadRequestError } = require("../utils/errors");
+
+function crearResenasController(servicioReseñas, servicioDeezer) {
     return {
         listar: async (req, res, next) => {
             try {
@@ -22,11 +24,21 @@ function crearResenasController(servicioReseñas) {
         crear: async (req, res, next) => {
             try {
                 const idUsuario = req.user?.id;
-                const { cancion, valoracionPropia, descripcion } = req.body;
+                const { cancionId, valoracionPropia, descripcion } = req.body; 
+
+                if (!cancionId) {
+                    throw new BadRequestError("El ID de la canción es obligatorio.");
+                }
+
+                const cancionObjeto = await servicioDeezer.obtenerCancionPorId(cancionId);
+
+                if (!cancionObjeto) {
+                    throw new NotFoundError("No se encontró la canción en Deezer.");
+                }
 
                 const nuevaReseña = await servicioReseñas.crearReseña(
                     idUsuario,
-                    cancion,
+                    cancionObjeto,
                     valoracionPropia,
                     descripcion,
                 );
