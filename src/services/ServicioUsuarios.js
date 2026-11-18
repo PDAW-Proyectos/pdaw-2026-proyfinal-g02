@@ -1,3 +1,5 @@
+const { NotFoundError, ForbiddenError, BadRequestError, ConflictError } = require("../utils/errors.js");
+
 class ServicioUsuarios {
     constructor(repositorioUsuarios, repositorioReseñas) {
         this.repositorioUsuarios = repositorioUsuarios;
@@ -12,7 +14,7 @@ class ServicioUsuarios {
     obtenerPorId(id) {
         const usuario = this.repositorioUsuarios.buscarPorId(id);
         if (!usuario) {
-            throw new Error("Usuario no encontrado.");
+            throw new NotFoundError("Usuario");
         }
         return this._formatearUsuarioSeguro(usuario);
     }
@@ -20,17 +22,17 @@ class ServicioUsuarios {
     async actualizar(id, cambios, usuarioLogueado) {
         const usuario = this.repositorioUsuarios.buscarPorId(id);
         if (!usuario) {
-            throw new Error("Usuario no encontrado.");
+            throw new NotFoundError("Usuario");
         }
 
         // Regla de negocio: Solo el propio usuario o un administrador pueden modificar
         if (Number(usuarioLogueado.id) !== Number(id) && usuarioLogueado.rol !== "administrador") {
-            throw new Error("No tienes permisos para modificar este usuario.");
+            throw new ForbiddenError("No tienes permisos para modificar este usuario.");
         }
 
         // Evitar que un usuario común se cambie el rol a administrador a sí mismo
         if (cambios.rol && usuarioLogueado.rol !== "administrador") {
-            throw new Error("No puedes cambiar tu propio rol.");
+            throw new ForbiddenError("No puedes cambiar tu propio rol.");
         }
 
         const usuarioActualizado = await this.repositorioUsuarios.actualizar(id, cambios);
@@ -40,7 +42,7 @@ class ServicioUsuarios {
     async cambiarEstadoBan(id, estaBaneado) {
         const usuario = this.repositorioUsuarios.buscarPorId(id);
         if (!usuario) {
-            throw new Error("Usuario no encontrado.");
+            throw new NotFoundError("Usuario");
         }
 
         const usuarioActualizado = await this.repositorioUsuarios.actualizar(id, { estaBaneado });
@@ -50,12 +52,12 @@ class ServicioUsuarios {
     async eliminar(id, usuarioLogueado) {
         const usuario = this.repositorioUsuarios.buscarPorId(id);
         if (!usuario) {
-            throw new Error("Usuario no encontrado.");
+            throw new NotFoundError("Usuario");
         }
 
         // Regla de negocio: Solo el dueño o un admin pueden eliminar
         if (Number(usuarioLogueado.id) !== Number(id) && usuarioLogueado.rol !== "administrador") {
-            throw new Error("No tienes permisos para eliminar este usuario.");
+            throw new ForbiddenError("No tienes permisos para eliminar este usuario.");
         }
 
         return await this.repositorioUsuarios.eliminar(id);
@@ -63,30 +65,30 @@ class ServicioUsuarios {
 
     async seguir(idSeguidor, idSeguido) {
         if (Number(idSeguidor) === Number(idSeguido)) {
-            throw new Error("No podés seguirte a vos mismo.");
+            throw new BadRequestError("No podés seguirte a vos mismo.");
         }
         return await this.repositorioUsuarios.seguirUsuario(idSeguidor, idSeguido);
     }
 
     async dejarDeSeguir(idSeguidor, idSeguido) {
         if (Number(idSeguidor) === Number(idSeguido)) {
-            throw new Error("No podés dejar de seguirte a vos mismo.");
+            throw new BadRequestError("No podés dejar de seguirte a vos mismo.");
         }
         return await this.repositorioUsuarios.dejarDeSeguirUsuario(idSeguidor, idSeguido);
     }
 
     async agregarFavorita(idUsuarioLogueado, idReseña) {
         if (!idReseña) {
-            throw new Error("Debe proporcionar una ID de reseña válida.");
+            throw new BadRequestError("Debe proporcionar una ID de reseña válida.");
         }
 
         const reseña = this.repositorioReseñas.buscarPorId(idReseña);
         if (!reseña) {
-            throw new Error("La reseña que querés marcar como favorita no existe.");
+            throw new NotFoundError("Reseña");
         }
 
         if (String(reseña.idUsuario) === String(idUsuarioLogueado)) {
-            throw new Error("No podés agregar tu propia reseña a favoritas.");
+            throw new ConflictError("No podés agregar tu propia reseña a favoritas.");
         }
 
         const usuarioActual = this.repositorioUsuarios.buscarPorId(idUsuarioLogueado);
