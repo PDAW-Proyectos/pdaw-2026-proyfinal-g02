@@ -1,10 +1,10 @@
-import { setearAuthForms, checkAuthStatus } from "./auth.js";
+import { checkAuthStatus, inicializarAuth } from "./auth.js";
 import { cargarNavbar } from "./navbar.js";
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", async() => {
     const user = await checkAuthStatus();
-    cargarNavbar(user);
-    setearAuthForms();
+    cargarNavbar(user, {mostrarBuscador: true});
+    inicializarAuth()
 
     cargarDatosPerfil(userLogueado);
     });

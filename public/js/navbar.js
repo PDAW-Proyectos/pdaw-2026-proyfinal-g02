@@ -25,7 +25,7 @@ export function cargarNavbar(user = null, opciones = {}) {
                     <a class="nav-link text-light ${rutaActual.endsWith('admin.html') ? 'active fw-bold' : ''}" href="/admin.html">Panel Admin</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-light ${rutaActual.endsWith('perfil.html') ? 'active fw-bold' : ''}" href="/perfil.html">Perfil</a>
+                    <a class="nav-link text-light ${rutaActual.endsWith('miPerfil.html') ? 'active fw-bold' : ''}" href="/miPerfil.html">Perfil</a>
                 </li>
             `;
         } else {
@@ -37,7 +37,7 @@ export function cargarNavbar(user = null, opciones = {}) {
                     <a class="nav-link text-light ${rutaActual.endsWith('favoritas.html') ? 'active fw-bold' : ''}" href="/favoritas.html">Favoritas</a>
                 </li>
                 <li class="nav-item">
-                <a class="nav-link text-light ${rutaActual.endsWith('perfil.html') ? 'active fw-bold' : ''}" href="/perfil.html">Perfil</a>
+                <a class="nav-link text-light ${rutaActual.endsWith('miPerfil.html') ? 'active fw-bold' : ''}" href="/miPerfil.html">Perfil</a>
                 </li>
             `;
         }
