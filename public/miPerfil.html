@@ -22,20 +22,79 @@
     <!-- header -->
     <header id="main-navbar"></header>
 
-    <main class="container px-4">
+    <main class="container my-5 text-light">
+    <h2 class="fw-bold mb-4">Datos de mi Cuenta</h2>
+    
+    <div class="row">
+        <!-- Columna Izquierda: Datos de la Cuenta -->
+        <div class="col-md-7">
+            <form id="form-perfil" class="bg-dark p-4 rounded-4 border border-secondary shadow-sm">
+                
+                <!-- Usuario -->
+                <div class="mb-3 position-relative">
+                    <label for="input-usuario" class="form-label text-secondary small">Nombre de usuario</label>
+                    <div class="input-group">
+                        <input type="text" id="input-usuario" class="form-control bg-secondary text-light border-0" readonly>
+                        <button class="btn btn-outline-light btn-editar" type="button" data-campo="usuario">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    </div>
+                </div>
 
-       <div class="col-md-7 ps-md-5 text-center text-md-start">
-            <h1 id="perfil-username" class="fw-bold text-white mb-4">Cargando...</h1>
+                <!-- Email -->
+                <div class="mb-3 position-relative">
+                    <label for="input-email" class="form-label text-secondary small">Correo electrónico</label>
+                    <div class="input-group">
+                        <input type="email" id="input-email" class="form-control bg-secondary text-light border-0" readonly>
+                        <button class="btn btn-outline-light btn-editar" type="button" data-campo="email">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    </div>
+                </div>
 
-            <p class="text-secondary mb-2">Reseñas propias: <span id="perfil-reseñas-propias" class="text-light">0</span></p>
-            <p class="text-secondary mb-2">Reseñas guardadas: <span id="perfil-reseñas-guardadas" class="text-light">0</span></p>
-            <p class="text-secondary mb-4">Cuenta creada desde: <span id="perfil-fecha-creacion" class="text-light">-</span></p>
+                <!-- Contraseña -->
+                <div class="mb-3 position-relative">
+                    <label for="input-pass" class="form-label text-secondary small">Contraseña</label>
+                    <div class="input-group">
+                        <input type="password" id="input-pass" class="form-control bg-secondary text-light border-0" value="********" readonly>
+                        <button class="btn btn-outline-light btn-editar" type="button" data-campo="password">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    </div>
+                </div>
 
-            <div>
-                <a href="mis-resenas.html" id="link-ver-reseñas" class="text-white text-decoration-underline fw-bold">Ver reseñas</a>
+                <!-- Estado de baneo -->
+                <div class="mb-3">
+                    <label class="form-label text-secondary small">Estado de la cuenta</label>
+                    <div id="estado-ban" class="p-2 rounded bg-secondary text-light fw-bold text-center">
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Columna Derecha: Estadísticas / Listas (Reseñas, Seguidores, etc.) -->
+        <div class="col-md-5">
+            <div class="bg-dark p-4 rounded-4 border border-secondary shadow-sm">
+                <h5 class="text-white mb-3">Actividad</h5>
+                <ul class="list-group list-group-flush bg-transparent">
+                    <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center">
+                        Mis Reseñas <span id="count-mis-resenas" class="badge bg-success rounded-pill">0</span>
+                    </li>
+                    <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center">
+                        Reseñas Favoritas <span id="count-favs" class="badge bg-success rounded-pill">0</span>
+                    </li>
+                    <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center">
+                        Seguidores <span id="count-seguidores" class="badge bg-info rounded-pill">0</span>
+                    </li>
+                    <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center">
+                        Seguidos <span id="count-seguidos" class="badge bg-info rounded-pill">0</span>
+                    </li>
+                </ul>
             </div>
         </div>
-    </main>
+    </div>
+</main>
 
     <!-- Footer -->
     <footer class="footer text-center py-4 border-top border-secondary mt-5 text-secondary">
