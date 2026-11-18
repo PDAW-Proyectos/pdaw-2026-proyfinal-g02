@@ -1,9 +1,9 @@
 const { Router } = require('express');
 const crearResenasController = require("../controllers/controller.reseñas");
 
-module.exports = function (servicioReseñas, middlewareAutenticacion) {
+module.exports = function (servicios, middlewareAutenticacion) {
     const router = Router();
-    const resenasCtrl = crearResenasController(servicioReseñas);
+    const resenasCtrl = crearResenasController(servicios.reseñas, servicios.deezer);
 
     // Rutas públicas
     router.get("/", resenasCtrl.listar);
