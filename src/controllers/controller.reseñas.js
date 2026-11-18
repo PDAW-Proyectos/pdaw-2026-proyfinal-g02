@@ -103,6 +103,19 @@ function crearResenasController(servicioReseñas, servicioDeezer) {
                 next(error);
             }
         },
+
+        obtenerPorId: async (req, res, next) => {
+            try {
+                const { id } = req.params;
+                const reseña = await servicioReseñas.obtenerReseñaPorId(id);
+                if (!reseña) {
+                    throw new NotFoundError("No se encontró la reseña solicitada.");
+                }
+                res.json(reseña);
+            } catch (error) {
+                next(error);
+            }
+        },
     };
 }
 

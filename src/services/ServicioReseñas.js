@@ -2,9 +2,10 @@ const Cancion = require("../models/Cancion");
 const { NotFoundError, ForbiddenError, BadRequestError, UnauthorizedError } = require("../utils/errors.js");
 
 class ServicioReseñas {
-    constructor(repositorioReseñas, repositorioUsuarios) {
+    constructor(repositorioReseñas, repositorioUsuarios, servicioDeezer) {
         this.repositorioReseñas = repositorioReseñas;
         this.repositorioUsuarios = repositorioUsuarios;
+        this.servicioDeezer = servicioDeezer;
     }
 
     async listarReseñas() {
@@ -15,7 +16,19 @@ class ServicioReseñas {
         const reseña = this.repositorioReseñas.buscarPorId(id);
         if (!reseña) {
             throw new NotFoundError("Reseña");
+        }        
+        try {
+            if (this.servicioDeezer && reseña.cancion && reseña.cancion.id) {
+                const datosFrescos = await this.servicioDeezer.obtenerCancionPorId(reseña.cancion.id);                
+                if (datosFrescos && datosFrescos.previewUrl) {
+                    reseña.cancion.previewUrl = datosFrescos.previewUrl; // esto es porque se vencia el previewUrl y no se reproducia nada
+                    await this.repositorioReseñas.actualizar(id, { cancion: reseña.cancion });
+                }
+            }
+        } catch (error) {
+            throw new NotFoundError("No se pudo actualizar el audio de la canción desde Deezer.");
         }
+
         return reseña;
     }
 
