@@ -6,31 +6,31 @@ document.addEventListener("DOMContentLoaded", async() => {
     cargarNavbar(user, {mostrarBuscador: true});
     inicializarAuth()
 
-    cargarReseñasPopulares();
+    cargarPortadaTopGlobales();
     cargarUltimasReseñas();
 });
 
-async function cargarReseñasPopulares() {
-    const grid = document.getElementById('popular-reviews-grid');
-    if (!grid) return; 
+async function cargarPortadaTopGlobales() {
+    const contenedor = document.getElementById('portadas-container');
+    if (!contenedor) return; 
 
     try {
-        const response = await fetch('/api/resenas/populares?limit=3');
-        if (!response.ok) throw new Error('Error al obtener reseñas populares');
+        const respuesta = await fetch('/api/deezer/topGlobal');
+        if (!respuesta.ok) throw new Error('No se pudo obtener el top global');
         
-        const reseñas = await response.json();
+        const canciones = await respuesta.json();
+        const cancionesSeleccionadas = canciones.slice(0, 6);
 
-        if (reseñas && reseñas.length > 0) {
-            grid.innerHTML = reseñas.map(item => `
-                <div class="col-4 col-md-3">
-                    <a href="/reseña.html?id=${item.id}" class="album-card">
-                        <img src="${item.cancion?.imagen || item.portadaUrl || '/img/default-album.jpg'}" alt="Portada del álbum" loading="lazy">
-                    </a>
-                </div>
-            `).join('');
-        }
-    } catch (error) {
-        console.error('No se pudieron cargar las reseñas populares:', error);
+        contenedor.innerHTML = cancionesSeleccionadas.map(cancion => {
+            return`
+            <img src="${cancion.imagen}" 
+                    alt="${cancion.titulo}" 
+                    class="poster-item">
+                    `;
+        }).join('');
+
+    } catch(error) {
+        console.error("Error al cargar las portadas dinámicas", error);
     }
 }
 

@@ -224,3 +224,25 @@ h2 {
     height: 220px;
     background-color: #2c3440;
 }
+
+#portadas-container {
+    padding-top: 10px;
+}
+
+.poster-item {
+    width: 150px;
+    height: 225px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.poster-item:hover {
+    border-color: #00c74b;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 2;
+}
