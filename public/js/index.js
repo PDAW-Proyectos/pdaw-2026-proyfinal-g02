@@ -3,9 +3,12 @@ import { cargarNavbar } from "./navbar.js";
 
 document.addEventListener("DOMContentLoaded", async() => {
     const user = await checkAuthStatus();
-    cargarNavbar(user, {mostrarBuscador: true});
+    let mostrar = true
+    if(user && user.rol === "administrador"){
+        mostrar = false
+    }
+    cargarNavbar(user, {mostrarBuscador: mostrar});
     inicializarAuth()
-
     cargarReseñasPopulares();
     cargarUltimasReseñas();
 });

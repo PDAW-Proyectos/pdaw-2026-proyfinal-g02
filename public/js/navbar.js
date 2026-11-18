@@ -7,8 +7,6 @@ export function cargarNavbar(user = null, opciones = {}) {
     const rutaActual = window.location.pathname;
     const mostrarBuscador = opciones.mostrarBuscador ?? true;
 
-
-    // let linksHTML = ``;
     let linksHTML = `
         <li class="nav-item">
             <a class="nav-link text-light ${rutaActual.endsWith('index.html') || rutaActual === '/' ? 'active fw-bold' : ''}" href="/index.html">Inicio</a>
@@ -20,7 +18,10 @@ export function cargarNavbar(user = null, opciones = {}) {
 
     if (user) {
         if (user.rol === "administrador") {
-            linksHTML += `
+            linksHTML = `
+                <li class="nav-item">
+                    <a class="nav-link text-light ${rutaActual.endsWith('index.html') || rutaActual === '/' ? 'active fw-bold' : ''}" href="/index.html">Inicio</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link text-light ${rutaActual.endsWith('admin.html') ? 'active fw-bold' : ''}" href="/admin.html">Panel Admin</a>
                 </li>
