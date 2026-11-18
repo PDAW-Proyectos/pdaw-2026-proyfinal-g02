@@ -38,7 +38,7 @@ function createApp(contenedor) {
     app.use(middlewares.autenticacion.autenticar) 
 
     app.use("/api/auth", routerAuth(servicios, middlewares.autenticacion))
-    app.use("/api/resenas", routerReseñas(servicios.reseñas, middlewares.autenticacion));
+    app.use("/api/resenas", routerReseñas(servicios, middlewares.autenticacion));
     app.use("/api/deezer", routerDeezer(servicios.deezer))
     app.use("/api/usuarios", routerUsuarios(servicios.usuarios, middlewares))
 
