@@ -87,10 +87,10 @@ async function cargarUltimasReseñas() {
                             <div class="d-flex justify-content-between align-items-start mb-1">
                                 <div>
                                     <h4 class="card-title mb-1 fw-bold text-light">${reseña.cancion?.titulo || "Canción sin título"}</h4>
-                                    <p class="text-secondary mb-2 fs-6"><i class="fa-solid fa-microphone-lines me-2 text-success"></i>${artistasStr} <span class="text-muted ms-2">|</span> <span class="text-light ms-2">${albumNombre}</span></p>
+                                    <p class="text-secondary mb-2 fs-6"><i class="fa-solid fa-microphone-lines me-2 text-success"></i>${artistasStr} <span class="text-white ms-2">|</span> <span class="text-light ms-2">${albumNombre}</span></p>
                                 </div>
                                 <div class="fs-4 fw-bold text-warning bg-black px-3 py-1 rounded-pill border border-secondary">
-                                    ★ ${reseña.valoracionPropia}.0
+                                    ★ ${reseña.valoracionPropia}
                                 </div>
                             </div>
 
@@ -99,7 +99,7 @@ async function cargarUltimasReseñas() {
                             </p>
 
                             <div class="d-flex justify-content-between align-items-center pt-3 border-top border-secondary">
-                                <small class="text-muted"><i class="fa-regular fa-calendar me-1"></i> Publicado el ${fechaFormateada}</small>
+                                <small class="text-white"><i class="fa-regular fa-calendar me-1"></i> Publicado el ${fechaFormateada}</small>
                                 <a href="/reseña.html?id=${reseña.id}" class="btn btn-brand btn-sm px-4 py-2 fw-semibold shadow-sm">
                                     Ver reseña completa <i class="fa-solid fa-arrow-right ms-1"></i>
                                 </a>
