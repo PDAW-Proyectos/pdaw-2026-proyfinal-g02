@@ -9,69 +9,51 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="./css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,600;0,800;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,600;0,800;1,700&display=swap"
+        rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
     <!-- header -->
-    <header class="navbar navbar-custom navbar-expand-lg px-4 py-3">
-        <div class="container-fluid">
-            <a class="navbar-brand text-light fw-bold fs-3" href="#">Beatácora</a>
+    <header id="main-navbar"></header>
 
-            <!-- input de busqueda -->
-            <div class="d-flex mx-auto col-12 col-md-5 my-2 my-lg-0">
-                <input type="text" id="searchInput" placeholder="Buscar canciones..."
-                    class="form-control search-input" />
-            </div>
-
-            <div class="auth-actions d-flex gap-2">
-                <!-- Botón que activa el Modal de Login -->
-                <button class="btn btn-link text-light text-decoration-none" data-bs-toggle="modal"
-                    data-bs-target="#loginModal">
-                    Iniciar sesión <i class="fa-regular fa-user ms-1"></i>
-                </button>
-                <!-- Botón que activa el Modal de Registro -->
-                <button class="btn btn-brand btn-sm px-3" data-bs-toggle="modal" data-bs-target="#registerModal">
-                    Registrarse
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <main class="container-fluid px-4">
+    <main class="container px-4">
+        <!-- Hero -->
         <section class="hero-banner text-center pt-5">
             <h1 class="text-shadow display-5 fw-bold mb-3">Bienvenido a Beatácora</h1>
-            <p class="text-white fw-light fs-6 mt-5">
+            <p class="text-white fw-light fs-5 mt-5">
                 Cada canción cuenta una historia. Descúbrela, analízala y guárdala en tu bitácora.
             </p>
 
             <!-- Canciones destacadas -->
-            <div class="row justify-content-center my-4 g-3" id="popular-reviews-grid">
-                <div
-                    class="col-4 col-md-3 featured-card rounded d-flex align-items-center justify-content-center ">
-                    <i class="fa-solid fa-compact-disc fa-2x"></i>
-                </div>
-                <div
-                    class="col-4 col-md-3 featured-card rounded d-flex align-items-center justify-content-center ">
-                    <i class="fa-solid fa-music fa-2x"></i>
-                </div>
-                <div
-                    class="col-4 col-md-3 featured-card rounded d-flex align-items-center justify-content-center ">
-                    <i class="fa-solid fa-record-vinyl fa-2x"></i>
+            <div class="container">
+                <div class="row justify-content-center my-4 g-3" id="popular-reviews-grid">
+                    <div class="col-4 col-md-3 featured-card rounded d-flex align-items-center justify-content-center ">
+                        <i class="fa-solid fa-compact-disc fa-2x"></i>
+                    </div>
+                    <div class="col-4 col-md-3 featured-card rounded d-flex align-items-center justify-content-center ">
+                        <i class="fa-solid fa-music fa-2x"></i>
+                    </div>
+                    <div class="col-4 col-md-3 featured-card rounded d-flex align-items-center justify-content-center ">
+                        <i class="fa-solid fa-record-vinyl fa-2x"></i>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <p class="mt-5 mb-3 fw-semibold">En Beatácora podrás:</p>
-
-            <!-- Beneficios -->
+        <!-- Beneficios -->
+        <section class="container">
+            <p class="mt-5 mb-3 fw-semibold text-center">En Beatácora podrás:</p>
             <div class="row justify-content-center g-3">
                 <div class="col-md-4">
                     <div
                         class="feature-box card-green p-3 rounded h-150 d-flex align-items-center justify-content-center text-center">
-                        <small><em>Conocer la puntuación de las canciones</em>  </small>
+                        <small><em>Conocer la puntuación de las canciones</em> </small>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -109,9 +91,26 @@
 
         <!-- Ultimas Reseñas -->
         <section class="latest-reviews my-5 pt-4">
-            <h2><i class="bi bi-soundwave text-white me-2">"Lo que está sonando en </i><span class="text-success">Beatácora"</span></h2>
-        
+            <h2><i class="bi bi-soundwave text-white me-2">"Lo que está sonando en </i><span
+                    class="text-success">Beatácora"</span></h2>
+
             <div id="reviewsContainer" class="mt-4 mb-4 favorites-container">
+            </div>
+        </section>
+
+        <section class=" my-5">
+            <div
+                class="p-5 rounded-4 text-center bg-dark border border-secondary shadow-lg position-relative overflow-hidden">
+                <div class="py-3">
+                    <h3 class="fw-bold display-6 mb-3 text-light">¿Listo para sumergirte en la música?</h3>
+                    <p class="text-secondary mb-4 mx-auto" style="max-width: 600px;">
+                        Explorá nuestro catálogo completo de canciones, descubrí lo que opina la comunidad y empezá a
+                        armar tu propia bitácora musical hoy mismo.
+                    </p>
+                    <a href="/explorar.html" class="btn btn-brand btn-lg px-5 py-3 fw-semibold shadow">
+                        Explorar catálogo <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
             </div>
         </section>
     </main>
@@ -121,74 +120,11 @@
         <p class="mb-2">Podés encontrarnos también en:</p>
         <div class="social-icons fs-4 mb-3">
             <a href="#" class="text-secondary me-3"><i class="fa-brands fa-facebook"></i></a>
-            <a href="#" class="text-secondary me-3"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" class="text-secondary me-3"><i class="fa-brands fa-x"></i></a>
             <a href="#" class="text-secondary"><i class="fa-brands fa-instagram"></i></a>
         </div>
         <small>Copyright 2026 Beatácora®. Todos los derechos reservados.</small>
     </footer>
-
-    <!-- ================= MODAL DE INICIO DE SESIÓN ================= -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-3">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold" id="loginModalLabel">Iniciar Sesión en Beatácora</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="loginForm">
-                        <div class="mb-3">
-                            <label for="loginEmail" class="form-label text-secondary small">Correo electrónico</label>
-                            <input type="email" class="form-control search-input" id="loginEmail" required
-                                placeholder="tu@correo.com">
-                        </div>
-                        <div class="mb-3">
-                            <label for="loginPassword" class="form-label text-secondary small">Contraseña</label>
-                            <input type="password" class="form-control search-input" id="loginPassword" required
-                                placeholder="••••••••">
-                        </div>
-                        <button type="submit" class="btn btn-brand w-100 mt-3 py-2">Entrar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ================= MODAL DE REGISTRO ================= -->
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-3">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold" id="registerModalLabel">Crear una cuenta</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="registerForm">
-                        <div class="mb-3">
-                            <label for="registerUsername" class="form-label text-secondary small">Nombre de
-                                usuario</label>
-                            <input type="text" class="form-control search-input" id="registerUsername" required
-                                placeholder="tu_usuario" minlength="3" maxlength="20">
-                        </div>
-                        <div class="mb-3">
-                            <label for="registerEmail" class="form-label text-secondary small">Correo
-                                electrónico</label>
-                            <input type="email" class="form-control search-input" id="registerEmail" required
-                                placeholder="tu@correo.com">
-                        </div>
-                        <div class="mb-3">
-                            <label for="registerPassword" class="form-label text-secondary small">Contraseña</label>
-                            <input type="password" class="form-control search-input" id="registerPassword" required
-                                minlength="6" placeholder="mínimo 6 caracteres">
-                        </div>
-                        <button type="submit" class="btn btn-brand w-100 mt-3 py-2">Registrarse</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Bootstrap 5 JS Bundle CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
