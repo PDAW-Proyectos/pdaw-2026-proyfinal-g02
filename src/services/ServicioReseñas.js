@@ -1,5 +1,5 @@
-const Reseña = require("../models/Reseña");
 const Cancion = require("../models/Cancion");
+const { NotFoundError, ForbiddenError, BadRequestError, UnauthorizedError } = require("../utils/errors.js");
 
 class ServicioReseñas {
     constructor(repositorioReseñas, repositorioUsuarios) {
@@ -14,7 +14,7 @@ class ServicioReseñas {
     async obtenerReseñaPorId(id) {
         const reseña = this.repositorioReseñas.buscarPorId(id);
         if (!reseña) {
-            throw new Error("La reseña solicitada no existe.");
+            throw new NotFoundError("Reseña");
         }
         return reseña;
     }
@@ -24,22 +24,22 @@ class ServicioReseñas {
     }
 
     async crearReseña(idUsuario, cancionInput, valoracionPropia, descripcion) {
-        // 1. Validaciones de negocio
+        // 1. Validaciones de negocio usando BadRequestError o UnauthorizedError
         if (!idUsuario) {
-            throw new Error("Debe estar autenticado para crear una reseña.");
+            throw new UnauthorizedError("Debe estar autenticado para crear una reseña.");
         }
 
         const valoracion = Number(valoracionPropia);
         if (isNaN(valoracion) || valoracion < 1 || valoracion > 5) {
-            throw new Error("La valoración propia debe ser un número entre 1 y 5.");
+            throw new BadRequestError("La valoración propia debe ser un número entre 1 y 5.");
         }
 
         if (!descripcion || !descripcion.trim()) {
-            throw new Error("La descripción de la reseña no puede estar vacía.");
+            throw new BadRequestError("La descripción de la reseña no puede estar vacía.");
         }
 
         if (!cancionInput) {
-            throw new Error("La reseña debe estar asociada a una canción.");
+            throw new BadRequestError("La reseña debe estar asociada a una canción.");
         }
 
         // 2. Asegurarnos de que el objeto canción sea una instancia válida de Cancion
@@ -78,13 +78,13 @@ class ServicioReseñas {
 
         // Validar que el usuario sea el dueño de la reseña
         if (String(reseña.idUsuario) !== String(idUsuarioActual)) {
-            throw new Error("No tenés permisos para modificar esta reseña.");
+            throw new ForbiddenError("No tenés permisos para modificar esta reseña.");
         }
 
         if (datosNuevos.valoracionPropia !== undefined) {
             const val = Number(datosNuevos.valoracionPropia);
             if (isNaN(val) || val < 1 || val > 5) {
-                throw new Error("La valoración propia debe ser un número entre 1 y 5.");
+                throw new BadRequestError("La valoración propia debe ser un número entre 1 y 5.");
             }
             datosNuevos.valoracionPropia = val;
         }
@@ -96,7 +96,7 @@ class ServicioReseñas {
         const reseña = await this.obtenerReseñaPorId(idReseña);
 
         if (String(reseña.idUsuario) !== String(idUsuarioActual) && !esAdmin) {
-            throw new Error("No tenés permisos para eliminar esta reseña.");
+            throw new ForbiddenError("No tenés permisos para eliminar esta reseña.");
         }
 
         const resultado = await this.repositorioReseñas.eliminar(idReseña);
