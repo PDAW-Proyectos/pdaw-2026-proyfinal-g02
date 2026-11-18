@@ -94,7 +94,6 @@ async function inicializarAccionesUsuarios(){
 
             const targetBtn = e.target.closest(".eliminar-usuario");
             const userId = targetBtn.getAttribute("data-userid");
-            console.log("ID capturado para eliminar:", userId);
 
             const confirmado = confirm("¿Estas seguro que deseas eliminar a este usuario?");
             if (!confirmado) return;
@@ -103,9 +102,11 @@ async function inicializarAccionesUsuarios(){
                 const respuesta = await fetch(`/api/usuarios/${userId}`,{ 
                     method: "DELETE"
                 });
+                
                 if (!respuesta.ok) {
                     throw new Error("No se puede eliminar al usuario desde el servidor");
                 }
+                alert("Usuario eliminado correctamente");
                 cargarUsuarios();
             }catch (error) {
                 console.error("Error: ", error);
@@ -120,10 +121,9 @@ async function inicializarAccionesUsuarios(){
             const userId = targetBtn.getAttribute("data-id");
 
             const estadoActual = targetBtn.getAttribute("data-baneado") === 'true';
-            const nuevoEstado = !estadoActual;
 
 
-            await banearUsuario(userId, nuevoEstado);
+            await banearUsuario(userId, estadoActual);
         });
     });
 }
@@ -133,15 +133,22 @@ async function inicializarAccionesUsuarios(){
 
 async function banearUsuario(id, estaBaneado){
     try{
+        const nuevoEstado = !estaBaneado;
+
         const respuesta = await fetch(`/api/usuarios/${id}/ban`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ estaBaneado })
+            body: JSON.stringify({ estaBaneado: nuevoEstado })
         });
-        if (respuesta.ok) {
-            cargarUsuarios();
+        if (!respuesta.ok) {
+            throw new Error("No se pudo actualizar el estado del usuario");
         }
+
+        const mensaje = nuevoEstado ? "Usuario baneado con éxito" : "Usuario desbaneado correctamente";
+        alert(mensaje);
+        cargarUsuarios();
     }catch (error) {
         console.error("Error al banear el usuario", error);
+        alert("Ocurrió un error al intentar cambiar el estado del usuario");
     }
 }
