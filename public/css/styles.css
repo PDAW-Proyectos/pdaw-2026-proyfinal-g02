@@ -201,6 +201,9 @@ body {
     height: 120px;
     background-color: #2c3440;
 }
+.text-muted span {
+    color: rgb(255, 255, 255);
+}
 
 .explorar-card {
     position: relative;
