@@ -3,7 +3,7 @@ import { cargarNavbar } from "./navbar.js";
 
 document.addEventListener("DOMContentLoaded", async() => {
     const user = await checkAuthStatus();
-    cargarNavbar(user, {mostrarBuscador: true});
+    cargarNavbar(user, {mostrarBuscador: false});
     inicializarAuth()
 
     cargarUsuarios();
@@ -31,7 +31,8 @@ export async function cargarUsuarios(){
         }
 
         contenedor.innerHTML = usuarios.map(user => {
-            const cantidadReseñas = user.misReseñas?.length || 0;    
+            const cantidadReseñas = user.misReseñas?.length || 0;
+            const estaBaneado = user.estaBaneado || false;    
 
         return `
         <div class="review-card mb-3 d-flex justify-content-between align-items-center">
@@ -43,6 +44,9 @@ export async function cargarUsuarios(){
                     <span class="fw-bold text-white">${user.username}</span>
                     <a href="/usuario/${user.id}" class="text-secondary text-decoration-underline">Reseñas: (${cantidadReseñas})</a>
                 </div>
+                <button class="btn btn-sm {estaBaneado ? 'btn-danger' : 'btn-warning'} text-white btn-info btn-banear" data-id="${user.id}" data-baneado="${estaBaneado}">
+                    <i class="fa-solid fa-ban"></i>
+                </button>
                 <button class="btn btn-link p-0 text-decoration-none eliminar-usuario" data-userid="${user.id}" aria-label="Eliminar">
                     <span class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center btn-acciones">
                         <i class="bi bi-x-lg"></i>
@@ -87,4 +91,35 @@ async function inicializarAccionesUsuarios(){
             }
         });
     });
+
+    contenedor.querySelectorAll(".btn-banear").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+            const targetBtn = e.target.closest(".btn-banear");
+            const userId = targetBtn.getAttribute("data-id");
+
+            const estadoActual = targetBtn.getAttribute("data-baneado") === 'true';
+            const nuevoEstado = !estadoActual;
+
+
+            await banearUsuario(userId, nuevoEstado);
+        });
+    });
+}
+
+
+
+
+async function banearUsuario(id, estaBaneado){
+    try{
+        const respuesta = await fetch(`/api/usuarios/${id}/ban`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ estaBaneado })
+        });
+        if (respuesta.ok) {
+            cargarUsuarios();
+        }
+    }catch (error) {
+        console.error("Error al banear el usuario", error);
+    }
 }
