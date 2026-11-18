@@ -22,8 +22,10 @@ export async function cargarUsuarios(){
         if (!respuesta.ok) {
             throw new Error("No se pudieron cargar los usuarios.");
         }
+
+        const todosLosUsuarios = await respuesta.json();
         
-        const usuarios = await respuesta.json();
+        const usuarios = todosLosUsuarios.filter(user => user.rol !== "administrador");
 
         if (usuarios.length === 0) {
             contenedor.innerHTML = `<p class="text-secondary text-center py-4">No hay usuarios registrados.</p>`;
