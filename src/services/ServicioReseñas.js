@@ -17,7 +17,7 @@ class ServicioReseñas {
         return this.repositorioReseñas.listar();
     }
     
-    async obtenerReseñaPorId(id) {
+   async obtenerReseñaPorId(id, idUsuarioActual) {
         const reseña = this.repositorioReseñas.buscarPorId(id);
         if (!reseña) {
             throw new NotFoundError("Reseña");
@@ -30,7 +30,7 @@ class ServicioReseñas {
                         reseña.cancion.id,
                     );
                 if (datosFrescos && datosFrescos.previewUrl) {
-                    reseña.cancion.previewUrl = datosFrescos.previewUrl; // esto es porque se vencia el previewUrl y no se reproducia nada
+                    reseña.cancion.previewUrl = datosFrescos.previewUrl; // se vencia el previewUrl
                     await this.repositorioReseñas.actualizar(id, {
                         cancion: reseña.cancion,
                     });
@@ -42,8 +42,11 @@ class ServicioReseñas {
             }
         }
 
-        // Agregamos info del autor
+        // Agregamos info del autor, favoritos y seguimiento
         let autorInfo = { id: reseña.idUsuario, nombre: "Usuario" };
+        let esFavoritaDelUsuario = false;
+        let estaSiguiendoAlAutor = false;
+
         if (this.repositorioUsuarios) {
             const usuario = this.repositorioUsuarios.buscarPorId(
                 reseña.idUsuario,
@@ -54,11 +57,29 @@ class ServicioReseñas {
                     nombre: usuario.username || "Usuario",
                 };
             }
+
+            // Verificamos si el usuario actual marcó esta reseña como favorita
+            if (idUsuarioActual) {
+                const usuarioActual = this.repositorioUsuarios.buscarPorId(idUsuarioActual);
+                if (usuarioActual && usuarioActual.reseñasFavoritas) {
+                    esFavoritaDelUsuario = usuarioActual.reseñasFavoritas.some(
+                        (favId) => String(favId) === String(id)
+                    );
+                }
+            // Verificamos si sigue al autor
+            if (usuarioActual.seguidos) {
+                estaSiguiendoAlAutor = usuarioActual.seguidos.some(
+                    (segId) => String(segId) === String(reseña.idUsuario)
+                );
+            }
+            }
         }
 
         return {
             ...reseña,
             autor: autorInfo,
+            esFavorita: esFavoritaDelUsuario,
+            siguiendo: estaSiguiendoAlAutor
         };
     }
 

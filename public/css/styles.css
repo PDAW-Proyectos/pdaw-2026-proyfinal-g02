@@ -201,8 +201,8 @@ body {
     height: 120px;
     background-color: #2c3440;
 }
-.text-muted span {
-    color: rgb(255, 255, 255);
+.text-muted {
+    color: rgb(201, 201, 201)!important;
 }
 
 .explorar-card {

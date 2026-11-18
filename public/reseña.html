@@ -20,6 +20,61 @@
         <div id="detalleResenaContainer">
             <p class="text-center text-secondary py-5">Cargando detalles de la reseña...</p>
         </div>
+        <!-- ================= MODAL DE CREAR RESEÑA ================= -->
+        <div class="modal fade" id="resenaModal" tabindex="-1" aria-labelledby="resenaModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content bg-dark text-light border-secondary p-3">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold" id="resenaModalLabel"><i
+                                class="bi bi-star me-2 text-warning"></i>Escribir Reseña</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Mini reproductor y detalles de la canción dentro del modal -->
+                        <div class="row align-items-center mb-4 p-3 bg-black rounded-3 border border-secondary">
+                            <div class="col-md-3 text-center mb-3 mb-md-0">
+                                <img id="modalCancionImg" src="" alt="Portada" class="img-fluid rounded shadow"
+                                    style="width: 100px; height: 100px; object-fit: cover;">
+                            </div>
+                            <div class="col-md-9">
+                                <h5 id="modalCancionTitulo" class="fw-bold mb-1 text-white"></h5>
+                                <p id="modalCancionArtista" class="text-secondary small mb-2"></p>
+                                <!-- Reproductor con el preview de Deezer -->
+                                <audio id="modalAudioPreview" controls class="w-100" style="height: 38px;"></audio>
+                            </div>
+                        </div>
+
+                        <!-- Formulario de reseña -->
+                        <form id="resenaFormModal">
+                            <input type="hidden" id="modalCancionId">
+
+                            <div class="mb-3">
+                                <label for="modalValoracion" class="form-label text-secondary small">Valoración</label>
+                                <select class="form-select search-input" id="modalValoracion" required>
+                                    <option value="5">★★★★★ (5 - Obra maestra)</option>
+                                    <option value="4">★★★★☆ (4 - Muy buena)</option>
+                                    <option value="3">★★★☆☆ (3 - Buena)</option>
+                                    <option value="2">★★☆☆☆ (2 - Regular)</option>
+                                    <option value="1">★☆☆☆☆ (1 - Mala)</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="modalDescripcion" class="form-label text-secondary small">Tu opinión /
+                                    bitácora</label>
+                                <textarea class="form-control search-input" id="modalDescripcion" rows="4" required
+                                    placeholder="Contá qué te pareció esta canción, qué te transmite..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-brand w-100 py-2 fw-semibold shadow-sm">
+                                Publicar Reseña
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->

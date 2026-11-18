@@ -107,7 +107,8 @@ function crearResenasController(servicioReseñas, servicioDeezer) {
         obtenerPorId: async (req, res, next) => {
             try {
                 const { id } = req.params;
-                const reseña = await servicioReseñas.obtenerReseñaPorId(id);
+                const idUsuarioActual = req.user ? req.user.id : null;
+                const reseña = await servicioReseñas.obtenerReseñaPorId(id,idUsuarioActual);
                 if (!reseña) {
                     throw new NotFoundError("No se encontró la reseña solicitada.");
                 }
