@@ -46,8 +46,10 @@ export async function cargarUsuarios(){
                     <span class="fw-bold text-white">${user.username}</span>
                     <a href="/usuario/${user.id}" class="text-secondary text-decoration-underline">Reseñas: (${cantidadReseñas})</a>
                 </div>
-                <button class="btn btn-sm {estaBaneado ? 'btn-danger' : 'btn-warning'} text-white btn-info btn-banear" data-id="${user.id}" data-baneado="${estaBaneado}">
-                    <i class="fa-solid fa-ban"></i>
+                <button class="btn btn-sm ${estaBaneado ? 'btn-danger' : 'btn-warning'} btn-banear" 
+                        data-id="${user.id}" 
+                        data-baneado="${estaBaneado}">
+                    <i class="fa-solid fa-ban me-1"></i> ${estaBaneado ? 'Desbanear' : 'Banear'}
                 </button>
                 <button class="btn btn-link p-0 text-decoration-none eliminar-usuario" data-userid="${user.id}" aria-label="Eliminar">
                     <span class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center btn-acciones">
