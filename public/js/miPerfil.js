@@ -61,6 +61,7 @@ if (editarCampoModal) {
         inputNombreCampo.value = campo;
         inputValor.value = "";
         inputValor.removeAttribute("minlength");
+        inputValor.removeAttribute("maxlength");
 
         if (campo === 'usuario') {
             modalTitulo.textContent = "Cambiar nombre de usuario";
