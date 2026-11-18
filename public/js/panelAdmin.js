@@ -41,7 +41,7 @@ export async function cargarUsuarios(){
                         <i class="bi bi-person-fill fs-5"></i>
                     </div>
                     <span class="fw-bold text-white">${user.username}</span>
-                    <a href="#" class="text-secondary text-decoration-underline">Reseñas: (${cantidadReseñas})</a>
+                    <a href="/usuario/${user.id}" class="text-secondary text-decoration-underline">Reseñas: (${cantidadReseñas})</a>
                 </div>
                 <button class="btn btn-link p-0 text-decoration-none eliminar-usuario" data-userid="${user.id}" aria-label="Eliminar">
                     <span class="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center btn-acciones">
