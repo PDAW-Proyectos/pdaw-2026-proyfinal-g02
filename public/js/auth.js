@@ -7,6 +7,7 @@ export async function checkAuthStatus() {
         if (data.user) {
             return data.user;
         }
+        return null;
     } catch (error) {
         console.error("No se pudo verificar la sesión:", error);
         return null;
@@ -29,7 +30,7 @@ export function requiereRol(user, rol) {
         window.location.href = '/';
         return false;
     }
-    return true
+    return true;
 } // en cada vista que requiera un rol: if (!requiereRol(user, 'administrador')) return;
 
 export function inicializarAuth() {
@@ -50,12 +51,12 @@ export function inicializarAuth() {
                                 <div class="mb-3">
                                     <label for="loginEmail" class="form-label text-secondary small">Correo electrónico</label>
                                     <input type="email" class="form-control search-input" id="loginEmail" required
-                                        placeholder="tu@correo.com">
+                                        placeholder="tu@correo.com" autocomplete="email">
                                 </div>
                                 <div class="mb-3">
                                     <label for="loginPassword" class="form-label text-secondary small">Contraseña</label>
                                     <input type="password" class="form-control search-input" id="loginPassword" required
-                                        placeholder="••••••••">
+                                        placeholder="••••••••" autocomplete="current-password">
                                 </div>
                                 <button type="submit" class="btn btn-brand w-100 mt-3 py-2">Entrar</button>
                             </form>
@@ -78,17 +79,17 @@ export function inicializarAuth() {
                                 <div class="mb-3">
                                     <label for="registerUsername" class="form-label text-secondary small">Nombre de usuario</label>
                                     <input type="text" class="form-control search-input" id="registerUsername" required
-                                        placeholder="tu_usuario" minlength="3" maxlength="20">
+                                        placeholder="tu_usuario" minlength="3" maxlength="20" autocomplete="username">
                                 </div>
                                 <div class="mb-3">
                                     <label for="registerEmail" class="form-label text-secondary small">Correo electrónico</label>
                                     <input type="email" class="form-control search-input" id="registerEmail" required
-                                        placeholder="tu@correo.com">
+                                        placeholder="tu@correo.com" autocomplete="email">
                                 </div>
                                 <div class="mb-3">
                                     <label for="registerPassword" class="form-label text-secondary small">Contraseña</label>
                                     <input type="password" class="form-control search-input" id="registerPassword" required
-                                        minlength="6" placeholder="mínimo 6 caracteres">
+                                        minlength="6" placeholder="mínimo 6 caracteres" autocomplete="new-password">
                                 </div>
                                 <button type="submit" class="btn btn-brand w-100 mt-3 py-2">Registrarse</button>
                             </form>

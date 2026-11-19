@@ -7,7 +7,7 @@ let seguidosActuales = [];
 document.addEventListener("DOMContentLoaded", async () => {
     const user = await checkAuthStatus();
     if (!user) {
-        window.location.href = "/login.html";
+        window.location.href = "/index.html";
         return;
     }
 
@@ -155,6 +155,7 @@ if (editarCampoModal) {
             modalTitulo.textContent = "Cambiar nombre de usuario";
             labelDinamico.textContent = "Nuevo nombre de usuario";
             inputValor.type = "text";
+            inputValor.autocomplete = "username";
             inputValor.placeholder = "tu_usuario";
             inputValor.minLength = 3;
             inputValor.maxLength = 20;
@@ -163,12 +164,14 @@ if (editarCampoModal) {
             modalTitulo.textContent = "Cambiar correo electrónico";
             labelDinamico.textContent = "Nuevo correo electrónico";
             inputValor.type = "email";
+            inputValor.autocomplete = "email";
             inputValor.placeholder = "tu@correo.com";
             inputValor.value = document.getElementById("input-email").value;
         } else if (campo === "password") {
             modalTitulo.textContent = "Cambiar contraseña";
             labelDinamico.textContent = "Nueva contraseña";
             inputValor.type = "password";
+            inputValor.autocomplete = "new-password";
             inputValor.placeholder = "mínimo 6 caracteres";
             inputValor.minLength = 6;
         }
