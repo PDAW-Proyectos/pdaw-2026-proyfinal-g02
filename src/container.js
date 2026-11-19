@@ -1,4 +1,5 @@
 const config = require("./config");
+const logger = require("./utils/logger");
 const autenticacion = require("./middlewares/autenticacion");
 const RepositorioUsuarios = require("./repositories/RepositorioUsuarios");
 const RepositorioReseñas = require("./repositories/RepositorioReseñas");
@@ -6,6 +7,7 @@ const ServicioAuth = require("./services/servicioAuth");
 const ServicioReseñas = require("./services/ServicioReseñas");
 const ServicioDeezer = require("./services/ServicioDeezer");
 const ServicioUsuarios = require("./services/ServicioUsuarios");
+const { precargarDatosIniciales } = require("./utils/seed");
 
 const repositorios = {
     usuarios: new RepositorioUsuarios(config.rutaUsuarios),
@@ -28,6 +30,11 @@ const middlewares = {
 async function inicializarContenedor() {
     await repositorios.usuarios.cargar();
     await repositorios.reseñas.cargar();
+    await precargarDatosIniciales({
+    servicioAuth: servicios.auth,
+    servicioResenas: servicios.reseñas,
+    logger,
+});
 }
 
 module.exports = {
