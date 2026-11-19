@@ -1,7 +1,9 @@
 import { checkAuthStatus, inicializarAuth } from "./auth.js";
+import { cargarFooter } from "./footer.js";
 import { cargarNavbar } from "./navbar.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
+    cargarFooter()
     const user = await checkAuthStatus();
     let mostrar = true
     if(user && user.rol === "administrador"){

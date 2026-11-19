@@ -1,8 +1,10 @@
 import { checkAuthStatus, inicializarAuth } from "./auth.js";
+import { cargarFooter } from "./footer.js";
 import { inicializarModalReseña } from "./modalReseña.js";
 import { cargarNavbar } from "./navbar.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
+    cargarFooter()
     const user = await checkAuthStatus();
     cargarNavbar(user, { mostrarBuscador: false });
     inicializarAuth();

@@ -26,7 +26,11 @@ class ServicioReseñas {
     }
 
     async listarReseñas() {
-        return this.repositorioReseñas.listar();
+        const reseñas = await this.repositorioReseñas.listar();
+        if (!Array.isArray(reseñas)) {
+            return [];
+        }
+        return reseñas.map((reseña) => this.enriquecerReseñaConAutor(reseña));
     }
 
     async obtenerReseñaPorId(id, idUsuarioActual) {
