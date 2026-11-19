@@ -1,0 +1,181 @@
+@baseUrl = http://localhost:3000
+
+### ==========================================
+### 1. SALUD DEL SERVIDOR
+### ==========================================
+
+### Health check
+GET {{baseUrl}}/api/salud
+
+
+### ==========================================
+### 2. AUTENTICACIÓN Y SESIÓN
+### ==========================================
+
+### Registrar nuevo usuario (éxito 201)
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "usuario_prueba",
+  "email": "prueba@example.com",
+  "password": "Password123!"
+}
+
+### Registrar con datos faltantes (error 400)
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "usuario_prueba"
+}
+
+### Iniciar sesión (éxito 200)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "prueba@example.com",
+  "password": "Password123!"
+}
+
+### Iniciar sesión con credenciales inválidas (error 401)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "prueba@example.com",
+  "password": "ClaveIncorrecta"
+}
+
+### Consultar sesión actual (/me)
+GET {{baseUrl}}/api/auth/me
+
+### Cerrar sesión (éxito 204)
+POST {{baseUrl}}/api/auth/logout
+
+
+### ==========================================
+### 3. RESEÑAS (JSON y XML)
+### ==========================================
+
+### Listar todas las reseñas en JSON (200)
+GET {{baseUrl}}/api/resenas
+
+### Listar todas las reseñas en XML por query param ?formato=xml (200)
+GET {{baseUrl}}/api/resenas?formato=xml
+
+### Listar todas las reseñas en XML por cabecera Accept (200)
+GET {{baseUrl}}/api/resenas
+Accept: application/xml
+
+### Listar últimas reseñas con límite (200)
+GET {{baseUrl}}/api/resenas/ultimas?limit=6
+
+### Listar reseñas populares (200)
+GET {{baseUrl}}/api/resenas/populares?limit=6
+
+### Listar reseñas por ID de usuario (200)
+GET {{baseUrl}}/api/resenas/usuario/1
+
+### Obtener reseña por ID en JSON (200)
+GET {{baseUrl}}/api/resenas/1
+
+### Obtener reseña por ID en XML (200)
+GET {{baseUrl}}/api/resenas/1?formato=xml
+
+### Obtener reseña inexistente (error 404)
+GET {{baseUrl}}/api/resenas/999999
+
+### Crear reseña sin autenticación (error 401)
+POST {{baseUrl}}/api/resenas
+Content-Type: application/json
+
+{
+  "cancionId": "66609426",
+  "valoracionPropia": 5,
+  "descripcion": "Excelente tema"
+}
+
+### Crear reseña autenticado (éxito 201) - requiere sesión activa
+POST {{baseUrl}}/api/resenas
+Content-Type: application/json
+
+{
+  "cancionId": "66609426",
+  "valoracionPropia": 5,
+  "descripcion": "Excelente canción para escuchar entera"
+}
+
+### Actualizar reseña por ID - requiere sesión activa
+PUT {{baseUrl}}/api/resenas/1
+Content-Type: application/json
+
+{
+  "valoracionPropia": 4,
+  "descripcion": "Reseña actualizada"
+}
+
+### Eliminar reseña por ID - requiere sesión activa
+DELETE {{baseUrl}}/api/resenas/1
+
+
+### ==========================================
+### 4. DEEZER (API EXTERNA)
+### ==========================================
+
+### Buscar canciones en Deezer (200)
+GET {{baseUrl}}/api/deezer/buscar?q=daft%20punk
+
+### Obtener top global en Deezer (200)
+GET {{baseUrl}}/api/deezer/topGlobal
+
+
+### ==========================================
+### 5. USUARIOS, SEGUIR Y FAVORITAS
+### ==========================================
+
+### Listar todos los usuarios - requiere rol admin (200 / 401 / 403)
+GET {{baseUrl}}/api/usuarios
+
+### Obtener usuario por ID - requiere autenticación
+GET {{baseUrl}}/api/usuarios/1
+
+### Actualizar usuario por ID - requiere autenticación
+PUT {{baseUrl}}/api/usuarios/1
+Content-Type: application/json
+
+{
+  "username": "nuevo_nombre_prueba"
+}
+
+### Cambiar estado de baneo - requiere rol admin
+PATCH {{baseUrl}}/api/usuarios/2/ban
+Content-Type: application/json
+
+{
+  "estaBaneado": true
+}
+
+### Seguir a un usuario - requiere autenticación
+POST {{baseUrl}}/api/usuarios/2/seguir
+
+### Dejar de seguir a un usuario - requiere autenticación
+DELETE {{baseUrl}}/api/usuarios/2/seguir
+
+### Agregar reseña a favoritas - requiere autenticación
+POST {{baseUrl}}/api/usuarios/favoritas/1
+
+### Quitar reseña de favoritas - requiere autenticación
+DELETE {{baseUrl}}/api/usuarios/favoritas/1
+
+### Eliminar usuario por ID - requiere autenticación
+DELETE {{baseUrl}}/api/usuarios/2
+
+
+### ==========================================
+### 6. RUTA INEXISTENTE (404 problem+json)
+### ==========================================
+
+### Ruta no encontrada para verificar manejo centralizado de errores
+GET {{baseUrl}}/api/ruta-que-no-existe
