@@ -16,8 +16,8 @@ class ServicioReseñas {
     async listarReseñas() {
         return this.repositorioReseñas.listar();
     }
-    
-   async obtenerReseñaPorId(id, idUsuarioActual) {
+
+    async obtenerReseñaPorId(id, idUsuarioActual) {
         const reseña = this.repositorioReseñas.buscarPorId(id);
         if (!reseña) {
             throw new NotFoundError("Reseña");
@@ -60,18 +60,19 @@ class ServicioReseñas {
 
             // Verificamos si el usuario actual marcó esta reseña como favorita
             if (idUsuarioActual) {
-                const usuarioActual = this.repositorioUsuarios.buscarPorId(idUsuarioActual);
+                const usuarioActual =
+                    this.repositorioUsuarios.buscarPorId(idUsuarioActual);
                 if (usuarioActual && usuarioActual.reseñasFavoritas) {
                     esFavoritaDelUsuario = usuarioActual.reseñasFavoritas.some(
-                        (favId) => String(favId) === String(id)
+                        (favId) => String(favId) === String(id),
                     );
                 }
-            // Verificamos si sigue al autor
-            if (usuarioActual.seguidos) {
-                estaSiguiendoAlAutor = usuarioActual.seguidos.some(
-                    (segId) => String(segId) === String(reseña.idUsuario)
-                );
-            }
+                // Verificamos si sigue al autor
+                if (usuarioActual.seguidos) {
+                    estaSiguiendoAlAutor = usuarioActual.seguidos.some(
+                        (segId) => String(segId) === String(reseña.idUsuario),
+                    );
+                }
             }
         }
 
@@ -79,7 +80,7 @@ class ServicioReseñas {
             ...reseña,
             autor: autorInfo,
             esFavorita: esFavoritaDelUsuario,
-            siguiendo: estaSiguiendoAlAutor
+            siguiendo: estaSiguiendoAlAutor,
         };
     }
 
@@ -189,7 +190,9 @@ class ServicioReseñas {
                     idReseña,
                 );
             }
-            await this.repositorioUsuarios.quitarReseñaFavoritaDeTodos(idReseña);
+            await this.repositorioUsuarios.quitarReseñaFavoritaDeTodos(
+                idReseña,
+            );
         }
 
         return resultado;
@@ -197,12 +200,26 @@ class ServicioReseñas {
 
     async obtenerUltimas(limite = 10) {
         const todas = await this.repositorioReseñas.listar();
-        return [...todas]
+        const ultimas = [...todas]
             .sort(
                 (a, b) =>
                     new Date(b.fechaPublicado) - new Date(a.fechaPublicado),
             )
             .slice(0, Number(limite));
+
+        if (!this.repositorioUsuarios) {
+            return ultimas;
+        }
+
+        return ultimas.map((reseña) => {
+            const usuario = this.repositorioUsuarios.buscarPorId(
+                reseña.idUsuario,
+            );
+            return {
+                ...reseña,
+                nombreAutor: usuario?.username || "Anónimo",
+            };
+        });
     }
 
     async obtenerPopulares(limite = 10) {
