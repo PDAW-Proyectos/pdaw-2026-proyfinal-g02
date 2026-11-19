@@ -1,3 +1,5 @@
+import { mostrarAlerta } from "./toast.js";
+
 export async function checkAuthStatus() {
     try {
         const response = await fetch("/api/auth/me", { method: "GET" });

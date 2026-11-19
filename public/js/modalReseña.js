@@ -1,4 +1,4 @@
-// modalReseña.js
+import { mostrarAlerta } from "./toast.js";
 export function inicializarModalReseña() {
     const resenaModal = document.getElementById('resenaModal');
     if (!resenaModal) return;

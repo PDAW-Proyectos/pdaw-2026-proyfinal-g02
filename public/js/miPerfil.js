@@ -1,6 +1,7 @@
 import { checkAuthStatus, inicializarAuth } from "./auth.js";
 import { cargarFooter } from "./footer.js";
 import { cargarNavbar } from "./navbar.js";
+import { mostrarAlerta } from "./toast.js";
 
 let seguidoresActuales = [];
 let seguidosActuales = [];
