@@ -23,7 +23,7 @@ export function cargarNavbar(user = null, opciones = {}) {
                     <a class="nav-link text-light ${rutaActual.endsWith('index.html') || rutaActual === '/' ? 'active fw-bold' : ''}" href="/index.html">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-light ${rutaActual.endsWith('admin.html') ? 'active fw-bold' : ''}" href="/admin.html">Panel Admin</a>
+                    <a class="nav-link text-light ${rutaActual.endsWith('panelAdmin.html') ? 'active fw-bold' : ''}" href="/panelAdmin.html">Panel Admin</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-light ${rutaActual.endsWith('miPerfil.html') ? 'active fw-bold' : ''}" href="/miPerfil.html">Perfil</a>
@@ -32,7 +32,7 @@ export function cargarNavbar(user = null, opciones = {}) {
         } else {
             linksHTML += `
                 <li class="nav-item">
-                    <a class="nav-link text-light ${rutaActual.endsWith('reseñas.html') ? 'active fw-bold' : ''}" href="/reseñas.html">Mis Reseñas</a>
+                    <a class="nav-link text-light ${rutaActual.endsWith('resenas.html') ? 'active fw-bold' : ''}" href="/resenas.html">Reseñas</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-light ${rutaActual.endsWith('favoritas.html') ? 'active fw-bold' : ''}" href="/favoritas.html">Favoritas</a>
