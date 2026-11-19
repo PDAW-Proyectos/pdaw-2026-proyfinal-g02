@@ -1,8 +1,14 @@
 const Usuario = require("./Usuario");
 
 class UsuarioRegular extends Usuario {
-    constructor(id, username, email, passwordHash) {
-        super(id, username, email, passwordHash, "usuario");
+    constructor({ id, username, email, passwordHash } = {}) {
+        super({
+            id,
+            username,
+            email,
+            passwordHash,
+            rol: "usuario",
+        });
         this.estaBaneado = false;
         this.reseñasFavoritas = [];
         this.misReseñas = [];

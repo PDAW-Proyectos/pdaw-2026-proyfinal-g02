@@ -74,8 +74,7 @@ class ServicioDeezer {
             // Mapeamos cada objeto con tu modelo existente
             return data.data.map((track) => Cancion.fromDeezer(track));
         } catch (error) {
-            console.error("Error en ServicioDeezer.obtenerNovedades:", error);
-            throw new Error("No se pudieron cargar las novedades.");
+            throw new Error("No se pudieron cargar las novedades.", error);
         }
     }
 }

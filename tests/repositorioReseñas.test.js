@@ -8,7 +8,7 @@ describe("Repositorio de Reseñas - CRUD y Persistencia", () => {
     let cancionEjemplo;
 
     beforeEach(async () => {
-        const ruta = await crearCarpetaTemporal();    
+        const ruta = await crearCarpetaTemporal();
         repositorio = new RepositorioReseñas(ruta);
         repo2 = new RepositorioReseñas(ruta);
         const c = {
@@ -18,34 +18,51 @@ describe("Repositorio de Reseñas - CRUD y Persistencia", () => {
             album: "A Night at the Opera",
             previewUrl: "https://preview.url",
             imagen: "https://imagen.url",
-            duracion: 354
-        }
-        cancionEjemplo = new Cancion(c.id, c.titulo, c.artistas, c.album, c.previewUrl, c.imagen, c.duracion);
-        
+            duracion: 354,
+        };
+        cancionEjemplo = new Cancion({
+            id: c.id,
+            titulo: c.titulo,
+            artistas: c.artistas,
+            album: c.album,
+            previewUrl: c.previewUrl,
+            imagen: c.imagen,
+            duracion: c.duracion,
+        });
     });
 
     test("Debería asignar IDs crecientes a partir de 1 al agregar reseñas", async () => {
-        await repositorio.agregar(cancionEjemplo, 5, "Obra maestra", "usuario1");
+        await repositorio.agregar(
+            cancionEjemplo,
+            5,
+            "Obra maestra",
+            "usuario1",
+        );
         await repositorio.agregar(cancionEjemplo, 4, "Muy buena", "usuario2");
-        
+
         const lista = repositorio.listar();
         expect(lista[0].id).toBe("1");
         expect(lista[1].id).toBe("2");
     });
-    
+
     test("Debería guardar y cargar correctamente las reseñas desde el archivo físico", async () => {
-        await repositorio.agregar(cancionEjemplo, 5, "Increíble tema", "usuario1");
-        
+        await repositorio.agregar(
+            cancionEjemplo,
+            5,
+            "Increíble tema",
+            "usuario1",
+        );
+
         await repo2.cargar();
         const listaRepo2 = repo2.listar();
-        
+
         expect(listaRepo2.length).toBe(1);
         expect(listaRepo2[0].id).toBe("1");
         expect(listaRepo2[0].descripcion).toBe("Increíble tema");
         // Verifica que la canción interna se haya reconstruido correctamente como instancia
         expect(listaRepo2[0].cancion.titulo).toBe("Bohemian Rhapsody");
     });
-    
+
     test("Debería buscar reseñas correctamente por ID y por Usuario", async () => {
         await repositorio.agregar(cancionEjemplo, 5, "Reseña uno", "usuarioA");
         await repositorio.agregar(cancionEjemplo, 4, "Reseña dos", "usuarioA");
@@ -62,13 +79,19 @@ describe("Repositorio de Reseñas - CRUD y Persistencia", () => {
     });
 
     test("Debería actualizar los datos correctamente respetando el ID y el usuario original", async () => {
-        await repositorio.agregar(cancionEjemplo, 3, "Comentario inicial", "usuario1");
+        await repositorio.agregar(
+            cancionEjemplo,
+            3,
+            "Comentario inicial",
+            "usuario1",
+        );
 
-        await repositorio.updateReseña || await repositorio.actualizar("1", { 
-            valoracionPropia: 5,
-            descripcion: "Comentario actualizado",
-            cantidadFavoritos: 10
-        });
+        (await repositorio.updateReseña) ||
+            (await repositorio.actualizar("1", {
+                valoracionPropia: 5,
+                descripcion: "Comentario actualizado",
+                cantidadFavoritos: 10,
+            }));
 
         const actualizado = repositorio.buscarPorId("1");
         expect(actualizado.id).toBe("1");
@@ -80,13 +103,13 @@ describe("Repositorio de Reseñas - CRUD y Persistencia", () => {
 
     test("Debería lanzar error al intentar actualizar una reseña inexistente", async () => {
         await expect(
-            repositorio.actualizar("999", { descripcion: "Prueba" })
+            repositorio.actualizar("999", { descripcion: "Prueba" }),
         ).rejects.toThrow("Reseña inexistente");
     });
 
     test("Debería eliminar una reseña por ID correctamente", async () => {
         await repositorio.agregar(cancionEjemplo, 5, "A borrar", "usuario1");
-        
+
         const eliminadoOk = await repositorio.eliminar("1");
         const eliminadoFalso = await repositorio.eliminar("999");
 

@@ -22,9 +22,19 @@ class RepositorioUsuarios {
             this.usuarios = data.map((datos) => {
                 let user;
                 if (datos.rol === "administrador") {
-                    user = new Administrador(datos.id, datos.username, datos.email, datos.passwordHash);
+                    user = new Administrador({
+                        id: datos.id,
+                        username: datos.username,
+                        email: datos.email,
+                        passwordHash: datos.passwordHash,
+                    });
                 } else {
-                    user = new UsuarioRegular(datos.id, datos.username, datos.email, datos.passwordHash);
+                    user = new UsuarioRegular({
+                        id: datos.id,
+                        username: datos.username,
+                        email: datos.email,
+                        passwordHash: datos.passwordHash,
+                    });
                     user.estaBaneado = datos.estaBaneado ?? false;
                     user.reseñasFavoritas = datos.reseñasFavoritas ?? [];
                     user.misReseñas = datos.misReseñas ?? [];
@@ -43,16 +53,30 @@ class RepositorioUsuarios {
     async guardar() {
         const carpeta = path.dirname(this.ruta);
         await mkdir(carpeta, { recursive: true });
-        await writeFile(this.ruta, JSON.stringify(this.usuarios, null, 2), "utf8");
+        await writeFile(
+            this.ruta,
+            JSON.stringify(this.usuarios, null, 2),
+            "utf8",
+        );
     }
 
     async agregar(username, email, passwordHash, rol = "usuario") {
         const id = this.proximoId++;
         let usuario;
         if (rol === "administrador") {
-            usuario = new Administrador(id, username, email, passwordHash);
+            usuario = new Administrador({
+                id,
+                username,
+                email,
+                passwordHash,
+            });
         } else {
-            usuario = new UsuarioRegular(id, username, email, passwordHash);
+            usuario = new UsuarioRegular({
+                id,
+                username,
+                email,
+                passwordHash,
+            });
         }
         this.usuarios.push(usuario);
         await this.guardar();
@@ -80,7 +104,8 @@ class RepositorioUsuarios {
         if (!usuario) throw new NotFoundError("Usuario inexistente");
         if (cambios.username !== undefined) usuario.username = cambios.username;
         if (cambios.email !== undefined) usuario.email = cambios.email;
-        if (cambios.passwordHash !== undefined) usuario.passwordHash = cambios.passwordHash;
+        if (cambios.passwordHash !== undefined)
+            usuario.passwordHash = cambios.passwordHash;
         if (cambios.estaBaneado !== undefined && usuario.rol === "usuario") {
             usuario.estaBaneado = cambios.estaBaneado;
         }
@@ -108,7 +133,7 @@ class RepositorioUsuarios {
 
         if (!usuario.misReseñas.includes(idReseña)) {
             usuario.misReseñas.push(idReseña);
-            await this.guardar(); 
+            await this.guardar();
         }
 
         return usuario;
@@ -122,9 +147,9 @@ class RepositorioUsuarios {
 
         if (usuario.misReseñas) {
             usuario.misReseñas = usuario.misReseñas.filter(
-                (id) => String(id) !== String(idReseña)
+                (id) => String(id) !== String(idReseña),
             );
-            await this.guardar(); 
+            await this.guardar();
         }
 
         return usuario;
@@ -141,7 +166,9 @@ class RepositorioUsuarios {
         if (!seguidor.seguidos) seguidor.seguidos = [];
         if (!seguido.seguidores) seguido.seguidores = [];
 
-        const yaLoSigue = seguidor.seguidos.some(id => Number(id) === Number(idSeguido));
+        const yaLoSigue = seguidor.seguidos.some(
+            (id) => Number(id) === Number(idSeguido),
+        );
         if (!yaLoSigue) {
             seguidor.seguidos.push(Number(idSeguido));
             seguido.seguidores.push(Number(idSeguidor));
@@ -160,11 +187,15 @@ class RepositorioUsuarios {
         }
 
         if (seguidor.seguidos) {
-            seguidor.seguidos = seguidor.seguidos.filter(id => Number(id) !== Number(idSeguido));
+            seguidor.seguidos = seguidor.seguidos.filter(
+                (id) => Number(id) !== Number(idSeguido),
+            );
         }
 
         if (seguido.seguidores) {
-            seguido.seguidores = seguido.seguidores.filter(id => Number(id) !== Number(idSeguidor));
+            seguido.seguidores = seguido.seguidores.filter(
+                (id) => Number(id) !== Number(idSeguidor),
+            );
         }
 
         await this.guardar();
@@ -179,7 +210,9 @@ class RepositorioUsuarios {
         if (!usuario.reseñasFavoritas) {
             usuario.reseñasFavoritas = [];
         }
-        const yaExiste = usuario.reseñasFavoritas.some(id => String(id) === String(idReseña));
+        const yaExiste = usuario.reseñasFavoritas.some(
+            (id) => String(id) === String(idReseña),
+        );
         if (!yaExiste) {
             usuario.reseñasFavoritas.push(String(idReseña));
             await this.guardar();
@@ -194,7 +227,7 @@ class RepositorioUsuarios {
         }
         if (usuario.reseñasFavoritas) {
             usuario.reseñasFavoritas = usuario.reseñasFavoritas.filter(
-                (id) => String(id) !== String(idReseña)
+                (id) => String(id) !== String(idReseña),
             );
             await this.guardar();
         }
@@ -208,7 +241,7 @@ class RepositorioUsuarios {
             if (Array.isArray(usuario.reseñasFavoritas)) {
                 const largoAnterior = usuario.reseñasFavoritas.length;
                 usuario.reseñasFavoritas = usuario.reseñasFavoritas.filter(
-                    (id) => String(id) !== String(idReseña)
+                    (id) => String(id) !== String(idReseña),
                 );
                 if (usuario.reseñasFavoritas.length !== largoAnterior) {
                     huboCambios = true;
