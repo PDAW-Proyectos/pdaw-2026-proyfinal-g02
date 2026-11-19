@@ -31,7 +31,7 @@ export function cargarNavbar(user = null, opciones = {}) {
         } else {
             linksHTML += `
                 <li class="nav-item">
-                    <a class="nav-link text-light ${rutaActual.endsWith('resenas.html') ? 'active fw-bold' : ''}" href="/resenas.html">Mis Reseñas</a>
+                    <a class="nav-link text-light ${rutaActual.endsWith('resenas.html') ? 'active fw-bold' : ''}" href="/resenas.html">Reseñas</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-light ${rutaActual.endsWith('favoritas.html') ? 'active fw-bold' : ''}" href="/favoritas.html">Favoritas</a>

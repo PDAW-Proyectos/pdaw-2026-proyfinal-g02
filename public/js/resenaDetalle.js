@@ -66,6 +66,14 @@ function renderizarDetalleReseña(reseña, contenedor, user) {
     const imagenCancion = reseña.cancion?.imagen || "/img/default-album.jpg";
     const previewUrl = reseña.cancion?.previewUrl;
 
+    // Autor y enlace a su perfil/reseñas
+    const idAutor = reseña.autor?.id ?? reseña.idUsuario;
+    const nombreAutor = reseña.autor?.nombre || reseña.nombreAutor || "Anónimo";
+    const autorHtml =
+        idAutor !== undefined && idAutor !== null
+            ? `<a href="/resenas.html?id=${idAutor}" class="text-light text-decoration-none fw-bold link-success">${nombreAutor}</a>`
+            : `<strong class="text-light">${nombreAutor}</strong>`;
+
     // Verificamos si el backend nos indicó que ya es favorita y si ya sigue al usuario
     const esFavoritaInicial = reseña.esFavorita || false;
     const siguiendoInicial = reseña.siguiendo || false;
@@ -86,8 +94,8 @@ function renderizarDetalleReseña(reseña, contenedor, user) {
         : "fa-solid fa-user-plus";
 
     // Verificamos roles y permisos
-    const esSuPropiaReseña = user && reseña.autor?.id && String(user.id) === String(reseña.autor.id);
-    const esAdmin = user && user.rol === 'administrador';
+    const esSuPropiaReseña = user && idAutor && String(user.id) === String(idAutor);
+    const esAdmin = user && user.rol === "administrador";
 
     // El administrador y el dueño pueden eliminar
     const puedeEliminar = esSuPropiaReseña || esAdmin;
@@ -107,14 +115,14 @@ function renderizarDetalleReseña(reseña, contenedor, user) {
             data-preview="${previewUrl || ""}">
             <i class="fa-solid fa-pen me-1"></i> Editar
         </button>
-    ` : '';
+    ` : "";
 
     // El botón de eliminar se muestra si es dueño O si es admin
     const botonEliminarHtml = puedeEliminar ? `
         <button id="btnEliminarResena" class="btn btn-outline-danger btn-sm py-1 px-3 rounded-pill">
             <i class="fa-solid fa-trash-can me-1"></i> Eliminar
         </button>
-    ` : '';
+    ` : "";
 
     // Badge de "Tu reseña" solo si es tuya, "Modo Administrador" si sos el admin
     const badgeDerechaHtml = esSuPropiaReseña ? `
@@ -125,11 +133,11 @@ function renderizarDetalleReseña(reseña, contenedor, user) {
         <span class="badge bg-danger bg-opacity-25 text-danger border border-danger px-3 py-2 rounded-pill">
             <i class="fa-solid fa-shield-halved me-1"></i> Modo Administrador
         </span>
-    ` : '');
+    ` : "");
 
     // Botón de seguir: No se muestra si es su propia reseña O si es admin
     const botonSeguirHtml = (esSuPropiaReseña || esAdmin) ? "" : `
-        <button id="btnSeguir" class="btn ${claseSeguir} btn-sm ms-2 py-1 px-3 rounded-pill" data-usuario-id="${reseña.autor?.id}">
+        <button id="btnSeguir" class="btn ${claseSeguir} btn-sm ms-2 py-1 px-3 rounded-pill" data-usuario-id="${idAutor}">
             <i class="${iconoSeguir} me-1"></i> ${textoSeguir}
         </button>
     `;
@@ -151,8 +159,8 @@ function renderizarDetalleReseña(reseña, contenedor, user) {
 
     // Botón de favoritos
     const deshabilitarFavorito = esSuPropiaReseña || esAdmin;
-    const claseBotonFav = deshabilitarFavorito 
-        ? "btn-outline-secondary text-muted opacity-50" 
+    const claseBotonFav = deshabilitarFavorito
+        ? "btn-outline-secondary text-muted opacity-50"
         : claseFavorito;
     const atributoDisabled = deshabilitarFavorito ? "disabled aria-disabled='true'" : "";
     const tooltipPropio = esSuPropiaReseña ? "No podés agregar tu propia reseña a favoritos" : (esAdmin ? "Los administradores no usan favoritos" : "");
@@ -161,7 +169,6 @@ function renderizarDetalleReseña(reseña, contenedor, user) {
             <i class="${iconoFavorito} fa-star me-1"></i> Favorita (<span id="contadorFavoritos">${reseña.cantidadFavoritos || 0}</span>)
         </button>
     `;
-
 
     contenedor.innerHTML = `
         <div class="card bg-dark border border-secondary rounded-4 shadow-lg text-light p-4 p-md-5">
@@ -215,7 +222,7 @@ function renderizarDetalleReseña(reseña, contenedor, user) {
                 <div class="d-flex align-items-center flex-wrap gap-2">
                     <span><i class="fa-regular fa-calendar me-1"></i> ${fechaFormateada}</span>
                     <span>•</span>
-                    <span>Por <strong class="text-light">${reseña.autor?.nombre || "Anónimo"}</strong></span>
+                    <span>Por ${autorHtml}</span>
                     ${botonSeguirHtml}
                 </div>
                 <div class="d-flex align-items-center flex-wrap gap-2 justify-content-md-end">
@@ -230,7 +237,7 @@ function renderizarDetalleReseña(reseña, contenedor, user) {
 
     configurarAccionesDetalle(
         reseña.id,
-        reseña.autor?.id,
+        idAutor,
         user,
         esFavoritaInicial,
         siguiendoInicial,
@@ -248,7 +255,7 @@ function configurarAccionesDetalle(
 ) {
     // 1. Lógica del botón Seguir
     const btnSeguir = document.getElementById("btnSeguir");
-    let siguiendo = siguiendoInicial; // <--- Inicializamos con el valor del servidor
+    let siguiendo = siguiendoInicial;
 
     if (btnSeguir && autorId) {
         btnSeguir.addEventListener("click", async () => {
@@ -291,7 +298,7 @@ function configurarAccionesDetalle(
 
     // 2. Lógica del botón Favoritas
     const btnFavorito = document.getElementById("btnFavorito");
-    let esFavorita = esFavoritaInicial; // <--- Tomamos el valor inicial que vino del servidor
+    let esFavorita = esFavoritaInicial;
 
     if (btnFavorito) {
         btnFavorito.addEventListener("click", async () => {
@@ -302,15 +309,13 @@ function configurarAccionesDetalle(
                 return;
             }
 
-            // Evitar que el usuario marque su propia reseña como favorita
             const esSuPropiaReseña = autorId && String(user.id) === String(autorId);
             if (esSuPropiaReseña) {
                 alert("No podés agregar tu propia reseña a favoritos.");
                 return;
             }
 
-            // Evitar que el administrador marque la reseña como favorita
-            if (user && user.rol === 'administrador') {
+            if (user && user.rol === "administrador") {
                 alert("Los administradores no pueden agregar reseñas a favoritos.");
                 return;
             }
@@ -357,15 +362,12 @@ function configurarAccionesDetalle(
     const btnReseñar = document.getElementById("btnReseñarCancion");
     if (btnReseñar && cancion) {
         btnReseñar.addEventListener("click", () => {
-            // Asegúrate de tener el modal en tu HTML de resenaDetalle.html (el mismo que en explorar)
-            const modalElement = document.getElementById("modalCrearReseña"); // Nombre de ejemplo de tu modal
+            const modalElement = document.getElementById("modalCrearReseña");
             if (modalElement) {
-                // Opcional: Si tu modal tiene inputs ocultos o campos para la canción, los rellenás acá:
                 const inputCancionId =
                     document.getElementById("cancionIdInput");
                 if (inputCancionId) inputCancionId.value = cancion.id;
 
-                // Mostramos el modal usando Bootstrap
                 const modal = new bootstrap.Modal(modalElement);
                 modal.show();
             } else {
@@ -376,7 +378,7 @@ function configurarAccionesDetalle(
         });
     }
 
-    // 4. Lógica del botón Eliminar Reseña (Solo para el propietario)
+    // 4. Lógica del botón Eliminar Reseña (Solo para el propietario o admin)
     const btnEliminar = document.getElementById("btnEliminarResena");
     if (btnEliminar) {
         btnEliminar.addEventListener("click", async () => {

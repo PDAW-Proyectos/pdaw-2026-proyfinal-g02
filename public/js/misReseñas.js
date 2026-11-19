@@ -24,16 +24,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     const esPropia = Boolean(user) && String(user.id) === String(idObjetivo);
-    const tituloPagina = document.querySelector("h1");
+    const esAdmin = user?.rol === "administrador";
+    const mostrarBotonSeguir = !esPropia && !esAdmin;
 
+    const tituloPagina = document.querySelector("h1");
     if (tituloPagina) {
         tituloPagina.textContent = esPropia ? "Mis reseñas" : "Reseñas del usuario";
     }
 
-    await cargarResenasUsuario(idObjetivo, { user, esPropia, tituloPagina });
+    await cargarResenasUsuario(idObjetivo, {
+        user,
+        esPropia,
+        mostrarBotonSeguir,
+        tituloPagina,
+    });
 });
 
-async function cargarResenasUsuario(idUsuario, { user, esPropia, tituloPagina }) {
+async function cargarResenasUsuario(
+    idUsuario,
+    { user, esPropia, mostrarBotonSeguir, tituloPagina },
+) {
     const contenedor = document.querySelector(".favorites-container");
 
     try {
@@ -52,10 +62,15 @@ async function cargarResenasUsuario(idUsuario, { user, esPropia, tituloPagina })
             `Usuario #${idUsuario}`;
 
         const textoTitulo = esPropia ? "Mis reseñas" : `Reseñas de ${nombreUsuario}`;
-        if (tituloPagina) {
-            tituloPagina.textContent = textoTitulo;
-        }
         document.title = `${textoTitulo} - Beatácora`;
+
+        if (tituloPagina) {
+            renderizarCabeceraTitulo(tituloPagina, textoTitulo, {
+                mostrarBotonSeguir,
+                idUsuario,
+                user,
+            });
+        }
 
         if (!reseñas || reseñas.length === 0) {
             contenedor.innerHTML = `
@@ -84,6 +99,12 @@ async function cargarResenasUsuario(idUsuario, { user, esPropia, tituloPagina })
                 : (reseña.tiempo || "hace un momento");
 
             const nombreAutor = reseña.nombreAutor || nombreUsuario;
+            const idAutor = reseña.idUsuario ?? idUsuario;
+            const autorHtml =
+                idAutor !== undefined && idAutor !== null
+                    ? `<a href="/resenas.html?id=${idAutor}" class="text-light text-decoration-none fw-bold link-success">${nombreAutor}</a>`
+                    : `<strong class="text-light">${nombreAutor}</strong>`;
+
             const badgeTuReseña = esPropia ? `
                 <span class="badge bg-success bg-opacity-25 text-success border border-success px-2 py-1 rounded-pill">
                     <i class="fa-solid fa-user-check me-1"></i> Tu reseña
@@ -120,10 +141,8 @@ async function cargarResenasUsuario(idUsuario, { user, esPropia, tituloPagina })
                             <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center pt-3 border-top border-secondary gap-2">
                                 <div class="d-flex align-items-center flex-wrap gap-2 small text-white">
                                     <span><i class="fa-regular fa-calendar me-1"></i> Publicado el ${fechaFormateada}</span>
-                                    ${nombreAutor ? `
-                                        <span class="text-secondary">•</span>
-                                        <span>Por <strong class="text-light">${nombreAutor}</strong></span>
-                                    ` : ""}
+                                    <span class="text-secondary">•</span>
+                                    <span>Por ${autorHtml}</span>
                                     ${badgeTuReseña}
                                 </div>
                                 <a href="/reseña.html?id=${reseña.id}" class="btn btn-brand btn-sm px-4 py-2 fw-semibold shadow-sm">
@@ -141,4 +160,64 @@ async function cargarResenasUsuario(idUsuario, { user, esPropia, tituloPagina })
         contenedor.innerHTML = `
             <p class="text-center text-danger py-4">Ocurrió un error al cargar las reseñas.</p>`;
     }
+}
+
+function renderizarCabeceraTitulo(tituloEl, textoTitulo, { mostrarBotonSeguir, idUsuario, user }) {
+    if (!mostrarBotonSeguir) {
+        tituloEl.className = "text-center fw-bold mb-5";
+        tituloEl.textContent = textoTitulo;
+        return;
+    }
+
+    let siguiendo = Array.isArray(user?.seguidos)
+        ? user.seguidos.some((segId) => String(segId) === String(idUsuario))
+        : false;
+
+    const claseSeguir = siguiendo ? "btn-success text-white" : "btn-outline-light";
+    const textoSeguir = siguiendo ? "Siguiendo" : "Seguir";
+    const iconoSeguir = siguiendo ? "fa-solid fa-check" : "fa-solid fa-user-plus";
+
+    tituloEl.className = "d-flex flex-wrap justify-content-center align-items-center gap-3 fw-bold mb-5";
+    tituloEl.innerHTML = `
+        <span>${textoTitulo}</span>
+        <button id="btnSeguirUsuario" class="btn ${claseSeguir} btn-sm py-2 px-3 rounded-pill" data-usuario-id="${idUsuario}">
+            <i class="${iconoSeguir} me-1"></i> ${textoSeguir}
+        </button>
+    `;
+
+    const btnSeguir = document.getElementById("btnSeguirUsuario");
+    if (!btnSeguir) return;
+
+    btnSeguir.addEventListener("click", async () => {
+        if (!user) {
+            alert("Debés iniciar sesión para seguir a otros usuarios.");
+            return;
+        }
+
+        try {
+            const metodo = siguiendo ? "DELETE" : "POST";
+            const response = await fetch(`/api/usuarios/${idUsuario}/seguir`, {
+                method: metodo,
+                headers: { "Content-Type": "application/json" },
+            });
+
+            if (!response.ok) {
+                throw new Error("No se pudo actualizar el estado de seguimiento.");
+            }
+
+            siguiendo = !siguiendo;
+            if (siguiendo) {
+                btnSeguir.innerHTML = `<i class="fa-solid fa-check me-1"></i> Siguiendo`;
+                btnSeguir.classList.remove("btn-outline-light");
+                btnSeguir.classList.add("btn-success", "text-white");
+            } else {
+                btnSeguir.innerHTML = `<i class="fa-solid fa-user-plus me-1"></i> Seguir`;
+                btnSeguir.classList.remove("btn-success", "text-white");
+                btnSeguir.classList.add("btn-outline-light");
+            }
+        } catch (error) {
+            console.error("Error al seguir/dejar de seguir:", error);
+            alert("Ocurrió un error al procesar la acción.");
+        }
+    });
 }
