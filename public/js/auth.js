@@ -107,6 +107,21 @@ export function inicializarAuth() {
     const loginModalElement = document.getElementById("loginModal");
     const registerModalElement = document.getElementById("registerModal");
 
+    if (loginModalElement && !loginModalElement.dataset.focusAttached) {
+        loginModalElement.dataset.focusAttached = "true";
+        loginModalElement.addEventListener("shown.bs.modal", () => {
+            const inputEmail = document.getElementById("loginEmail");
+            inputEmail?.focus();
+        });
+    }
+    if (registerModalElement && !registerModalElement.dataset.focusAttached) {
+        registerModalElement.dataset.focusAttached = "true";
+        registerModalElement.addEventListener("shown.bs.modal", () => {
+            const inputUsername = document.getElementById("registerUsername");
+            inputUsername?.focus();
+        });
+    }
+
     const loginModal = loginModalElement 
         ? (bootstrap.Modal.getInstance(loginModalElement) || new bootstrap.Modal(loginModalElement))
         : null;
