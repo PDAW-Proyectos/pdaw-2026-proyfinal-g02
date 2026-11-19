@@ -29,4 +29,21 @@ module.exports = [
       'prefer-const': 'error',
     },
   },
+  {
+    files: ['public/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        bootstrap: 'readonly',
+        mostrarAlerta: 'readonly',
+      },
+    },
+    rules: {
+      eqeqeq: 'error',
+      'prefer-const': 'error',
+      complexity: ['warn', 10],
+      'max-depth': ['warn', 3],
+      'max-params': ['warn', 4],
+    },
+  },
 ];

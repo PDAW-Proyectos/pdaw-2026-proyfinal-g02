@@ -1,12 +1,13 @@
 import { checkAuthStatus, inicializarAuth } from "./auth.js";
 import { cargarFooter } from "./footer.js";
 import { cargarNavbar } from "./navbar.js";
+import { mostrarAlerta } from "./toast.js";
 
 let seguidoresActuales = [];
 let seguidosActuales = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
-    cargarFooter()
+    cargarFooter();
     const user = await checkAuthStatus();
     if (!user) {
         window.location.href = "/index.html";
@@ -79,6 +80,32 @@ function inicializarEventosListasSociales() {
     }
 }
 
+function _obtenerIdUsuarioLista(data, fallbackId) {
+    return data?.id ?? data?._id ?? fallbackId;
+}
+
+function _obtenerNombreUsuarioLista(data, id) {
+    return data?.username || data?.nombre || `Usuario #${id}`;
+}
+
+async function _resolverItemUsuarioLista(item) {
+    if (item && typeof item === "object") {
+        const id = _obtenerIdUsuarioLista(item, null);
+        return { id, nombre: _obtenerNombreUsuarioLista(item, id) };
+    }
+
+    const id = item;
+    try {
+        const res = await fetch(`/api/usuarios/${id}`);
+        if (!res.ok) return { id, nombre: `Usuario #${id}` };
+        const u = await res.json();
+        const resolvedId = _obtenerIdUsuarioLista(u, id);
+        return { id: resolvedId, nombre: _obtenerNombreUsuarioLista(u, resolvedId) };
+    } catch {
+        return { id, nombre: `Usuario #${id}` };
+    }
+}
+
 async function abrirModalListaUsuarios(titulo, lista, mensajeVacio) {
     const modalEl = document.getElementById("listaUsuariosModal");
     const tituloEl = document.getElementById("listaUsuariosModalLabel");
@@ -96,25 +123,7 @@ async function abrirModalListaUsuarios(titulo, lista, mensajeVacio) {
         return;
     }
 
-    const usuariosResueltos = await Promise.all(
-        lista.map(async (item) => {
-            if (item && typeof item === "object") {
-                const id = item.id ?? item._id;
-                const nombre = item.username || item.nombre || `Usuario #${id}`;
-                return { id, nombre };
-            }
-
-            const id = item;
-            try {
-                const res = await fetch(`/api/usuarios/${id}`);
-                if (!res.ok) return { id, nombre: `Usuario #${id}` };
-                const u = await res.json();
-                return { id: u.id ?? id, nombre: u.username || u.nombre || `Usuario #${id}` };
-            } catch {
-                return { id, nombre: `Usuario #${id}` };
-            }
-        })
-    );
+    const usuariosResueltos = await Promise.all(lista.map(_resolverItemUsuarioLista));
 
     cuerpoEl.innerHTML = `
         <div class="list-group list-group-flush">
@@ -136,6 +145,62 @@ async function abrirModalListaUsuarios(titulo, lista, mensajeVacio) {
     `;
 }
 
+function _configurarInputCampoModal(campo, { modalTitulo, labelDinamico, inputValor }) {
+    if (campo === "usuario") {
+        modalTitulo.textContent = "Cambiar nombre de usuario";
+        labelDinamico.textContent = "Nuevo nombre de usuario";
+        inputValor.type = "text";
+        inputValor.autocomplete = "username";
+        inputValor.placeholder = "tu_usuario";
+        inputValor.minLength = 3;
+        inputValor.maxLength = 20;
+        inputValor.value = document.getElementById("input-usuario").value;
+        return;
+    }
+
+    if (campo === "email") {
+        modalTitulo.textContent = "Cambiar correo electrónico";
+        labelDinamico.textContent = "Nuevo correo electrónico";
+        inputValor.type = "email";
+        inputValor.autocomplete = "email";
+        inputValor.placeholder = "tu@correo.com";
+        inputValor.value = document.getElementById("input-email").value;
+        return;
+    }
+
+    if (campo === "password") {
+        modalTitulo.textContent = "Cambiar contraseña";
+        labelDinamico.textContent = "Nueva contraseña";
+        inputValor.type = "password";
+        inputValor.autocomplete = "new-password";
+        inputValor.placeholder = "mínimo 6 caracteres";
+        inputValor.minLength = 6;
+    }
+}
+
+function _validarCampoPerfil(campoModificado, nuevoValor) {
+    if (campoModificado === "usuario" && nuevoValor.length < 3) {
+        mostrarAlerta("El usuario debe tener al menos 3 caracteres.", "error");
+        return false;
+    }
+    if (campoModificado === "email") {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(nuevoValor)) {
+            mostrarAlerta("Por favor, ingresá un correo electrónico válido.", "error");
+            return false;
+        }
+    }
+    if (campoModificado === "password" && nuevoValor.length < 6) {
+        mostrarAlerta("La contraseña debe tener al menos 6 caracteres.", "error");
+        return false;
+    }
+    return true;
+}
+
+function _resolverNombreCampoApi(campoModificado) {
+    return campoModificado === "usuario" ? "username" : campoModificado;
+}
+
 const editarCampoModal = document.getElementById("editarCampoModal");
 const formEditarCampo = document.getElementById("form-editar-campo");
 const inputValor = document.getElementById("valor-input");
@@ -153,30 +218,7 @@ if (editarCampoModal) {
         inputValor.removeAttribute("minlength");
         inputValor.removeAttribute("maxlength");
 
-        if (campo === "usuario") {
-            modalTitulo.textContent = "Cambiar nombre de usuario";
-            labelDinamico.textContent = "Nuevo nombre de usuario";
-            inputValor.type = "text";
-            inputValor.autocomplete = "username";
-            inputValor.placeholder = "tu_usuario";
-            inputValor.minLength = 3;
-            inputValor.maxLength = 20;
-            inputValor.value = document.getElementById("input-usuario").value;
-        } else if (campo === "email") {
-            modalTitulo.textContent = "Cambiar correo electrónico";
-            labelDinamico.textContent = "Nuevo correo electrónico";
-            inputValor.type = "email";
-            inputValor.autocomplete = "email";
-            inputValor.placeholder = "tu@correo.com";
-            inputValor.value = document.getElementById("input-email").value;
-        } else if (campo === "password") {
-            modalTitulo.textContent = "Cambiar contraseña";
-            labelDinamico.textContent = "Nueva contraseña";
-            inputValor.type = "password";
-            inputValor.autocomplete = "new-password";
-            inputValor.placeholder = "mínimo 6 caracteres";
-            inputValor.minLength = 6;
-        }
+        _configurarInputCampoModal(campo, { modalTitulo, labelDinamico, inputValor });
     });
 
     formEditarCampo.addEventListener("submit", async (e) => {
@@ -185,31 +227,13 @@ if (editarCampoModal) {
         const campoModificado = inputNombreCampo.value;
         const nuevoValor = inputValor.value.trim();
 
-        if (campoModificado === "usuario" && nuevoValor.length < 3) {
-            alert("El usuario debe tener al menos 3 caracteres.");
-            return;
-        }
-        if (campoModificado === "email") {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(nuevoValor)) {
-                alert("Por favor, ingresá un correo electrónico válido.");
-                return;
-            }
-        }
-        if (campoModificado === "password" && nuevoValor.length < 6) {
-            alert("La contraseña debe tener al menos 6 caracteres.");
-            return;
-        }
+        if (!_validarCampoPerfil(campoModificado, nuevoValor)) return;
 
         try {
             const user = await checkAuthStatus();
             if (!user) return;
 
-            let campoAEnviar = campoModificado;
-            if (campoModificado === "usuario") {
-                campoAEnviar = "username";
-            }
-
+            const campoAEnviar = _resolverNombreCampoApi(campoModificado);
             const respuesta = await fetch(`/api/usuarios/${user.id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
@@ -219,7 +243,7 @@ if (editarCampoModal) {
             const data = await respuesta.json();
             if (!respuesta.ok) throw new Error(data.error || "No se pudo actualizar la información.");
 
-            alert("¡Cambios guardados con éxito!");
+            mostrarAlerta("¡Cambios guardados con éxito!", "exito");
 
             const modalInstance = bootstrap.Modal.getOrCreateInstance(editarCampoModal);
             modalInstance.hide();
@@ -227,7 +251,7 @@ if (editarCampoModal) {
             await cargarDatosPerfil(user.id);
         } catch (error) {
             console.error("Error al actualizar:", error);
-            alert(error.message);
+            mostrarAlerta(error.message, "error");
         }
     });
 }
