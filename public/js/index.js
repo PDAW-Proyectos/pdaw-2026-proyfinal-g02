@@ -75,6 +75,11 @@ async function cargarUltimasReseñas(user) {
             const albumNombre = reseña.cancion?.album ? `Álbum: ${reseña.cancion.album}` : "";
 
             const nombreAutor = reseña.nombreAutor || "Anónimo";
+            const autorHtml =
+                reseña.idUsuario !== undefined && reseña.idUsuario !== null
+                    ? `<a href="/resenas.html?id=${reseña.idUsuario}" class="text-light text-decoration-none fw-bold link-success">${nombreAutor}</a>`
+                    : `<strong class="text-light">${nombreAutor}</strong>`;
+
             const esSuPropiaReseña =
                 Boolean(user) &&
                 reseña.idUsuario !== undefined &&
@@ -115,7 +120,7 @@ async function cargarUltimasReseñas(user) {
                                 <div class="d-flex align-items-center flex-wrap gap-2 small text-white">
                                     <span><i class="fa-regular fa-calendar me-1"></i> Publicado el ${fechaFormateada}</span>
                                     <span class="text-secondary">•</span>
-                                    <span>Por <strong class="text-light">${nombreAutor}</strong></span>
+                                    <span>Por ${autorHtml}</span>
                                     ${badgeTuReseña}
                                 </div>
                                 <a href="/reseña.html?id=${reseña.id}" class="btn btn-brand btn-sm px-4 py-2 fw-semibold shadow-sm">
