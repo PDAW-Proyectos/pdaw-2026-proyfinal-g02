@@ -10,6 +10,7 @@ module.exports = function (servicios, middlewareAutenticacion) {
     router.get("/usuario/:idUsuario", resenasCtrl.listarPorUsuario);
     router.get("/ultimas", resenasCtrl.listarUltimas);
     router.get("/populares", resenasCtrl.listarPopulares);
+    router.get('/:id', resenasCtrl.obtenerPorId);
 
     // Rutas protegidas
     router.post("/", middlewareAutenticacion.requiereAutenticacion, resenasCtrl.crear);

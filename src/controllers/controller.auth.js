@@ -11,12 +11,20 @@ const destroy = (req) =>
 function crearControladorAuth(servicio) {
     async function register(req, res, next) {
         try {
-            const { username, email, password, rol = "usuario" } = req.body ?? {};
-            
+            const {
+                username,
+                email,
+                password,
+                rol = "usuario",
+            } = req.body ?? {};
+
             if (
-                !username || username.trim() === "" ||
-                !email || email.trim() === "" ||
-                !password || password.trim() === ""
+                !username ||
+                username.trim() === "" ||
+                !email ||
+                email.trim() === "" ||
+                !password ||
+                password.trim() === ""
             ) {
                 throw new BadRequestError("Todos los campos son obligatorios");
             }
@@ -36,12 +44,15 @@ function crearControladorAuth(servicio) {
     async function login(req, res, next) {
         try {
             const { email, password } = req.body ?? {};
-            
+
             if (!email || !email.trim() || !password) {
                 throw new UnauthorizedError("Credenciales inválidas");
             }
 
-            const usuario = await servicio.iniciarSesion(email.trim(), password);
+            const usuario = await servicio.iniciarSesion(
+                email.trim(),
+                password,
+            );
             if (!usuario) {
                 throw new UnauthorizedError("Credenciales inválidas");
             }
@@ -49,9 +60,9 @@ function crearControladorAuth(servicio) {
             await regenerate(req);
             req.session.userId = usuario.id;
 
-            return res.status(200).json({ 
-                message: "Inicio de sesión exitoso", 
-                user: usuario 
+            return res.status(200).json({
+                message: "Inicio de sesión exitoso",
+                user: usuario,
             });
         } catch (error) {
             next(error);
@@ -70,7 +81,7 @@ function crearControladorAuth(servicio) {
     function me(req, res, next) {
         try {
             if (!req.user) {
-                throw new UnauthorizedError("No hay sesión activa");
+                return res.json({ authenticated: false, user: null });
             }
             res.json({ authenticated: true, user: req.user });
         } catch (error) {
