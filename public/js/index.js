@@ -1,49 +1,56 @@
 import { checkAuthStatus, inicializarAuth } from "./auth.js";
+import { cargarFooter } from "./footer.js";
 import { cargarNavbar } from "./navbar.js";
 
-document.addEventListener("DOMContentLoaded", async() => {
+document.addEventListener("DOMContentLoaded", async () => {
+    cargarFooter();
     const user = await checkAuthStatus();
-    cargarNavbar(user, {mostrarBuscador: true});
-    inicializarAuth()
+    let mostrar = true;
+    if (user && user.rol === "administrador") {
+        mostrar = false;
+    }
+    cargarNavbar(user, { mostrarBuscador: mostrar });
+    inicializarAuth();
 
     cargarPortadaTopGlobales();
-    cargarUltimasReseñas();
+    cargarUltimasReseñas(user);
 });
 
 async function cargarPortadaTopGlobales() {
-    const contenedor = document.getElementById('portadas-container');
-    if (!contenedor) return; 
+    const contenedor = document.getElementById("portadas-container");
+    if (!contenedor) return;
 
     try {
-        const respuesta = await fetch('/api/deezer/topGlobal');
-        if (!respuesta.ok) throw new Error('No se pudo obtener el top global');
-        
+        const respuesta = await fetch("/api/deezer/topGlobal");
+        if (!respuesta.ok) throw new Error("No se pudo obtener el top global");
+
         const canciones = await respuesta.json();
         const cancionesSeleccionadas = canciones.slice(0, 6);
 
-        contenedor.innerHTML = cancionesSeleccionadas.map(cancion => {
-            return`
+        contenedor.innerHTML = cancionesSeleccionadas
+            .map((cancion) => {
+                return `
             <img src="${cancion.imagen}" 
                     alt="${cancion.titulo}" 
                     class="poster-item">
                     `;
-        }).join('');
-
-    } catch(error) {
+            })
+            .join("");
+    } catch (error) {
         console.error("Error al cargar las portadas dinámicas", error);
     }
 }
 
-async function cargarUltimasReseñas() {
+async function cargarUltimasReseñas(user) {
     const container = document.querySelector("#reviewsContainer");
-    
+
     if (!container) return;
 
     try {
         container.innerHTML = `<p class="text-secondary text-center py-4">Cargando últimas reseñas...</p>`;
 
         const respuesta = await fetch("/api/resenas/ultimas?limit=6");
-        
+
         if (!respuesta.ok) {
             throw new Error("No se pudieron cargar las reseñas.");
         }
@@ -61,18 +68,43 @@ async function cargarUltimasReseñas() {
             const colDiv = document.createElement("div");
             colDiv.className = "col-12 mb-4";
 
-            const fechaFormateada = new Date(reseña.fechaPublicado).toLocaleDateString("es-AR", {
+            const fechaFormateada = new Date(
+                reseña.fechaPublicado,
+            ).toLocaleDateString("es-AR", {
                 day: "2-digit",
                 month: "2-digit",
-                year: "numeric"
+                year: "numeric",
             });
 
-            const artistasStr = Array.isArray(reseña.cancion?.artistas) 
-                ? reseña.cancion.artistas.join(", ") 
-                : (reseña.cancion?.artistas || "Artista desconocido");
+            const artistasStr = Array.isArray(reseña.cancion?.artistas)
+                ? reseña.cancion.artistas.join(", ")
+                : reseña.cancion?.artistas || "Artista desconocido";
 
-            const imagenCancion = reseña.cancion?.imagen || '/img/default-album.jpg';
-            const albumNombre = reseña.cancion?.album ? `Álbum: ${reseña.cancion.album}` : "";
+            const imagenCancion =
+                reseña.cancion?.imagen || "/img/default-album.jpg";
+            const albumNombre = reseña.cancion?.album
+                ? `Álbum: ${reseña.cancion.album}`
+                : "";
+
+            const nombreAutor = reseña.nombreAutor || "Anónimo";
+            const autorHtml =
+                reseña.idUsuario !== undefined && reseña.idUsuario !== null
+                    ? `<a href="/resenas.html?id=${reseña.idUsuario}" class="text-light text-decoration-none fw-bold link-success">${nombreAutor}</a>`
+                    : `<strong class="text-light">${nombreAutor}</strong>`;
+
+            const esSuPropiaReseña =
+                Boolean(user) &&
+                reseña.idUsuario !== undefined &&
+                reseña.idUsuario !== null &&
+                String(user.id) === String(reseña.idUsuario);
+
+            const badgeTuReseña = esSuPropiaReseña
+                ? `
+                <span class="badge bg-success bg-opacity-25 text-success border border-success px-2 py-1 rounded-pill">
+                    <i class="fa-solid fa-user-check me-1"></i> Tu reseña
+                </span>
+            `
+                : "";
 
             colDiv.innerHTML = `
                 <div class="review-card mb-4 p-4 rounded-4 bg-dark border border-secondary text-light shadow-sm">
@@ -87,10 +119,10 @@ async function cargarUltimasReseñas() {
                             <div class="d-flex justify-content-between align-items-start mb-1">
                                 <div>
                                     <h4 class="card-title mb-1 fw-bold text-light">${reseña.cancion?.titulo || "Canción sin título"}</h4>
-                                    <p class="text-secondary mb-2 fs-6"><i class="fa-solid fa-microphone-lines me-2 text-success"></i>${artistasStr} <span class="text-muted ms-2">|</span> <span class="text-light ms-2">${albumNombre}</span></p>
+                                    <p class="text-secondary mb-2 fs-6"><i class="fa-solid fa-microphone-lines me-2 text-success"></i>${artistasStr} <span class="text-white ms-2">|</span> <span class="text-light ms-2">${albumNombre}</span></p>
                                 </div>
                                 <div class="fs-4 fw-bold text-warning bg-black px-3 py-1 rounded-pill border border-secondary">
-                                    ★ ${reseña.valoracionPropia}.0
+                                    ★ ${reseña.valoracionPropia}
                                 </div>
                             </div>
 
@@ -98,8 +130,13 @@ async function cargarUltimasReseñas() {
                                 "${reseña.descripcion}"
                             </p>
 
-                            <div class="d-flex justify-content-between align-items-center pt-3 border-top border-secondary">
-                                <small class="text-muted"><i class="fa-regular fa-calendar me-1"></i> Publicado el ${fechaFormateada}</small>
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center pt-3 border-top border-secondary gap-2">
+                                <div class="d-flex align-items-center flex-wrap gap-2 small text-white">
+                                    <span><i class="fa-regular fa-calendar me-1"></i> Publicado el ${fechaFormateada}</span>
+                                    <span class="text-secondary">•</span>
+                                    <span>Por ${autorHtml}</span>
+                                    ${badgeTuReseña}
+                                </div>
                                 <a href="/reseña.html?id=${reseña.id}" class="btn btn-brand btn-sm px-4 py-2 fw-semibold shadow-sm">
                                     Ver reseña completa <i class="fa-solid fa-arrow-right ms-1"></i>
                                 </a>
@@ -111,7 +148,6 @@ async function cargarUltimasReseñas() {
 
             container.appendChild(colDiv);
         });
-
     } catch (error) {
         console.error("Error:", error);
         container.innerHTML = `<p class="text-danger text-center py-4">Ocurrió un error al cargar las reseñas.</p>`;

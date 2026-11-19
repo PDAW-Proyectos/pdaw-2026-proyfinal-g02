@@ -1,10 +1,14 @@
 import { checkAuthStatus, inicializarAuth } from "./auth.js";
+import { cargarFooter } from "./footer.js";
+import { inicializarModalReseña } from "./modalReseña.js";
 import { cargarNavbar } from "./navbar.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
+    cargarFooter()
     const user = await checkAuthStatus();
     cargarNavbar(user, { mostrarBuscador: false });
     inicializarAuth();
+    inicializarModalReseña()
 
     const inputBuscar = document.getElementById("input-buscar");
     const params = new URLSearchParams(window.location.search);
@@ -123,82 +127,5 @@ function renderizarCanciones(canciones) {
         `;
 
         contenedor.innerHTML += tarjetaHTML;
-    });
-}
-
-// Listener global para cuando se abre el modal de reseñas
-const resenaModal = document.getElementById('resenaModal');
-if (resenaModal) {
-    resenaModal.addEventListener('show.bs.modal', (event) => {
-        const button = event.relatedTarget; // El botón "Reseñar" que se clickeó
-
-        // Extraemos los datos de los atributos data-*
-        const id = button.getAttribute('data-id');
-        const titulo = button.getAttribute('data-titulo');
-        const artistas = button.getAttribute('data-artistas');
-        const imagen = button.getAttribute('data-imagen');
-        const preview = button.getAttribute('data-preview');
-        const album = button.getAttribute('data-album');
-
-        // Rellenamos los elementos visuales del modal
-        document.getElementById('modalCancionId').value = id;
-        document.getElementById('modalCancionTitulo').textContent = titulo;
-        document.getElementById('modalCancionArtista').textContent = `${artistas} — ${album}`;
-        document.getElementById('modalCancionImg').src = imagen || '/img/default-album.jpg';
-        
-        // Configuramos y cargamos el reproductor de audio
-        const audioElement = document.getElementById('modalAudioPreview');
-        if (preview) {
-            audioElement.src = preview;
-            audioElement.style.display = 'block';
-        } else {
-            audioElement.src = '';
-            audioElement.style.display = 'none';
-        }
-        
-        // Limpiamos el formulario anterior
-        document.getElementById('resenaFormModal').reset();
-        document.getElementById('modalCancionId').value = id; // reasignamos el hidden que se borra con reset
-    });
-
-    // Pausar el audio automáticamente si cierran el modal
-    resenaModal.addEventListener('hidden.bs.modal', () => {
-        const audioElement = document.getElementById('modalAudioPreview');
-        audioElement.pause();
-        audioElement.currentTime = 0;
-    });
-}
-
-// Manejar el envío (submit) del formulario de reseña desde el modal
-const resenaFormModal = document.getElementById('resenaFormModal');
-if (resenaFormModal) {
-    resenaFormModal.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const cancionId = document.getElementById('modalCancionId').value;
-        const valoracionPropia = parseInt(document.getElementById('modalValoracion').value);
-        const descripcion = document.getElementById('modalDescripcion').value.trim();
-
-        try {
-            const response = await fetch('/api/resenas', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cancionId, valoracionPropia, descripcion })
-            });
-
-            const data = await response.json();
-            console.log(data)
-            if (!response.ok) throw new Error(data.error || 'Error al guardar la reseña.');
-
-            alert('¡Reseña publicada con éxito!');
-            
-            // Cerramos el modal usando Bootstrap
-            const modalInstance = bootstrap.Modal.getInstance(resenaModal);
-            modalInstance.hide();
-
-        } catch (error) {
-            console.error('Error:', error);
-            alert(error.message);
-        }
     });
 }

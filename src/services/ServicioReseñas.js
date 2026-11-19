@@ -1,45 +1,138 @@
 const Cancion = require("../models/Cancion");
-const { NotFoundError, ForbiddenError, BadRequestError, UnauthorizedError } = require("../utils/errors.js");
+const {
+    NotFoundError,
+    ForbiddenError,
+    BadRequestError,
+    UnauthorizedError,
+} = require("../utils/errors.js");
 
 class ServicioReseñas {
-    constructor(repositorioReseñas, repositorioUsuarios) {
+    constructor(repositorioReseñas, repositorioUsuarios, servicioDeezer) {
         this.repositorioReseñas = repositorioReseñas;
         this.repositorioUsuarios = repositorioUsuarios;
+        this.servicioDeezer = servicioDeezer;
+    }
+
+    enriquecerReseñaConAutor(reseña) {
+        if (!reseña || !this.repositorioUsuarios) {
+            return reseña;
+        }
+
+        const usuario = this.repositorioUsuarios.buscarPorId(reseña.idUsuario);
+        return {
+            ...reseña,
+            nombreAutor: usuario?.username || "Anónimo",
+        };
     }
 
     async listarReseñas() {
-        return this.repositorioReseñas.listar();
+        const reseñas = await this.repositorioReseñas.listar();
+        if (!Array.isArray(reseñas)) {
+            return [];
+        }
+        return reseñas.map((reseña) => this.enriquecerReseñaConAutor(reseña));
     }
 
-    async obtenerReseñaPorId(id) {
+    async obtenerReseñaPorId(id, idUsuarioActual) {
         const reseña = this.repositorioReseñas.buscarPorId(id);
         if (!reseña) {
             throw new NotFoundError("Reseña");
         }
-        return reseña;
+
+        if (this.servicioDeezer && reseña.cancion && reseña.cancion.id) {
+            try {
+                const datosFrescos =
+                    await this.servicioDeezer.obtenerCancionPorId(
+                        reseña.cancion.id,
+                    );
+                if (datosFrescos && datosFrescos.previewUrl) {
+                    reseña.cancion.previewUrl = datosFrescos.previewUrl; // se vencia el previewUrl
+                    await this.repositorioReseñas.actualizar(id, {
+                        cancion: reseña.cancion,
+                    });
+                }
+            } catch (error) {
+                throw new NotFoundError(
+                    "No se pudo actualizar el audio de la canción desde Deezer.",
+                );
+            }
+        }
+
+        // Agregamos info del autor, favoritos y seguimiento
+        let autorInfo = { id: reseña.idUsuario, nombre: "Usuario" };
+        let esFavoritaDelUsuario = false;
+        let estaSiguiendoAlAutor = false;
+
+        if (this.repositorioUsuarios) {
+            const usuario = this.repositorioUsuarios.buscarPorId(
+                reseña.idUsuario,
+            );
+            if (usuario) {
+                autorInfo = {
+                    id: usuario.id,
+                    nombre: usuario.username || "Usuario",
+                };
+            }
+
+            // Verificamos si el usuario actual marcó esta reseña como favorita
+            if (idUsuarioActual) {
+                const usuarioActual =
+                    this.repositorioUsuarios.buscarPorId(idUsuarioActual);
+                if (usuarioActual && usuarioActual.reseñasFavoritas) {
+                    esFavoritaDelUsuario = usuarioActual.reseñasFavoritas.some(
+                        (favId) => String(favId) === String(id),
+                    );
+                }
+                // Verificamos si sigue al autor
+                if (usuarioActual && usuarioActual.seguidos) {
+                    estaSiguiendoAlAutor = usuarioActual.seguidos.some(
+                        (segId) => String(segId) === String(reseña.idUsuario),
+                    );
+                }
+            }
+        }
+
+        return {
+            ...reseña,
+            autor: autorInfo,
+            esFavorita: esFavoritaDelUsuario,
+            siguiendo: estaSiguiendoAlAutor,
+        };
     }
 
     async obtenerReseñasDeUsuario(idUsuario) {
-        return this.repositorioReseñas.buscarPorUsuario(idUsuario);
+        const reseñas = await this.repositorioReseñas.buscarPorUsuario(idUsuario);
+        if (!Array.isArray(reseñas)) {
+            return [];
+        }
+        return reseñas.map((reseña) => this.enriquecerReseñaConAutor(reseña));
     }
 
     async crearReseña(idUsuario, cancionInput, valoracionPropia, descripcion) {
         // 1. Validaciones de negocio usando BadRequestError o UnauthorizedError
         if (!idUsuario) {
-            throw new UnauthorizedError("Debe estar autenticado para crear una reseña.");
+            throw new UnauthorizedError(
+                "Debe estar autenticado para crear una reseña.",
+            );
         }
 
         const valoracion = Number(valoracionPropia);
         if (isNaN(valoracion) || valoracion < 1 || valoracion > 5) {
-            throw new BadRequestError("La valoración propia debe ser un número entre 1 y 5.");
+            throw new BadRequestError(
+                "La valoración propia debe ser un número entre 1 y 5.",
+            );
         }
 
         if (!descripcion || !descripcion.trim()) {
-            throw new BadRequestError("La descripción de la reseña no puede estar vacía.");
+            throw new BadRequestError(
+                "La descripción de la reseña no puede estar vacía.",
+            );
         }
 
         if (!cancionInput) {
-            throw new BadRequestError("La reseña debe estar asociada a una canción.");
+            throw new BadRequestError(
+                "La reseña debe estar asociada a una canción.",
+            );
         }
 
         // 2. Asegurarnos de que el objeto canción sea una instancia válida de Cancion
@@ -53,7 +146,7 @@ class ServicioReseñas {
                 cancionInput.previewUrl,
                 cancionInput.imagen,
                 cancionInput.duracion,
-                cancionInput.fechaLanzamiento
+                cancionInput.fechaLanzamiento,
             );
         }
 
@@ -62,12 +155,15 @@ class ServicioReseñas {
             cancionFinal,
             valoracion,
             descripcion.trim(),
-            idUsuario
+            idUsuario,
         );
 
         // 4. Agregar reseña al usuario
         if (this.repositorioUsuarios) {
-            await this.repositorioUsuarios.agregarReseña(idUsuario, nuevaReseña.id);
+            await this.repositorioUsuarios.agregarReseña(
+                idUsuario,
+                nuevaReseña.id,
+            );
         }
 
         return nuevaReseña;
@@ -78,13 +174,17 @@ class ServicioReseñas {
 
         // Validar que el usuario sea el dueño de la reseña
         if (String(reseña.idUsuario) !== String(idUsuarioActual)) {
-            throw new ForbiddenError("No tenés permisos para modificar esta reseña.");
+            throw new ForbiddenError(
+                "No tenés permisos para modificar esta reseña.",
+            );
         }
 
         if (datosNuevos.valoracionPropia !== undefined) {
             const val = Number(datosNuevos.valoracionPropia);
             if (isNaN(val) || val < 1 || val > 5) {
-                throw new BadRequestError("La valoración propia debe ser un número entre 1 y 5.");
+                throw new BadRequestError(
+                    "La valoración propia debe ser un número entre 1 y 5.",
+                );
             }
             datosNuevos.valoracionPropia = val;
         }
@@ -96,13 +196,23 @@ class ServicioReseñas {
         const reseña = await this.obtenerReseñaPorId(idReseña);
 
         if (String(reseña.idUsuario) !== String(idUsuarioActual) && !esAdmin) {
-            throw new ForbiddenError("No tenés permisos para eliminar esta reseña.");
+            throw new ForbiddenError(
+                "No tenés permisos para eliminar esta reseña.",
+            );
         }
 
         const resultado = await this.repositorioReseñas.eliminar(idReseña);
 
-        if (this.repositorioUsuarios && reseña.idUsuario) {
-            await this.repositorioUsuarios.quitarReseña(reseña.idUsuario, idReseña);
+        if (this.repositorioUsuarios) {
+            if (reseña.idUsuario) {
+                await this.repositorioUsuarios.quitarReseña(
+                    reseña.idUsuario,
+                    idReseña,
+                );
+            }
+            await this.repositorioUsuarios.quitarReseñaFavoritaDeTodos(
+                idReseña,
+            );
         }
 
         return resultado;
@@ -110,9 +220,14 @@ class ServicioReseñas {
 
     async obtenerUltimas(limite = 10) {
         const todas = await this.repositorioReseñas.listar();
-        return [...todas]
-            .sort((a, b) => new Date(b.fechaPublicado) - new Date(a.fechaPublicado))
+        const ultimas = [...todas]
+            .sort(
+                (a, b) =>
+                    new Date(b.fechaPublicado) - new Date(a.fechaPublicado),
+            )
             .slice(0, Number(limite));
+
+        return ultimas.map((reseña) => this.enriquecerReseñaConAutor(reseña));
     }
 
     async obtenerPopulares(limite = 10) {
