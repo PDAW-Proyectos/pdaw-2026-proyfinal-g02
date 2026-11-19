@@ -1,10 +1,12 @@
 import { checkAuthStatus, inicializarAuth } from "./auth.js";
+import { cargarFooter } from "./footer.js";
 import { cargarNavbar } from "./navbar.js";
 
 let seguidoresActuales = [];
 let seguidosActuales = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
+    cargarFooter()
     const user = await checkAuthStatus();
     if (!user) {
         window.location.href = "/index.html";
