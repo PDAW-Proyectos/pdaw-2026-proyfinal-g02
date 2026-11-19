@@ -12,8 +12,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         mostrar = false
     }
     cargarNavbar(user, { mostrarBuscador: mostrar });
-    inicializarAuth();
 
+    const esAdmin = user.rol === "administrador";
+    const columnaActividad = document.getElementById("columna-actividad");
+    if (columnaActividad) {
+        columnaActividad.classList.toggle("d-none", esAdmin);
+    } 
+
+    inicializarAuth();
     
     await cargarDatosPerfil(user.id);
 });
@@ -24,6 +30,7 @@ async function cargarDatosPerfil(userId) {
         if (!respuesta.ok) throw new Error("No se pudo obtener la información del perfil.");
 
         const datosUsuario = await respuesta.json();
+
 
         document.getElementById("input-usuario").value = datosUsuario.username || "";
         document.getElementById("input-email").value = datosUsuario.email || "";
