@@ -12,10 +12,11 @@ const repositorios = {
     reseñas: new RepositorioReseñas(config.rutaReseñas),
 };
 
+const instanciaDeezer = new ServicioDeezer()
 const servicios = {
     auth: new ServicioAuth(repositorios.usuarios),
-    deezer: new ServicioDeezer(),
-    reseñas: new ServicioReseñas(repositorios.reseñas, repositorios.usuarios),
+    deezer: instanciaDeezer,
+    reseñas: new ServicioReseñas(repositorios.reseñas, repositorios.usuarios, instanciaDeezer),
     usuarios: new ServicioUsuarios(repositorios.usuarios, repositorios.reseñas),
 };
 

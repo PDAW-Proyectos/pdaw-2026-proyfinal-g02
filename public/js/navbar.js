@@ -22,7 +22,7 @@ export function cargarNavbar(user = null, opciones = {}) {
         if (user.rol === "administrador") {
             linksHTML += `
                 <li class="nav-item">
-                    <a class="nav-link text-light ${rutaActual.endsWith('admin.html') ? 'active fw-bold' : ''}" href="/admin.html">Panel Admin</a>
+                    <a class="nav-link text-light ${rutaActual.endsWith('panelAdmin.html') ? 'active fw-bold' : ''}" href="/panelAdmin.html">Panel Admin</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-light ${rutaActual.endsWith('perfil.html') ? 'active fw-bold' : ''}" href="/perfil.html">Perfil</a>
