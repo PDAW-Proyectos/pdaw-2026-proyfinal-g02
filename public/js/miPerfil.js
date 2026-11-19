@@ -6,7 +6,7 @@ let seguidoresActuales = [];
 let seguidosActuales = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
-    cargarFooter()
+    cargarFooter();
     const user = await checkAuthStatus();
     if (!user) {
         window.location.href = "/index.html";
@@ -186,18 +186,18 @@ if (editarCampoModal) {
         const nuevoValor = inputValor.value.trim();
 
         if (campoModificado === "usuario" && nuevoValor.length < 3) {
-            alert("El usuario debe tener al menos 3 caracteres.");
+            mostrarAlerta("El usuario debe tener al menos 3 caracteres.", "error");
             return;
         }
         if (campoModificado === "email") {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(nuevoValor)) {
-                alert("Por favor, ingresá un correo electrónico válido.");
+                mostrarAlerta("Por favor, ingresá un correo electrónico válido.", "error");
                 return;
             }
         }
         if (campoModificado === "password" && nuevoValor.length < 6) {
-            alert("La contraseña debe tener al menos 6 caracteres.");
+            mostrarAlerta("La contraseña debe tener al menos 6 caracteres.", "error");
             return;
         }
 
@@ -219,7 +219,7 @@ if (editarCampoModal) {
             const data = await respuesta.json();
             if (!respuesta.ok) throw new Error(data.error || "No se pudo actualizar la información.");
 
-            alert("¡Cambios guardados con éxito!");
+            mostrarAlerta("¡Cambios guardados con éxito!", "exito");
 
             const modalInstance = bootstrap.Modal.getOrCreateInstance(editarCampoModal);
             modalInstance.hide();
@@ -227,7 +227,7 @@ if (editarCampoModal) {
             await cargarDatosPerfil(user.id);
         } catch (error) {
             console.error("Error al actualizar:", error);
-            alert(error.message);
+            mostrarAlerta(error.message, "error");
         }
     });
 }

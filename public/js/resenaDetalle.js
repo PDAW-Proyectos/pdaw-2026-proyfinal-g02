@@ -4,7 +4,7 @@ import { inicializarModalReseña } from "./modalReseña.js";
 import { cargarNavbar } from "./navbar.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-    cargarFooter()
+    cargarFooter();
     // 1. Inicializamos autenticación y navbar
     const user = await checkAuthStatus();
     cargarNavbar(user, { mostrarBuscador: true });
@@ -262,7 +262,7 @@ function configurarAccionesDetalle(
     if (btnSeguir && autorId) {
         btnSeguir.addEventListener("click", async () => {
             if (!user) {
-                alert("Debés iniciar sesión para seguir a otros usuarios.");
+                mostrarAlerta("Debés iniciar sesión para seguir a otros usuarios.", "aviso");
                 return;
             }
 
@@ -293,7 +293,7 @@ function configurarAccionesDetalle(
                 }
             } catch (error) {
                 console.error("Error al seguir/dejar de seguir:", error);
-                alert("Ocurrió un error al procesar la acción.");
+                mostrarAlerta("Ocurrió un error al procesar la acción.", "error");
             }
         });
     }
@@ -305,20 +305,21 @@ function configurarAccionesDetalle(
     if (btnFavorito) {
         btnFavorito.addEventListener("click", async () => {
             if (!user) {
-                alert(
+                mostrarAlerta(
                     "Debés iniciar sesión para agregar reseñas a tus favoritas.",
+                    "aviso",
                 );
                 return;
             }
 
             const esSuPropiaReseña = autorId && String(user.id) === String(autorId);
             if (esSuPropiaReseña) {
-                alert("No podés agregar tu propia reseña a favoritos.");
+                mostrarAlerta("No podés agregar tu propia reseña a favoritos.", "aviso");
                 return;
             }
 
             if (user && user.rol === "administrador") {
-                alert("Los administradores no pueden agregar reseñas a favoritos.");
+                mostrarAlerta("Los administradores no pueden agregar reseñas a favoritos.", "aviso");
                 return;
             }
 
@@ -337,7 +338,7 @@ function configurarAccionesDetalle(
 
                 esFavorita = !esFavorita;
                 const contador = document.getElementById("contadorFavoritos");
-                let actual = parseInt(contador.textContent);
+                const actual = parseInt(contador.textContent, 10);
 
                 const nuevoTotal = esFavorita
                     ? actual + 1
@@ -355,7 +356,7 @@ function configurarAccionesDetalle(
                 }
             } catch (error) {
                 console.error("Error al modificar favoritas:", error);
-                alert("Ocurrió un error al actualizar tus favoritas.");
+                mostrarAlerta("Ocurrió un error al actualizar tus favoritas.", "error");
             }
         });
     }
@@ -402,11 +403,11 @@ function configurarAccionesDetalle(
                     );
                 }
 
-                alert("Reseña eliminada con éxito.");
+                mostrarAlerta("Reseña eliminada con éxito.", "exito");
                 window.location.href = "/explorar.html";
             } catch (error) {
                 console.error("Error al eliminar la reseña:", error);
-                alert(error.message);
+                mostrarAlerta(error.message, "error");
             }
         });
     }

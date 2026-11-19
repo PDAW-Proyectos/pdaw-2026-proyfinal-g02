@@ -3,7 +3,7 @@ import { cargarFooter } from "./footer.js";
 import { cargarNavbar } from "./navbar.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-    cargarFooter()
+    cargarFooter();
     const user = await checkAuthStatus();
     cargarNavbar(user, { mostrarBuscador: true });
     inicializarAuth();
@@ -192,7 +192,7 @@ function renderizarCabeceraTitulo(tituloEl, textoTitulo, { mostrarBotonSeguir, i
 
     btnSeguir.addEventListener("click", async () => {
         if (!user) {
-            alert("Debés iniciar sesión para seguir a otros usuarios.");
+            mostrarAlerta("Debés iniciar sesión para seguir a otros usuarios.", "aviso");
             return;
         }
 
@@ -219,7 +219,7 @@ function renderizarCabeceraTitulo(tituloEl, textoTitulo, { mostrarBotonSeguir, i
             }
         } catch (error) {
             console.error("Error al seguir/dejar de seguir:", error);
-            alert("Ocurrió un error al procesar la acción.");
+            mostrarAlerta("Ocurrió un error al procesar la acción.", "error");
         }
     });
 }

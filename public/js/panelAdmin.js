@@ -2,17 +2,17 @@ import { checkAuthStatus, inicializarAuth } from "./auth.js";
 import { cargarFooter } from "./footer.js";
 import { cargarNavbar } from "./navbar.js";
 
-document.addEventListener("DOMContentLoaded", async() => {
-    cargarFooter()
+document.addEventListener("DOMContentLoaded", async () => {
+    cargarFooter();
     const user = await checkAuthStatus();
-    cargarNavbar(user, {mostrarBuscador: false});
-    inicializarAuth()
+    cargarNavbar(user, { mostrarBuscador: false });
+    inicializarAuth();
 
     cargarUsuarios();
 });
 
-export async function cargarUsuarios(){
-    const contenedor = document.getElementById('usuarios-container');
+export async function cargarUsuarios() {
+    const contenedor = document.getElementById("usuarios-container");
 
     if (!contenedor) return;
 
@@ -26,8 +26,8 @@ export async function cargarUsuarios(){
         }
 
         const todosLosUsuarios = await respuesta.json();
-        
-        const usuarios = todosLosUsuarios.filter(user => user.rol !== "administrador");
+
+        const usuarios = todosLosUsuarios.filter((user) => user.rol !== "administrador");
 
         if (usuarios.length === 0) {
             contenedor.innerHTML = `
@@ -39,11 +39,10 @@ export async function cargarUsuarios(){
             return;
         }
 
-        contenedor.innerHTML = usuarios.map(user => {
-            const cantidadReseñas = user.misReseñas?.length || 0;
-            const estaBaneado = user.estaBaneado || false;    
+        contenedor.innerHTML = usuarios.map((user) => {
+            const estaBaneado = user.estaBaneado || false;
 
-        return `
+            return `
             <tr>
                 <td>
                     <div class="d-flex align-items-center gap-3">
@@ -54,7 +53,7 @@ export async function cargarUsuarios(){
                     </div>
                 </td>
                 <td class="text-secondary text-center">
-                    ${user.email || 'Sin email'}
+                    ${user.email || "Sin email"}
                 </td>
                 <td class="text-center">
                     <a href="resenas.html?id=${user.id}" class="badge bg-secondary text-light text-decoration-none px-3 py-2 btn-ver-reseñas">
@@ -63,10 +62,10 @@ export async function cargarUsuarios(){
                 </td>
                 <td class="text-center">
                     <div class="d-inline-flex align-items-center gap-2">
-                        <button class="btn btn-sm ${estaBaneado ? 'btn-danger' : 'btn-warning'} text-dark fw-bold btn-banear" 
+                        <button class="btn btn-sm ${estaBaneado ? "btn-danger" : "btn-warning"} text-dark fw-bold btn-banear" 
                                 data-id="${user.id}" 
                                 data-baneado="${estaBaneado}">
-                            <i class="fa-solid fa-ban me-1"></i> ${estaBaneado ? 'Desbanear' : 'Banear'}
+                            <i class="fa-solid fa-ban me-1"></i> ${estaBaneado ? "Desbanear" : "Banear"}
                         </button>
                         <button class="btn btn-sm btn-outline-danger eliminar-usuario" 
                                 data-userid="${user.id}" 
@@ -77,23 +76,21 @@ export async function cargarUsuarios(){
                     </div>
                 </td>
             </tr>
-            `}).join('');
+            `;
+        }).join("");
 
         inicializarAccionesUsuarios();
-
-
     } catch (error) {
         console.error("Error: ", error);
-        contenedor.innerHTML = `<p class= "text-danger text-center py-4">Ocurrió un error al cargar los usuarios.</p>`;
+        contenedor.innerHTML = `<p class="text-danger text-center py-4">Ocurrió un error al cargar los usuarios.</p>`;
     }
 }
 
-async function inicializarAccionesUsuarios(){
+async function inicializarAccionesUsuarios() {
     const contenedor = document.getElementById("usuarios-container");
 
-    contenedor.querySelectorAll(".eliminar-usuario").forEach(btn => {
+    contenedor.querySelectorAll(".eliminar-usuario").forEach((btn) => {
         btn.addEventListener("click", async (e) => {
-
             const targetBtn = e.target.closest(".eliminar-usuario");
             const userId = targetBtn.getAttribute("data-userid");
 
@@ -101,56 +98,52 @@ async function inicializarAccionesUsuarios(){
             if (!confirmado) return;
 
             try {
-                const respuesta = await fetch(`/api/usuarios/${userId}`,{ 
-                    method: "DELETE"
+                const respuesta = await fetch(`/api/usuarios/${userId}`, {
+                    method: "DELETE",
                 });
-                
+
                 if (!respuesta.ok) {
                     throw new Error("No se puede eliminar al usuario desde el servidor");
                 }
-                alert("Usuario eliminado correctamente");
+                mostrarAlerta("Usuario eliminado correctamente", "exito");
                 cargarUsuarios();
-            }catch (error) {
+            } catch (error) {
                 console.error("Error: ", error);
-                alert("Ocurrió un error al intentar eliminar el usuario");
+                mostrarAlerta("Ocurrió un error al intentar eliminar el usuario", "error");
             }
         });
     });
 
-    contenedor.querySelectorAll(".btn-banear").forEach(btn => {
+    contenedor.querySelectorAll(".btn-banear").forEach((btn) => {
         btn.addEventListener("click", async (e) => {
             const targetBtn = e.target.closest(".btn-banear");
             const userId = targetBtn.getAttribute("data-id");
 
-            const estadoActual = targetBtn.getAttribute("data-baneado") === 'true';
-
+            const estadoActual = targetBtn.getAttribute("data-baneado") === "true";
 
             await banearUsuario(userId, estadoActual);
         });
     });
 }
 
-
-
-
-async function banearUsuario(id, estaBaneado){
-    try{
+async function banearUsuario(id, estaBaneado) {
+    try {
         const nuevoEstado = !estaBaneado;
 
         const respuesta = await fetch(`/api/usuarios/${id}/ban`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ estaBaneado: nuevoEstado })
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ estaBaneado: nuevoEstado }),
         });
         if (!respuesta.ok) {
             throw new Error("No se pudo actualizar el estado del usuario");
         }
 
         const mensaje = nuevoEstado ? "Usuario baneado con éxito" : "Usuario desbaneado correctamente";
-        alert(mensaje);
+        mostrarAlerta(mensaje, "exito");
         cargarUsuarios();
-    }catch (error) {
+    } catch (error) {
         console.error("Error al banear el usuario", error);
-        alert("Ocurrió un error al intentar cambiar el estado del usuario");
+        mostrarAlerta("Ocurrió un error al intentar cambiar el estado del usuario", "error");
     }
 }

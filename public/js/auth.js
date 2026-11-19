@@ -27,7 +27,7 @@ export async function logoutUser() {
 
 export function requiereRol(user, rol) {
     if (!user || user.rol !== rol) {
-        window.location.href = '/';
+        window.location.href = "/";
         return false;
     }
     return true;
@@ -35,7 +35,7 @@ export function requiereRol(user, rol) {
 
 export function inicializarAuth() {
     // 1. Inyectamos los modales en el DOM solo si no existen todavía
-    if (!document.getElementById('loginModal') && !document.getElementById('registerModal')) {
+    if (!document.getElementById("loginModal") && !document.getElementById("registerModal")) {
         const modalesHTML = `
             <!-- ================= MODAL DE INICIO DE SESIÓN ================= -->
             <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
@@ -98,7 +98,7 @@ export function inicializarAuth() {
                 </div>
             </div>
         `;
-        document.body.insertAdjacentHTML('beforeend', modalesHTML);
+        document.body.insertAdjacentHTML("beforeend", modalesHTML);
     }
 
     // 2. Obtenemos referencias y configuramos los listeners
@@ -122,11 +122,11 @@ export function inicializarAuth() {
         });
     }
 
-    const loginModal = loginModalElement 
+    const loginModal = loginModalElement
         ? (bootstrap.Modal.getInstance(loginModalElement) || new bootstrap.Modal(loginModalElement))
         : null;
-        
-    const registerModal = registerModalElement 
+
+    const registerModal = registerModalElement
         ? (bootstrap.Modal.getInstance(registerModalElement) || new bootstrap.Modal(registerModalElement))
         : null;
 
@@ -140,16 +140,16 @@ export function inicializarAuth() {
             const password = document.getElementById("registerPassword").value;
 
             if (username.length < 3) {
-                alert("El usuario debe tener al menos 3 caracteres.");
+                mostrarAlerta("El usuario debe tener al menos 3 caracteres.", "error");
                 return;
             }
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
-                alert("Por favor, ingresá un correo electrónico válido.");
+                mostrarAlerta("Por favor, ingresá un correo electrónico válido.", "error");
                 return;
             }
             if (password.length < 6) {
-                alert("La contraseña debe tener al menos 6 caracteres.");
+                mostrarAlerta("La contraseña debe tener al menos 6 caracteres.", "error");
                 return;
             }
 
@@ -162,13 +162,13 @@ export function inicializarAuth() {
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || "Error al registrar.");
 
-                alert("¡Registro exitoso! Por favor, iniciá sesión.");
+                mostrarAlerta("¡Registro exitoso! Por favor, iniciá sesión.", "exito");
                 registerForm.reset();
                 if (registerModal) registerModal.hide();
                 if (loginModal) loginModal.show();
             } catch (error) {
                 console.error("Error en registro:", error);
-                alert(error.message);
+                mostrarAlerta(error.message, "error");
             }
         });
     }
@@ -191,7 +191,7 @@ export function inicializarAuth() {
 
                 loginForm.reset();
                 if (loginModal) loginModal.hide();
-                
+
                 if (data.user && data.user.rol === "administrador") {
                     window.location.href = "/panelAdmin.html";
                 } else {
@@ -199,7 +199,7 @@ export function inicializarAuth() {
                 }
             } catch (error) {
                 console.error("Error en login:", error);
-                alert(error.message);
+                mostrarAlerta(error.message, "error");
             }
         });
     }
