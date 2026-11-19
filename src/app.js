@@ -8,7 +8,7 @@ const routerUsuarios = require("./routes/routes.usuarios");
 const { errorHandler, notFoundHandler } = require('./middlewares/errorHandler.js');
 const logger = require('./utils/logger.js');
 const requestContext = require("./middlewares/requestContext.js");
-
+const { version } = require("../package.json");
 
 function createApp(contenedor) {
     const { config, servicios, middlewares } = contenedor
@@ -30,12 +30,22 @@ function createApp(contenedor) {
                 secure: config.production,
                 maxAge: 60 * 60 * 1000,
             },
-        }),
+        })
     );
     app.set('trust proxy', 1);
 
     // carga req.user con el usuario si hay req.session.userId, sino null
     app.use(middlewares.autenticacion.autenticar) 
+
+    // endpoint para salud
+    app.get("/api/salud", (req, res) => {
+        res.json({
+            estado: "ok",
+            version,
+            entorno: config.env,
+            uptime: Math.round(process.uptime()),
+        });
+    });
 
     app.use("/api/auth", routerAuth(servicios, middlewares.autenticacion))
     app.use("/api/resenas", routerReseñas(servicios, middlewares.autenticacion));
