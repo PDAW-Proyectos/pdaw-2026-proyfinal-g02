@@ -52,14 +52,38 @@ npm test
 
 ## Endpoints
 
+#### Endpoints
+
+#### Endpoints
+
 | Método | Endpoint | Descripción | Permiso | Código de Éxito | Códigos de Error |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/register` | Registra un nuevo usuario (regular o administrador) mediante ServicioAuth. | Público | **201 Created** | `400`, `500` |
-| `POST` | `/api/auth/login` | Inicia sesión validando credenciales y generando sesión. | Público | **200 OK** | `400`, `401`, `500` |
-| `GET` | `/api/usuarios` | Obtiene el listado completo de usuarios del repositorio. | Admin | **200 OK** | `500` |
-| `GET` | `/api/usuarios/:id` | Busca y devuelve un usuario específico por su ID. | Autenticado | **200 OK** | `404`, `500` |
-| `PUT` | `/api/usuarios/:id` | Actualiza los datos o atributos de un usuario existente. | Autenticado | **200 OK** | `400`, `404`, `500` |
-| `DELETE` | `/api/usuarios/:id` | Elimina un usuario del sistema. | Admin | **204 No Content** | `404`, `500` |
+| ------ | ------ | ------ | ------ | ------ | ------ |
+| GET | `/api/salud` | Devuelve el estado (`ok`), versión, entorno y uptime sin dependencias externas[cite: 7]. | Público | **200 OK** | 500 |
+| POST | `/api/auth/register` | Registra un nuevo usuario (regular o administrador) mediante `ServicioAuth`[cite: 3, 8, 13]. | Público | **201 Created** | 400, 409, 500 |
+| POST | `/api/auth/login` | Inicia sesión validando credenciales, regenerando sesión y generando cookie[cite: 8, 13]. | Público | **200 OK** | 400, 401, 500 |
+| POST | `/api/auth/logout` | Destruye la sesión activa y limpia la cookie `connect.sid`[cite: 8]. | Público / Sesión | **204 No Content** | 500 |
+| GET | `/api/auth/me` | Devuelve el estado de autenticación y los datos del usuario en sesión si está logueado[cite: 8]. | Público | **200 OK** | 500 |
+| GET | `/api/usuarios` | Obtiene el listado completo de usuarios del repositorio[cite: 6, 11, 13]. | Admin | **200 OK** | 401, 403, 500 |
+| GET | `/api/usuarios/:id` | Busca y devuelve un usuario específico por su ID[cite: 6, 11, 13]. | Autenticado | **200 OK** | 401, 404, 500 |
+| PUT | `/api/usuarios/:id` | Actualiza los datos o atributos de un usuario existente[cite: 6, 11, 13]. | Autenticado | **200 OK** | 400, 401, 403, 404, 500 |
+| DELETE | `/api/usuarios/:id` | Elimina un usuario del sistema[cite: 6, 11, 13]. | Autenticado | **200 OK** | 401, 403, 404, 500 |
+| PATCH | `/api/usuarios/:id/ban` | Cambia el estado de baneo (`estaBaneado`) de un usuario[cite: 6, 11]. | Admin | **200 OK** | 400, 401, 403, 404, 500 |
+| POST | `/api/usuarios/:id/seguir` | Sigue al usuario indicado por `:id`[cite: 6, 11]. | Autenticado | **200 OK** | 400, 401, 404, 500 |
+| DELETE | `/api/usuarios/:id/seguir` | Deja de seguir al usuario indicado por `:id`[cite: 6, 11]. | Autenticado | **200 OK** | 400, 401, 404, 500 |
+| POST | `/api/usuarios/favoritas/:idReseña` | Agrega una reseña a las favoritas del usuario autenticado[cite: 6, 11]. | Autenticado | **200 OK** | 400, 401, 403, 404, 500 |
+| DELETE | `/api/usuarios/favoritas/:idReseña` | Quita una reseña de las favoritas del usuario autenticado[cite: 6, 11]. | Autenticado | **200 OK** | 400, 401, 404, 500 |
+| GET | `/api/resenas` | Lista las reseñas (JSON por defecto o XML con `?formato=xml` o `Accept: application/xml`)[cite: 5, 10]. | Público | **200 OK** | 500 |
+| GET | `/api/resenas/usuario/:idUsuario` | Lista las reseñas publicadas por un usuario específico[cite: 5, 10]. | Público | **200 OK** | 404, 500 |
+| GET | `/api/resenas/ultimas` | Devuelve las últimas reseñas publicadas (`?limit=` por defecto 10)[cite: 5, 10]. | Público | **200 OK** | 400, 500 |
+| GET | `/api/resenas/populares` | Devuelve las reseñas más populares (`?limit=` por defecto 10)[cite: 5, 10]. | Público | **200 OK** | 400, 500 |
+| GET | `/api/resenas/:id` | Obtiene el detalle de una reseña por su ID (JSON por defecto o XML con `?formato=xml` o `Accept: application/xml`)[cite: 5, 10]. | Público | **200 OK** | 404, 500 |
+| POST | `/api/resenas` | Crea una reseña asociada a una canción obtenida desde Deezer[cite: 5, 10, 13]. | Autenticado | **201 Created** | 400, 401, 404, 409, 500 |
+| PUT | `/api/resenas/:id` | Actualiza una reseña existente[cite: 5, 10]. | Autenticado | **200 OK** | 400, 401, 403, 404, 500 |
+| DELETE | `/api/resenas/:id` | Elimina una reseña[cite: 5, 10]. | Autenticado | **200 OK** | 401, 403, 404, 500 |
+| GET | `/api/deezer/buscar` | Busca canciones en Deezer según el parámetro de consulta `?q=`[cite: 4, 9]. | Público | **200 OK** | 400, 500, 502, 503 |
+| GET | `/api/deezer/topGlobal` | Obtiene el top global de canciones desde Deezer[cite: 4, 9]. | Público | **200 OK** | 500, 502, 503 |
+
+- **Formatos y errores:** Los endpoints de reseñas soportan respuesta en XML (`Content-Type: application/xml; charset=utf-8`) mediante `?formato=xml` o cabecera `Accept: application/xml`
 
 ## Uso de herramientas de IA
 
