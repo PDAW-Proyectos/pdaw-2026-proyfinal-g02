@@ -13,6 +13,18 @@ class ServicioReseñas {
         this.servicioDeezer = servicioDeezer;
     }
 
+    enriquecerReseñaConAutor(reseña) {
+        if (!reseña || !this.repositorioUsuarios) {
+            return reseña;
+        }
+
+        const usuario = this.repositorioUsuarios.buscarPorId(reseña.idUsuario);
+        return {
+            ...reseña,
+            nombreAutor: usuario?.username || "Anónimo",
+        };
+    }
+
     async listarReseñas() {
         return this.repositorioReseñas.listar();
     }
@@ -68,7 +80,7 @@ class ServicioReseñas {
                     );
                 }
                 // Verificamos si sigue al autor
-                if (usuarioActual.seguidos) {
+                if (usuarioActual && usuarioActual.seguidos) {
                     estaSiguiendoAlAutor = usuarioActual.seguidos.some(
                         (segId) => String(segId) === String(reseña.idUsuario),
                     );
@@ -85,7 +97,11 @@ class ServicioReseñas {
     }
 
     async obtenerReseñasDeUsuario(idUsuario) {
-        return this.repositorioReseñas.buscarPorUsuario(idUsuario);
+        const reseñas = await this.repositorioReseñas.buscarPorUsuario(idUsuario);
+        if (!Array.isArray(reseñas)) {
+            return [];
+        }
+        return reseñas.map((reseña) => this.enriquecerReseñaConAutor(reseña));
     }
 
     async crearReseña(idUsuario, cancionInput, valoracionPropia, descripcion) {
@@ -207,19 +223,7 @@ class ServicioReseñas {
             )
             .slice(0, Number(limite));
 
-        if (!this.repositorioUsuarios) {
-            return ultimas;
-        }
-
-        return ultimas.map((reseña) => {
-            const usuario = this.repositorioUsuarios.buscarPorId(
-                reseña.idUsuario,
-            );
-            return {
-                ...reseña,
-                nombreAutor: usuario?.username || "Anónimo",
-            };
-        });
+        return ultimas.map((reseña) => this.enriquecerReseñaConAutor(reseña));
     }
 
     async obtenerPopulares(limite = 10) {

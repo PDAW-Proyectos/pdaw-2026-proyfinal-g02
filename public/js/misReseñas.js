@@ -3,51 +3,92 @@ import { cargarNavbar } from "./navbar.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
     const user = await checkAuthStatus();
-    cargarNavbar(user);
+    cargarNavbar(user, { mostrarBuscador: true });
     inicializarAuth();
 
     const contenedor = document.querySelector(".favorites-container");
+    if (!contenedor) return;
 
-    if (!user) {
+    const params = new URLSearchParams(window.location.search);
+    const idParam = params.get("id");
+
+    // Si no viene ?id=... en la URL, usamos el usuario logueado
+    const idObjetivo = idParam || user?.id;
+
+    if (!idObjetivo) {
         contenedor.innerHTML = `
             <div class="text-center text-warning py-5">
-                <h3>Debes iniciar sesión para ver tus reseñas.</h3>
+                <h3>Debés iniciar sesión para ver tus reseñas.</h3>
             </div>`;
         return;
     }
 
-    await cargarMisResenas(user.id);
+    const esPropia = Boolean(user) && String(user.id) === String(idObjetivo);
+    const tituloPagina = document.querySelector("h1");
+
+    if (tituloPagina) {
+        tituloPagina.textContent = esPropia ? "Mis reseñas" : "Reseñas del usuario";
+    }
+
+    await cargarResenasUsuario(idObjetivo, { user, esPropia, tituloPagina });
 });
 
-async function cargarMisResenas(idUsuario) {
+async function cargarResenasUsuario(idUsuario, { user, esPropia, tituloPagina }) {
     const contenedor = document.querySelector(".favorites-container");
 
     try {
+        contenedor.innerHTML = `<p class="text-center text-secondary py-4">Cargando reseñas...</p>`;
+
         const respuesta = await fetch(`/api/resenas/usuario/${idUsuario}`);
-        
-        if (!respuesta.ok) throw new Error("No se pudieron cargar tus reseñas.");
+        if (!respuesta.ok) throw new Error("No se pudieron cargar las reseñas.");
 
         const reseñas = await respuesta.json();
 
+        const nombreUsuario =
+            reseñas?.[0]?.nombreAutor ||
+            reseñas?.[0]?.autor?.username ||
+            reseñas?.[0]?.autor?.nombre ||
+            (esPropia ? (user?.username || user?.nombre) : null) ||
+            `Usuario #${idUsuario}`;
+
+        const textoTitulo = esPropia ? "Mis reseñas" : `Reseñas de ${nombreUsuario}`;
+        if (tituloPagina) {
+            tituloPagina.textContent = textoTitulo;
+        }
+        document.title = `${textoTitulo} - Beatácora`;
+
         if (!reseñas || reseñas.length === 0) {
             contenedor.innerHTML = `
-                <p class="text-center text-secondary py-4">Aún no has creado ninguna reseña.</p>`;
+                <p class="text-center text-secondary py-4">
+                    ${esPropia ? "Aún no creaste ninguna reseña." : `${nombreUsuario} aún no tiene reseñas publicadas.`}
+                </p>`;
             return;
         }
 
-        contenedor.innerHTML = reseñas.map(reseña => {
-            const imagenCancion = reseña.cancion?.imagen || reseña.imagen || '';
-            const artistasStr = Array.isArray(reseña.cancion?.artistas) 
-                ? reseña.cancion.artistas.join(', ') 
-                : (reseña.cancion?.artistas || reseña.artista || 'Artista desconocido');
-            const albumNombre = reseña.cancion?.album || reseña.album || 'Álbum desconocido';
-            const tituloCancion = reseña.cancion?.titulo || reseña.titulo || 'Canción sin título';
-            const valoracion = reseña.valoracionPropia || reseña.rating || '0';
-            const descripcion = reseña.descripcion || reseña.comentario || '';
-            
-            const fechaFormateada = reseña.fechaPublicado 
-                ? new Date(reseña.fechaPublicado).toLocaleDateString() 
-                : (reseña.tiempo || 'hace un momento');
+        contenedor.innerHTML = reseñas.map((reseña) => {
+            const imagenCancion = reseña.cancion?.imagen || reseña.imagen || "/img/default-album.jpg";
+            const artistasStr = Array.isArray(reseña.cancion?.artistas)
+                ? reseña.cancion.artistas.join(", ")
+                : (reseña.cancion?.artistas || reseña.artista || "Artista desconocido");
+            const albumNombre = reseña.cancion?.album ? `Álbum: ${reseña.cancion.album}` : "";
+            const tituloCancion = reseña.cancion?.titulo || reseña.titulo || "Canción sin título";
+            const valoracion = reseña.valoracionPropia ?? reseña.rating ?? "-";
+            const descripcion = reseña.descripcion || reseña.comentario || "";
+
+            const fechaFormateada = reseña.fechaPublicado
+                ? new Date(reseña.fechaPublicado).toLocaleDateString("es-AR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric"
+                })
+                : (reseña.tiempo || "hace un momento");
+
+            const nombreAutor = reseña.nombreAutor || nombreUsuario;
+            const badgeTuReseña = esPropia ? `
+                <span class="badge bg-success bg-opacity-25 text-success border border-success px-2 py-1 rounded-pill">
+                    <i class="fa-solid fa-user-check me-1"></i> Tu reseña
+                </span>
+            ` : "";
 
             return `
                 <div class="review-card mb-4 p-4 rounded-4 bg-dark border border-secondary text-light shadow-sm" data-id="${reseña.id}">
@@ -63,13 +104,12 @@ async function cargarMisResenas(idUsuario) {
                                 <div>
                                     <h4 class="card-title mb-1 fw-bold text-light">${tituloCancion}</h4>
                                     <p class="text-secondary mb-2 fs-6">
-                                        <i class="fa-solid fa-microphone-lines me-2 text-success"></i>${artistasStr} 
-                                        <span class="text-muted ms-2">|</span> 
-                                        <span class="text-light ms-2">${albumNombre}</span>
+                                        <i class="fa-solid fa-microphone-lines me-2 text-success"></i>${artistasStr}
+                                        ${albumNombre ? `<span class="text-white ms-2">|</span> <span class="text-light ms-2">${albumNombre}</span>` : ""}
                                     </p>
                                 </div>
                                 <div class="fs-4 fw-bold text-warning bg-black px-3 py-1 rounded-pill border border-secondary">
-                                    ★ ${valoracion}.0
+                                    ★ ${valoracion}
                                 </div>
                             </div>
 
@@ -77,20 +117,18 @@ async function cargarMisResenas(idUsuario) {
                                 "${descripcion}"
                             </p>
 
-                            <div class="d-flex justify-content-between align-items-center pt-3 border-top border-secondary">
-                                <small class="text-muted">
-                                    <i class="fa-regular fa-calendar me-1"></i> Publicado el ${fechaFormateada}
-                                </small>
-                                <div class="d-flex gap-2">
-                                    <!-- Botón Editar -->
-                                    <button class="btn btn-outline-primary btn-sm px-3 py-1 fw-semibold btn-editar" data-id="${reseña.id}" aria-label="Editar reseña">
-                                        <i class="bi bi-pencil-fill me-1"></i> Editar
-                                    </button>
-                                    <!-- Botón Eliminar -->
-                                    <button class="btn btn-outline-danger btn-sm px-3 py-1 fw-semibold btn-eliminar" data-id="${reseña.id}" aria-label="Eliminar reseña">
-                                        <i class="bi bi-trash-fill me-1"></i> Eliminar
-                                    </button>
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center pt-3 border-top border-secondary gap-2">
+                                <div class="d-flex align-items-center flex-wrap gap-2 small text-white">
+                                    <span><i class="fa-regular fa-calendar me-1"></i> Publicado el ${fechaFormateada}</span>
+                                    ${nombreAutor ? `
+                                        <span class="text-secondary">•</span>
+                                        <span>Por <strong class="text-light">${nombreAutor}</strong></span>
+                                    ` : ""}
+                                    ${badgeTuReseña}
                                 </div>
+                                <a href="/reseña.html?id=${reseña.id}" class="btn btn-brand btn-sm px-4 py-2 fw-semibold shadow-sm">
+                                    Ver reseña completa <i class="fa-solid fa-arrow-right ms-1"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -98,51 +136,9 @@ async function cargarMisResenas(idUsuario) {
             `;
         }).join("");
 
-        configurarAcciones();
-
     } catch (error) {
         console.error("Error:", error);
         contenedor.innerHTML = `
-            <p class="text-center text-danger py-4">Ocurrió un error al cargar tus reseñas.</p>`;
+            <p class="text-center text-danger py-4">Ocurrió un error al cargar las reseñas.</p>`;
     }
-}
-
-    document.querySelectorAll(".btn-editar").forEach(btn => {
-        btn.addEventListener("click", (e) => {
-            const idReseña = e.currentTarget.getAttribute("data-id");
-            alert(`Editar reseña con ID: ${idReseña}`);
-        });
-    });
-
-
-function configurarAcciones() {
-    document.querySelectorAll(".btn-eliminar").forEach(btn => {
-        btn.addEventListener("click", async (e) => {
-            const idReseña = e.currentTarget.getAttribute("data-id");
-            
-            if (confirm("¿Estás seguro de que querés eliminar esta reseña?")) {
-                try {
-                    const respuesta = await fetch(`/api/resenas/${idReseña}`, {
-                        method: "DELETE"
-                    });
-
-                    if (respuesta.ok) {
-                        const tarjeta = document.querySelector(`.review-card[data-id="${idReseña}"]`);
-                        if (tarjeta) tarjeta.remove();
-                    } else {
-                        alert("No se pudo eliminar la reseña.");
-                    }
-                } catch (err) {
-                    console.error("Error al eliminar:", err);
-                }
-            }
-        });
-    });
-
-    document.querySelectorAll(".btn-editar").forEach(btn => {
-        btn.addEventListener("click", (e) => {
-            const idReseña = e.currentTarget.getAttribute("data-id");
-            alert(`Editar reseña con ID: ${idReseña}`);
-        });
-    });
 }
