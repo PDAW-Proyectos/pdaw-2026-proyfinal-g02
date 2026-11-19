@@ -75,7 +75,7 @@ export function inicializarModalReseña() {
 
             let url = '/api/resenas';
             let method = 'POST';
-            let bodyData = {};
+            let bodyData
 
             if (esEdicion) {
                 const resenaId = resenaFormModal.dataset.resenaId;
