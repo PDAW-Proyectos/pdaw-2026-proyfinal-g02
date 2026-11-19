@@ -1,11 +1,26 @@
 const { NotFoundError, BadRequestError } = require("../utils/errors");
+const { serializeResenasXml } = require("../utils/xml");
+
+function solicitaXml(req) {
+    if (req.query?.formato === "xml") return true;
+    const formatoAceptado = req.accepts(["json", "xml"]);
+    return formatoAceptado === "xml";
+}
+
+function enviarRespuesta(req, res, datos) {
+    if (solicitaXml(req)) {
+        res.type("application/xml; charset=utf-8").send(serializeResenasXml(datos));
+        return;
+    }
+    res.json(datos);
+}
 
 function crearResenasController(servicioReseñas, servicioDeezer) {
     return {
         listar: async (req, res, next) => {
             try {
                 const reseñas = await servicioReseñas.listarReseñas();
-                res.json(reseñas);
+                enviarRespuesta(req, res, reseñas);
             } catch (error) {
                 next(error);
             }
@@ -15,7 +30,7 @@ function crearResenasController(servicioReseñas, servicioDeezer) {
             try {
                 const { idUsuario } = req.params;
                 const reseñas = await servicioReseñas.obtenerReseñasDeUsuario(idUsuario);
-                res.json(reseñas);
+                enviarRespuesta(req, res, reseñas);
             } catch (error) {
                 next(error);
             }
@@ -24,7 +39,7 @@ function crearResenasController(servicioReseñas, servicioDeezer) {
         crear: async (req, res, next) => {
             try {
                 const idUsuario = req.user?.id;
-                const { cancionId, valoracionPropia, descripcion } = req.body; 
+                const { cancionId, valoracionPropia, descripcion } = req.body;
 
                 if (!cancionId) {
                     throw new BadRequestError("El ID de la canción es obligatorio.");
@@ -88,7 +103,7 @@ function crearResenasController(servicioReseñas, servicioDeezer) {
             try {
                 const limite = req.query.limit || 10;
                 const ultimas = await servicioReseñas.obtenerUltimas(limite);
-                res.json(ultimas);
+                enviarRespuesta(req, res, ultimas);
             } catch (error) {
                 next(error);
             }
@@ -98,7 +113,7 @@ function crearResenasController(servicioReseñas, servicioDeezer) {
             try {
                 const limite = req.query.limit || 10;
                 const populares = await servicioReseñas.obtenerPopulares(limite);
-                res.json(populares);
+                enviarRespuesta(req, res, populares);
             } catch (error) {
                 next(error);
             }
@@ -108,11 +123,11 @@ function crearResenasController(servicioReseñas, servicioDeezer) {
             try {
                 const { id } = req.params;
                 const idUsuarioActual = req.user ? req.user.id : null;
-                const reseña = await servicioReseñas.obtenerReseñaPorId(id,idUsuarioActual);
+                const reseña = await servicioReseñas.obtenerReseñaPorId(id, idUsuarioActual);
                 if (!reseña) {
                     throw new NotFoundError("No se encontró la reseña solicitada.");
                 }
-                res.json(reseña);
+                enviarRespuesta(req, res, reseña);
             } catch (error) {
                 next(error);
             }
