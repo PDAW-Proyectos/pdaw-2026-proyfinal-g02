@@ -55,7 +55,7 @@ export async function cargarUsuarios(){
                     ${user.email || 'Sin email'}
                 </td>
                 <td class="text-center">
-                    <a href="/usuario/${user.id}" class="badge bg-secondary text-light text-decoration-none px-3 py-2 btn-ver-reseñas">
+                    <a href="resenas.html?id=${user.id}" class="badge bg-secondary text-light text-decoration-none px-3 py-2 btn-ver-reseñas">
                         Ver reseñas
                     </a>
                 </td>
