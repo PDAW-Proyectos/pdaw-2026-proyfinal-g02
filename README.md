@@ -92,3 +92,5 @@ Registrar aquí qué herramientas se usaron, para qué tareas y qué se adoptó 
 | Fecha | Herramienta | Tarea | Qué se adoptó y por qué |
 | ----- | ----------- | ----- | ----------------------- |
 |       |             |       |                         |
+| 17/11 | Gemini | Maquetar vista de explorar y ruta de top global | Ayuda en la obtención de charts y organización de arquitectura de capas |
+| 18/11 | Gemini | Maquetar vista reseña | Ayuda con la implementacion del listado de las reseñas del usuario |
