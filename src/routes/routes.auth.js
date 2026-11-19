@@ -11,7 +11,7 @@ function routerAuth(servicios, middlewareAutenticacion) {
   router.post('/register', controladorAuth.register);
   router.post('/login', controladorAuth.login);
   router.post('/logout', controladorAuth.logout);
-  router.get('/me', requiereAutenticacion, controladorAuth.me);
+  router.get('/me', controladorAuth.me);
 
   return router;
 };
