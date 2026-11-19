@@ -200,6 +200,26 @@ class RepositorioUsuarios {
         }
         return usuario;
     }
+
+    async quitarReseñaFavoritaDeTodos(idReseña) {
+        let huboCambios = false;
+
+        for (const usuario of this.usuarios) {
+            if (Array.isArray(usuario.reseñasFavoritas)) {
+                const largoAnterior = usuario.reseñasFavoritas.length;
+                usuario.reseñasFavoritas = usuario.reseñasFavoritas.filter(
+                    (id) => String(id) !== String(idReseña)
+                );
+                if (usuario.reseñasFavoritas.length !== largoAnterior) {
+                    huboCambios = true;
+                }
+            }
+        }
+
+        if (huboCambios) {
+            await this.guardar();
+        }
+    }
 }
 
 module.exports = RepositorioUsuarios;

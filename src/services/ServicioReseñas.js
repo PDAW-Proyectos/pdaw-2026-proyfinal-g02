@@ -182,11 +182,14 @@ class ServicioReseñas {
 
         const resultado = await this.repositorioReseñas.eliminar(idReseña);
 
-        if (this.repositorioUsuarios && reseña.idUsuario) {
-            await this.repositorioUsuarios.quitarReseña(
-                reseña.idUsuario,
-                idReseña,
-            );
+        if (this.repositorioUsuarios) {
+            if (reseña.idUsuario) {
+                await this.repositorioUsuarios.quitarReseña(
+                    reseña.idUsuario,
+                    idReseña,
+                );
+            }
+            await this.repositorioUsuarios.quitarReseñaFavoritaDeTodos(idReseña);
         }
 
         return resultado;
