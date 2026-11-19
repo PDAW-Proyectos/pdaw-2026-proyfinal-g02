@@ -89,6 +89,16 @@ npm test
 
 Registrar aquí qué herramientas se usaron, para qué tareas y qué se adoptó de sus propuestas.
 
-| Fecha | Herramienta | Tarea | Qué se adoptó y por qué |
-| ----- | ----------- | ----- | ----------------------- |
-|       |             |       |                         |
+| Herramienta | Tarea | Qué se adoptó y por qué |
+| ----------- | ----- | ----------------------- |
+|  Gemini           | Refactorizar, corregir errores y tests unitarios      |      Mejoras en las validaciones y creacion de tests extras. Para abarcar casos que no teniamos en cuenta y evitar código ineficiente.             |
+| Gemini | Maquetación con bootstrap | Clases y estilos para mejorar las vistas. |
+| Gemini | Refactorizar | Pasar de la estructura ya diseñada en HTML a generarla dinamicamente a traves de innerHTML o textContent |
+| Gemini | Test | Creacion de ejemplos distintos para los diferentes tests |
+| Gemini | Depuración de estilos y DOM | Revisión de carga de íconos (Font Awesome) y comportamiento de modales de Bootstrap |
+| Gemini | Organización de repositorio y Git | Estandarización de mensajes de commit (feat, fix, docs |
+| Gemini | Documentación técnica | Transformar en formato Markdown la documentacion escrita en los distintos documentos |
+| Gemini | Estilos | Ideas para nombres, colores, efectos |
+| Gemini | Organizacion GitHub | Estandarizacion de mensajes de las issues |
+
+
