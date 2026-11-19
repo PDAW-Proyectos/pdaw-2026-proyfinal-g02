@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="./css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,600;0,800;1,700&display=swap"
         rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&family=Syne:wght@700;800&display=swap"
@@ -23,78 +23,86 @@
     <header id="main-navbar"></header>
 
     <main class="container my-5 text-light">
-    <h2 class="fw-bold mb-4">Datos de mi Cuenta</h2>
-    
-    <div class="row">
-        <!-- Columna Izquierda: Datos de la Cuenta -->
-        <div class="col-md-7">
-            <form id="form-perfil" class="bg-dark p-4 rounded-4 border border-secondary shadow-sm">
-                
-                <!-- Usuario -->
-                <div class="mb-3 position-relative">
-                    <label for="input-usuario" class="form-label text-secondary small">Nombre de usuario</label>
-                    <div class="input-group">
-                        <input type="text" id="input-usuario" class="form-control bg-secondary text-light border-0" readonly>
-                        <button class="btn btn-outline-light btn-editar" type="button" data-bs-toggle="modal" data-bs-target="#editarCampoModal" data-campo="usuario">
-                            <i class="bi bi-pencil"></i>
-                        </button>
+        <h2 class="fw-bold mb-4">Datos de mi Cuenta</h2>
+
+        <div class="row">
+            <!-- Columna Izquierda: Datos de la Cuenta -->
+            <div class="col-md-7">
+                <form id="form-perfil" class="bg-dark p-4 rounded-4 border border-secondary shadow-sm">
+
+                    <!-- Usuario -->
+                    <div class="mb-3 position-relative">
+                        <label for="input-usuario" class="form-label text-secondary small">Nombre de usuario</label>
+                        <div class="input-group">
+                            <input type="text" id="input-usuario" class="form-control bg-secondary text-light border-0" readonly>
+                            <button class="btn btn-outline-light btn-editar" type="button" data-bs-toggle="modal" data-bs-target="#editarCampoModal" data-campo="usuario">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Email -->
-                <div class="mb-3 position-relative">
-                    <label for="input-email" class="form-label text-secondary small">Correo electrónico</label>
-                    <div class="input-group">
-                        <input type="email" id="input-email" class="form-control bg-secondary text-light border-0" readonly>
-                        <button class="btn btn-outline-light btn-editar" type="button" data-bs-toggle="modal" data-bs-target="#editarCampoModal" data-campo="email">
-                            <i class="bi bi-pencil"></i>
-                        </button>
+                    <!-- Email -->
+                    <div class="mb-3 position-relative">
+                        <label for="input-email" class="form-label text-secondary small">Correo electrónico</label>
+                        <div class="input-group">
+                            <input type="email" id="input-email" class="form-control bg-secondary text-light border-0" readonly>
+                            <button class="btn btn-outline-light btn-editar" type="button" data-bs-toggle="modal" data-bs-target="#editarCampoModal" data-campo="email">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Contraseña -->
-                <div class="mb-3 position-relative">
-                    <label for="input-pass" class="form-label text-secondary small">Contraseña</label>
-                    <div class="input-group">
-                        <input type="password" id="input-pass" class="form-control bg-secondary text-light border-0" value="********" readonly>
-                        <button class="btn btn-outline-light btn-editar" type="button" data-bs-toggle="modal" data-bs-target="#editarCampoModal" data-campo="password">
-                            <i class="bi bi-pencil"></i>
-                        </button>
+                    <!-- Contraseña -->
+                    <div class="mb-3 position-relative">
+                        <label for="input-pass" class="form-label text-secondary small">Contraseña</label>
+                        <div class="input-group">
+                            <input type="password" id="input-pass" class="form-control bg-secondary text-light border-0" value="********" readonly>
+                            <button class="btn btn-outline-light btn-editar" type="button" data-bs-toggle="modal" data-bs-target="#editarCampoModal" data-campo="password">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Estado de baneo -->
-                <div class="mb-3">
-                    <label class="form-label text-secondary small">Estado de la cuenta</label>
-                    <div id="estado-ban" class="p-2 rounded bg-secondary text-light fw-bold text-center">
+                    <!-- Estado de baneo -->
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small">Estado de la cuenta</label>
+                        <div id="estado-ban" class="p-2 rounded bg-secondary text-light fw-bold text-center">
+                        </div>
                     </div>
+
+                </form>
+            </div>
+
+            <!-- Columna Derecha: Estadísticas / Listas (Reseñas, Seguidores, etc.) -->
+            <div id="columna-actividad" class="col-md-5">
+                <div class="bg-dark p-4 rounded-4 border border-secondary shadow-sm">
+                    <h5 class="text-white mb-3">Actividad</h5>
+                    <ul class="list-group list-group-flush bg-transparent">
+                        <li class="list-group-item bg-transparent text-light px-0">
+                            <a href="/resenas.html" class="text-light text-decoration-none d-flex justify-content-between align-items-center w-100">
+                                <span><i class="fa-solid fa-compact-disc me-2 text-success"></i>Mis Reseñas</span>
+                                <span id="count-mis-resenas" class="badge bg-success rounded-pill">0</span>
+                            </a>
+                        </li>
+                        <li class="list-group-item bg-transparent text-light px-0">
+                            <a href="/favoritas.html" class="text-light text-decoration-none d-flex justify-content-between align-items-center w-100">
+                                <span><i class="fa-solid fa-star me-2 text-warning"></i>Reseñas Favoritas</span>
+                                <span id="count-favs" class="badge bg-success rounded-pill">0</span>
+                            </a>
+                        </li>
+                        <li id="item-seguidores" class="list-group-item bg-transparent text-light px-0 d-flex justify-content-between align-items-center" style="cursor: pointer;" role="button">
+                            <span><i class="fa-solid fa-users me-2 text-info"></i>Seguidores</span>
+                            <span id="count-seguidores" class="badge bg-info text-dark fw-bold rounded-pill">0</span>
+                        </li>
+                        <li id="item-seguidos" class="list-group-item bg-transparent text-light px-0 d-flex justify-content-between align-items-center" style="cursor: pointer;" role="button">
+                            <span><i class="fa-solid fa-user-check me-2 text-info"></i>Seguidos</span>
+                            <span id="count-seguidos" class="badge bg-info text-dark fw-bold rounded-pill">0</span>
+                        </li>
+                    </ul>
                 </div>
-
-            </form>
-        </div>
-
-        <!-- Columna Derecha: Estadísticas / Listas (Reseñas, Seguidores, etc.) -->
-        <div id="columna-actividad" class="col-md-5">
-            <div class="bg-dark p-4 rounded-4 border border-secondary shadow-sm">
-                <h5 class="text-white mb-3">Actividad</h5>
-                <ul class="list-group list-group-flush bg-transparent">
-                    <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center">
-                        Mis Reseñas <span id="count-mis-resenas" class="badge bg-success rounded-pill">0</span>
-                    </li>
-                    <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center">
-                        Reseñas Favoritas <span id="count-favs" class="badge bg-success rounded-pill">0</span>
-                    </li>
-                    <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center">
-                        Seguidores <span id="count-seguidores" class="badge bg-info rounded-pill">0</span>
-                    </li>
-                    <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center">
-                        Seguidos <span id="count-seguidos" class="badge bg-info rounded-pill">0</span>
-                    </li>
-                </ul>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 
     <!-- Footer -->
     <footer class="footer text-center py-4 border-top border-secondary mt-5 text-secondary">
@@ -115,7 +123,7 @@
                     <h5 class="modal-title fw-bold" id="editarCampoModalLabel">Editar información</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                
+
                 <div class="modal-body">
                     <form id="form-editar-campo">
                         <!-- Campo oculto para identificar qué propiedad editamos -->
@@ -128,6 +136,21 @@
 
                         <button type="submit" class="btn btn-brand w-100 mt-3 py-2">Guardar cambios</button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL LISTA DE SEGUIDORES / SEGUIDOS ================= -->
+    <div class="modal fade" id="listaUsuariosModal" tabindex="-1" aria-labelledby="listaUsuariosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light border border-secondary p-3">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title fw-bold" id="listaUsuariosModalLabel">Usuarios</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="cuerpo-lista-usuarios">
+                    <p class="text-secondary text-center mb-0">Cargando...</p>
                 </div>
             </div>
         </div>
