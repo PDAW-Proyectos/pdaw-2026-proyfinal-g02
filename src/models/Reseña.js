@@ -1,5 +1,13 @@
 class Reseña {
-    constructor(id, cancion, valoracionPropia, descripcion, idUsuario, fechaPublicado = new Date(), cantidadFavoritos = 0) {
+    constructor({
+        id,
+        cancion,
+        valoracionPropia,
+        descripcion,
+        idUsuario,
+        fechaPublicado = new Date(),
+        cantidadFavoritos = 0,
+    } = {}) {
         this.id = id;
         this.cancion = cancion;
         this.valoracionPropia = valoracionPropia;

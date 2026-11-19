@@ -33,64 +33,73 @@ class ServicioReseñas {
         return reseñas.map((reseña) => this.enriquecerReseñaConAutor(reseña));
     }
 
+    async _refrescarPreviewCancion(idReseña, reseña) {
+        if (!this.servicioDeezer || !reseña.cancion?.id) {
+            return;
+        }
+
+        try {
+            const datosFrescos = await this.servicioDeezer.obtenerCancionPorId(
+                reseña.cancion.id,
+            );
+            if (datosFrescos?.previewUrl) {
+                reseña.cancion.previewUrl = datosFrescos.previewUrl; // se vencia el previewUrl
+                await this.repositorioReseñas.actualizar(idReseña, {
+                    cancion: reseña.cancion,
+                });
+            }
+        } catch {
+            throw new NotFoundError(
+                "No se pudo actualizar el audio de la canción desde Deezer.",
+            );
+        }
+    }
+
+    _obtenerInfoRelacionada(reseña, idUsuarioActual, idReseña) {
+        let autorInfo = { id: reseña.idUsuario, nombre: "Usuario" };
+        let esFavoritaDelUsuario = false;
+        let estaSiguiendoAlAutor = false;
+
+        if (!this.repositorioUsuarios) {
+            return { autorInfo, esFavoritaDelUsuario, estaSiguiendoAlAutor };
+        }
+
+        const usuario = this.repositorioUsuarios.buscarPorId(reseña.idUsuario);
+        if (usuario) {
+            autorInfo = {
+                id: usuario.id,
+                nombre: usuario.username || "Usuario",
+            };
+        }
+
+        if (idUsuarioActual) {
+            const usuarioActual =
+                this.repositorioUsuarios.buscarPorId(idUsuarioActual);
+            if (usuarioActual?.reseñasFavoritas) {
+                esFavoritaDelUsuario = usuarioActual.reseñasFavoritas.some(
+                    (favId) => String(favId) === String(idReseña),
+                );
+            }
+            if (usuarioActual?.seguidos) {
+                estaSiguiendoAlAutor = usuarioActual.seguidos.some(
+                    (segId) => String(segId) === String(reseña.idUsuario),
+                );
+            }
+        }
+
+        return { autorInfo, esFavoritaDelUsuario, estaSiguiendoAlAutor };
+    }
+
     async obtenerReseñaPorId(id, idUsuarioActual) {
         const reseña = this.repositorioReseñas.buscarPorId(id);
         if (!reseña) {
             throw new NotFoundError("Reseña");
         }
 
-        if (this.servicioDeezer && reseña.cancion && reseña.cancion.id) {
-            try {
-                const datosFrescos =
-                    await this.servicioDeezer.obtenerCancionPorId(
-                        reseña.cancion.id,
-                    );
-                if (datosFrescos && datosFrescos.previewUrl) {
-                    reseña.cancion.previewUrl = datosFrescos.previewUrl; // se vencia el previewUrl
-                    await this.repositorioReseñas.actualizar(id, {
-                        cancion: reseña.cancion,
-                    });
-                }
-            } catch (error) {
-                throw new NotFoundError(
-                    "No se pudo actualizar el audio de la canción desde Deezer.",
-                );
-            }
-        }
+        await this._refrescarPreviewCancion(id, reseña);
 
-        // Agregamos info del autor, favoritos y seguimiento
-        let autorInfo = { id: reseña.idUsuario, nombre: "Usuario" };
-        let esFavoritaDelUsuario = false;
-        let estaSiguiendoAlAutor = false;
-
-        if (this.repositorioUsuarios) {
-            const usuario = this.repositorioUsuarios.buscarPorId(
-                reseña.idUsuario,
-            );
-            if (usuario) {
-                autorInfo = {
-                    id: usuario.id,
-                    nombre: usuario.username || "Usuario",
-                };
-            }
-
-            // Verificamos si el usuario actual marcó esta reseña como favorita
-            if (idUsuarioActual) {
-                const usuarioActual =
-                    this.repositorioUsuarios.buscarPorId(idUsuarioActual);
-                if (usuarioActual && usuarioActual.reseñasFavoritas) {
-                    esFavoritaDelUsuario = usuarioActual.reseñasFavoritas.some(
-                        (favId) => String(favId) === String(id),
-                    );
-                }
-                // Verificamos si sigue al autor
-                if (usuarioActual && usuarioActual.seguidos) {
-                    estaSiguiendoAlAutor = usuarioActual.seguidos.some(
-                        (segId) => String(segId) === String(reseña.idUsuario),
-                    );
-                }
-            }
-        }
+        const { autorInfo, esFavoritaDelUsuario, estaSiguiendoAlAutor } =
+            this._obtenerInfoRelacionada(reseña, idUsuarioActual, id);
 
         return {
             ...reseña,
@@ -101,7 +110,8 @@ class ServicioReseñas {
     }
 
     async obtenerReseñasDeUsuario(idUsuario) {
-        const reseñas = await this.repositorioReseñas.buscarPorUsuario(idUsuario);
+        const reseñas =
+            await this.repositorioReseñas.buscarPorUsuario(idUsuario);
         if (!Array.isArray(reseñas)) {
             return [];
         }
@@ -138,16 +148,16 @@ class ServicioReseñas {
         // 2. Asegurarnos de que el objeto canción sea una instancia válida de Cancion
         let cancionFinal = cancionInput;
         if (!(cancionInput instanceof Cancion)) {
-            cancionFinal = new Cancion(
-                cancionInput.id,
-                cancionInput.titulo,
-                cancionInput.artistas,
-                cancionInput.album,
-                cancionInput.previewUrl,
-                cancionInput.imagen,
-                cancionInput.duracion,
-                cancionInput.fechaLanzamiento,
-            );
+            cancionFinal = new Cancion({
+                id: cancionInput.id,
+                titulo: cancionInput.titulo,
+                artistas: cancionInput.artistas,
+                album: cancionInput.album,
+                previewUrl: cancionInput.previewUrl,
+                imagen: cancionInput.imagen,
+                duracion: cancionInput.duracion,
+                fechaLanzamiento: cancionInput.fechaLanzamiento,
+            });
         }
 
         // 3. Persistir a través del repositorio

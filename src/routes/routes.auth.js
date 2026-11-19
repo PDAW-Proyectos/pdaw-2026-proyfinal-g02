@@ -1,9 +1,8 @@
 const { Router } = require('express');
 const crearControladorAuth = require("../controllers/controller.auth")
 
-function routerAuth(servicios, middlewareAutenticacion) {
+function routerAuth(servicios) {
   const {auth} = servicios
-  const {requiereAutenticacion} = middlewareAutenticacion  
 
   const router = Router();
   const controladorAuth = crearControladorAuth(auth);

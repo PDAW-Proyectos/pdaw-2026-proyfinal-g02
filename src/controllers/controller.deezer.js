@@ -9,7 +9,7 @@ function crearDeezerController(servicioDeezer) {
                 next(error);
             }
         },
-        topGlobal: async (req, res) => {
+        topGlobal: async (req, res, next) => {
             try {
                 const canciones = await servicioDeezer.obtenerTopGlobal();
                 res.json(canciones);

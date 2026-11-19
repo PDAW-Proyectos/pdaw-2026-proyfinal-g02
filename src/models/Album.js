@@ -1,5 +1,5 @@
 class Album {
-    constructor(id, nombre, portada = "", artistas = [], canciones = []) {
+    constructor({ id, nombre, portada = "", artistas = [], canciones = [] } = {}) {
         this.id = id;
         this.nombre = nombre;
         this.portada = portada;

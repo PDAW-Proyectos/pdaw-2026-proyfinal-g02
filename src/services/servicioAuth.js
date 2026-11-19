@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const {
     BadRequestError,
     ConflictError,
-    ForbiddenError
+    ForbiddenError,
 } = require("../utils/errors.js");
 
 class ServicioAuth {
@@ -25,8 +25,7 @@ class ServicioAuth {
         };
     }
 
-    async registrarUsuario(username, email, password, rol = "usuario") {
-        // validaciones de formato con BadRequestError
+    _validarDatosRegistro(username, email, password) {
         if (
             !username ||
             typeof username !== "string" ||
@@ -54,11 +53,9 @@ class ServicioAuth {
                 "La contraseña debe tener al menos 6 caracteres.",
             );
         }
+    }
 
-        const cleanUsername = username.trim();
-        const cleanEmail = email.trim().toLowerCase();
-
-        // que sean unicos el username y el email (ConflictError)
+    _verificarDisponibilidad(cleanUsername, cleanEmail) {
         const existeEmail = this.repositorio.buscarPorEmail(cleanEmail);
         const existeUsername =
             this.repositorio.buscarPorUsername(cleanUsername);
@@ -68,6 +65,15 @@ class ServicioAuth {
                 "El usuario o correo ya se encuentra registrado.",
             );
         }
+    }
+
+    async registrarUsuario(username, email, password, rol = "usuario") {
+        this._validarDatosRegistro(username, email, password);
+
+        const cleanUsername = username.trim();
+        const cleanEmail = email.trim().toLowerCase();
+
+        this._verificarDisponibilidad(cleanUsername, cleanEmail);
 
         const passwordHash = await bcrypt.hash(password, 12);
         const usuario = await this.repositorio.agregar(
@@ -89,7 +95,7 @@ class ServicioAuth {
             email.trim().toLowerCase(),
         );
         if (!usuario) {
-            return null; // 👈 Retorna null para los tests de credenciales inválidas
+            return null;
         }
 
         if (usuario.estaBaneado) {
@@ -98,7 +104,7 @@ class ServicioAuth {
 
         const esValida = await bcrypt.compare(password, usuario.passwordHash);
         if (!esValida) {
-            return null; // 👈 Retorna null para los tests de contraseña incorrecta
+            return null;
         }
 
         return this._toPublic(usuario);

@@ -5,6 +5,7 @@ const {
     ConflictError,
 } = require("../utils/errors.js");
 const bcrypt = require("bcryptjs");
+
 class ServicioUsuarios {
     constructor(repositorioUsuarios, repositorioReseñas) {
         this.repositorioUsuarios = repositorioUsuarios;
@@ -24,13 +25,7 @@ class ServicioUsuarios {
         return this._formatearUsuarioSeguro(usuario);
     }
 
-    async actualizar(id, cambios, usuarioLogueado) {
-        const usuario = this.repositorioUsuarios.buscarPorId(id);
-        if (!usuario) {
-            throw new NotFoundError("Usuario");
-        }
-
-        // Regla de negocio: Solo el propio usuario o un administrador pueden modificar
+    _validarPermisosActualizacion(id, cambios, usuarioLogueado) {
         if (
             Number(usuarioLogueado.id) !== Number(id) &&
             usuarioLogueado.rol !== "administrador"
@@ -40,10 +35,70 @@ class ServicioUsuarios {
             );
         }
 
-        // Evitar que un usuario común se cambie el rol a administrador a sí mismo
         if (cambios.rol && usuarioLogueado.rol !== "administrador") {
             throw new ForbiddenError("No puedes cambiar tu propio rol.");
         }
+    }
+
+    _prepararUsername(id, username, todosLosUsuarios) {
+        const nuevoUsername = String(username).trim();
+        if (nuevoUsername.length < 3) {
+            throw new BadRequestError(
+                "El nombre de usuario debe tener al menos 3 caracteres.",
+            );
+        }
+
+        const usernameOcupado = todosLosUsuarios.some(
+            (u) =>
+                Number(u.id) !== Number(id) &&
+                String(u.username || "").toLowerCase() ===
+                    nuevoUsername.toLowerCase(),
+        );
+        if (usernameOcupado) {
+            throw new ConflictError("Ese nombre de usuario ya está en uso.");
+        }
+
+        return nuevoUsername;
+    }
+
+    _prepararEmail(id, email, todosLosUsuarios) {
+        const nuevoEmail = String(email).trim().toLowerCase();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(nuevoEmail)) {
+            throw new BadRequestError(
+                "El correo electrónico no tiene un formato válido.",
+            );
+        }
+
+        const emailOcupado = todosLosUsuarios.some(
+            (u) =>
+                Number(u.id) !== Number(id) &&
+                String(u.email || "").toLowerCase() === nuevoEmail,
+        );
+        if (emailOcupado) {
+            throw new ConflictError("Ese correo electrónico ya está en uso.");
+        }
+
+        return nuevoEmail;
+    }
+
+    async _prepararPassword(password) {
+        const nuevaPassword = String(password).trim();
+        if (nuevaPassword.length < 6) {
+            throw new BadRequestError(
+                "La contraseña debe tener al menos 6 caracteres.",
+            );
+        }
+        return await bcrypt.hash(nuevaPassword, 12);
+    }
+
+    async actualizar(id, cambios, usuarioLogueado) {
+        const usuario = this.repositorioUsuarios.buscarPorId(id);
+        if (!usuario) {
+            throw new NotFoundError("Usuario");
+        }
+
+        this._validarPermisosActualizacion(id, cambios, usuarioLogueado);
 
         const datosParaActualizar = { ...cambios };
         const todosLosUsuarios = this.repositorioUsuarios.listar
@@ -51,63 +106,24 @@ class ServicioUsuarios {
             : [];
 
         if (datosParaActualizar.username !== undefined) {
-            const nuevoUsername = String(datosParaActualizar.username).trim();
-            if (nuevoUsername.length < 3) {
-                throw new BadRequestError(
-                    "El nombre de usuario debe tener al menos 3 caracteres.",
-                );
-            }
-
-            const usernameOcupado = todosLosUsuarios.some(
-                (u) =>
-                    Number(u.id) !== Number(id) &&
-                    String(u.username || "").toLowerCase() ===
-                        nuevoUsername.toLowerCase(),
+            datosParaActualizar.username = this._prepararUsername(
+                id,
+                datosParaActualizar.username,
+                todosLosUsuarios,
             );
-            if (usernameOcupado) {
-                throw new ConflictError(
-                    "Ese nombre de usuario ya está en uso.",
-                );
-            }
-
-            datosParaActualizar.username = nuevoUsername;
         }
 
         if (datosParaActualizar.email !== undefined) {
-            const nuevoEmail = String(datosParaActualizar.email)
-                .trim()
-                .toLowerCase();
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(nuevoEmail)) {
-                throw new BadRequestError(
-                    "El correo electrónico no tiene un formato válido.",
-                );
-            }
-
-            const emailOcupado = todosLosUsuarios.some(
-                (u) =>
-                    Number(u.id) !== Number(id) &&
-                    String(u.email || "").toLowerCase() === nuevoEmail,
+            datosParaActualizar.email = this._prepararEmail(
+                id,
+                datosParaActualizar.email,
+                todosLosUsuarios,
             );
-            if (emailOcupado) {
-                throw new ConflictError(
-                    "Ese correo electrónico ya está en uso.",
-                );
-            }
-
-            datosParaActualizar.email = nuevoEmail;
         }
 
         if (datosParaActualizar.password !== undefined) {
-            const nuevaPassword = String(datosParaActualizar.password).trim();
-            if (nuevaPassword.length < 6) {
-                throw new BadRequestError(
-                    "La contraseña debe tener al menos 6 caracteres.",
-                );
-            }
-            datosParaActualizar.passwordHash = await bcrypt.hash(
-                nuevaPassword,
-                12,
+            datosParaActualizar.passwordHash = await this._prepararPassword(
+                datosParaActualizar.password,
             );
             delete datosParaActualizar.password;
         }

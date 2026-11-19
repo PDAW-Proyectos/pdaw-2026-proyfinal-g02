@@ -26,25 +26,25 @@ class RepositorioReseñas {
                 const cancion =
                     c instanceof Cancion
                         ? c
-                        : new Cancion(
-                              c?.id,
-                              c?.titulo,
-                              c?.artistas,
-                              c?.album,
-                              c?.previewUrl,
-                              c?.imagen,
-                              c?.duracion
-                          );
+                        : new Cancion({
+                              id: c?.id,
+                              titulo: c?.titulo,
+                              artistas: c?.artistas,
+                              album: c?.album,
+                              previewUrl: c?.previewUrl,
+                              imagen: c?.imagen,
+                              duracion: c?.duracion,
+                          });
 
-                return new Reseña(
-                    d.id,
+                return new Reseña({
+                    id: d.id,
                     cancion,
-                    d.valoracionPropia,
-                    d.descripcion,
-                    d.idUsuario,
-                    d.fechaPublicado,
-                    d.cantidadFavoritos,
-                );
+                    valoracionPropia: d.valoracionPropia,
+                    descripcion: d.descripcion,
+                    idUsuario: d.idUsuario,
+                    fechaPublicado: d.fechaPublicado,
+                    cantidadFavoritos: d.cantidadFavoritos,
+                });
             });
 
             this.proximoId =
@@ -72,15 +72,15 @@ class RepositorioReseñas {
 
     async agregar(cancion, valoracionPropia, descripcion, idUsuario) {
         const id = String(this.proximoId++);
-        const nuevaReseña = new Reseña(
+        const nuevaReseña = new Reseña({
             id,
             cancion,
             valoracionPropia,
             descripcion,
             idUsuario,
-            new Date(),
-            0,
-        );
+            fechaPublicado: new Date(),
+            cantidadFavoritos: 0,
+        });
 
         this.reseñas.push(nuevaReseña);
         await this.guardar();
@@ -106,15 +106,17 @@ class RepositorioReseñas {
         const reseñaActual = this.reseñas[index];
 
         // Mantenemos el ID original y actualizamos los campos permitidos
-        this.reseñas[index] = new Reseña(
-            reseñaActual.id,
-            datosNuevos.cancion ?? reseñaActual.cancion,
-            datosNuevos.valoracionPropia ?? reseñaActual.valoracionPropia,
-            datosNuevos.descripcion ?? reseñaActual.descripcion,
-            reseñaActual.idUsuario,
-            reseñaActual.fechaPublicado,
-            datosNuevos.cantidadFavoritos ?? reseñaActual.cantidadFavoritos,
-        );
+        this.reseñas[index] = new Reseña({
+            id: reseñaActual.id,
+            cancion: datosNuevos.cancion ?? reseñaActual.cancion,
+            valoracionPropia:
+                datosNuevos.valoracionPropia ?? reseñaActual.valoracionPropia,
+            descripcion: datosNuevos.descripcion ?? reseñaActual.descripcion,
+            idUsuario: reseñaActual.idUsuario,
+            fechaPublicado: reseñaActual.fechaPublicado,
+            cantidadFavoritos:
+                datosNuevos.cantidadFavoritos ?? reseñaActual.cantidadFavoritos,
+        });
 
         await this.guardar();
         return this.reseñas[index];
